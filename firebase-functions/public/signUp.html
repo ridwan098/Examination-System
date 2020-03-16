@@ -19,7 +19,9 @@
                     <input type="text" name='username' placeholder="Choose a Username" class="input" required /><br />
                     <input type="password" name='password' placeholder="Choose a Password" class="input"
                         required /><br />
-                    <label>User:</label><select name='userLevel' id="userLevel">
+                    <select name='userLevel' id="userLevel" class='btn'
+                        style='width:50% !important; background-color: darkgrey;' required>
+                        <option value="" selected disabled hidden>Choose here</option>
                         <option value="admin">Admin</option>
                         <option value="Student">Student</option>
                         <option value="Examiner">Examiner</option>
@@ -27,6 +29,7 @@
                         <option value="Invigilator">Grader</option>
                     </select>
                     <button class="btn" id='subbtn'>Create account</button>
+                    <span id='errorMessage' style='color:grey;'></span>
                     <span><a href="logIn.html">Return to Log in</a></span>
                 </div>
 
@@ -63,7 +66,7 @@
 
     </script>
     <script src='userAccess.js'></script>
-    <script src='app.js'></script>
+    <!-- <script src='app.js'></script> -->
 
 </body>
 

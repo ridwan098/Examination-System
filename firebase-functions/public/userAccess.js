@@ -24,11 +24,13 @@ signupForm.addEventListener("submit", (e) => {
             username: username1
         }).then(() => {
             console.log(cred);
+            document.getElementById('errorMessage').innerHTML = "Account Created Successfully " + '<br /> <br />';
         });
 
 
 
     }).catch(err => {
+        document.getElementById('errorMessage').innerHTML = "There was an error signing you up: " + err.message + '<br /> <br />';
         console.log('Error signing you up', err);
     });
     //console.log(email, password, userLevel, username, 'thats all');

@@ -75,7 +75,6 @@
                         console.log('User logged in: ', user)
                         db.collection('users').doc(user1.uid).get().then(doc => {
                             const word = `${doc.data().userLevel}`;
-                            console.log('');
                             console.log('This is the word', word + 'Page.html');
                             location.replace(word + 'Page.html');
                         });
@@ -83,7 +82,7 @@
                     }
                 });
             }).catch(err => {
-                document.getElementById('errorMessage').innerHTML += "There was an error logging you in: " + err.message + '<br /> <br />';
+                document.getElementById('errorMessage').innerHTML = "There was an error logging you in: " + err.message + '<br /> <br />';
             });
 
         });
