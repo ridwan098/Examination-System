@@ -19,7 +19,7 @@
                     <input type="password" name='password' placeholder="Password" class="input" required><br />
                     <button class="btn">log in</button>
                     <span id='errorMessage' style='color:grey;'></span>
-                    <span><a href="signUp.html">Forgot username or password.</a></span>
+                    <span><a href="signUp.html">Create a new account</a></span>
                 </div>
             </form>
         </div>
@@ -74,7 +74,7 @@
                     if (user1) {
                         console.log('User logged in: ', user)
                         db.collection('users').doc(user1.uid).get().then(doc => {
-                            const word = `${doc.data().userLevel}`;
+                            var word = `${doc.data().userLevel}`;
                             word = word.toLowerCase();
                             console.log('This is the word', word + 'Page.html');
                             location.replace(word + 'Page.html');
