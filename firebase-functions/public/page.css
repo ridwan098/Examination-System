@@ -49,12 +49,12 @@
         }
 
         .input:focus {
-            border: 2px solid #34b3a0;
+            border: 2px solid #28322C;
         }
 
         .btn {
             width: 100%;
-            background: #1D462E;
+            background: #28322C;
             height: 60px;
             text-align: center;
             line-height: 60px;
