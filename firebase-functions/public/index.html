@@ -4,15 +4,50 @@
 <head>
   <title>Higher Exam</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+      background-color: #34413A;
+      border-color: #34413A;
+    }
+  </style>
 </head>
 
 <body>
-  <header>
-    <a href='logIn.html'>
-      <h1>Click me</h1>
-    </a>
-  </header>
-  <button class='call'>Say Hello</button>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Higher Exam</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="jumbotron">
+    <div class="container text-center">
+      <h1>Welcome to</h1>
+      <p>Higher Exam</p>
+      <img src="student2.png" /><br />
+      <a href='logIn.html'><button class='btn'>Log In/Sign Up</button></a>
+
+    </div>
+  </div>
+
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="/__/firebase/7.10.0/firebase-app.js"></script>
 
