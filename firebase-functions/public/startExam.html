@@ -1,0 +1,102 @@
+<!DOCTYPE html5>
+<html>
+  <head>
+    <title>Start Exam</title>
+  <?php include 'header.php'?>
+  </head>
+  <style>
+    body{
+      color:rgb(47, 85, 151);
+    }
+    #candidate{
+      position:absolute;
+      top:200px;
+      left:30px;
+      font-size: 20px;
+      width: 400px;
+    }
+    .fontSizeClass{
+      position: absolute;
+      top: 200px;
+      left: 900px;
+      text-align: center;
+      font-size: 20px;
+    }
+    .startExamClass{
+      position: absolute;
+      top: 300px;
+      left: 450px;
+      text-align: center;
+      font-size: 20px;
+      width: 400px;
+    }
+    #startButton{
+      position: absolute;
+      top: 80px;
+      left:140px;
+      width: 120px;
+      background: rgb(60, 179, 113);
+      font-size: 20px;
+      border-radius: 20px;
+    }
+    .fontButtonClass{
+      background: transparent;
+      border-radius: 10px;
+      border: solid 0px transparent;
+      color:rgb(47, 85, 151);
+      text-decoration: underline rgb(47,85,151);
+    }
+    .normalSizedButton{
+      font-size: 20px;
+    }
+    .largeSizedButton{
+      font-size: 25px;
+    }
+    .extraSizedButton{
+      font-size: 30px;
+    }
+    
+  </style>
+  <body>
+    <div id="candidate">
+      <span>Candidate Name: Bruno Jauad</span><br>
+      <span>Candidate ID: 0123456789</span>
+    </div>
+
+    <div class="fontSizeClass">
+      <span>Font Size:</span><br>
+      <button class="normalSizedButton fontButtonClass" onclick="changeFontSize('normal')">Normal</button>
+      <button class="largeSizedButton fontButtonClass" onclick="changeFontSize('large')">Large</button>
+      <button class="extraSizedButton fontButtonClass" onclick="changeFontSize('extra')">Extra Large</button>
+    </div>
+
+    <div class="startExamClass">
+      <span>Module Title: BUS201</span><br>
+      <span>Exam Code: 565</span><br>
+      <button id="startButton" onclick="">Start</button>
+    </div>
+    <script>
+
+      function changeFontSize(fontSize){
+            fontClass = document.getElementsByClassName("fontSizeClass");
+            candidate = document.getElementById("candidate");
+            startExamClass = document.getElementsByClassName("startExamClass");
+
+        if(fontSize=="normal"){
+            fontClass[0].style.fontSize = "20px";
+            candidate.style.fontSize = "20px";
+            startExamClass[0].style.fontSize = "20px";
+        }else if(fontSize=="large"){
+            fontClass[0].style.fontSize = "25px";
+            candidate.style.fontSize="25px";
+            startExamClass[0].style.fontSize="25px";
+        }else if(fontSize=="extra"){
+            fontClass[0].style.fontSize = "30px";
+            candidate.style.fontSize="30px";
+            startExamClass[0].style.fontSize="30px";
+        }
+
+      }
+    </script>
+  </body>
+</html>
