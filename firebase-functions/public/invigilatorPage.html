@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <title>Invigilator Page</title>
+    <link rel="stylesheet" type="text/css" href="Invig.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -101,16 +101,22 @@
                 <p><a href="#">Link</a></p>
             </div>
             <div class="col-sm-8 text-left">
-                <h1>Welcome</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                    officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <h1 class="tx">In order to submit a report you must give a student id number or student username along side with a report detailing all malicious behaviour.</h1>
+                <form><p>
+                    <label>Enter Username/User ID:</label>
+                    <input type = "text"
+                           id = "myText"
+                           value = "" />
+                  </p>
+                </form>
                 <hr>
-                <h3>Test</h3>
-                <p>Lorem ipsum...</p>
+                <h3>Report Details:</h3>
+                <form>
+                    <p>
+                        <input type = "text"
+                        id = "textreport"
+                        value = "">
+                    </p></form>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
