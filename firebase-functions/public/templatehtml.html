@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UserPage</title>
+    <title>Admin Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -18,6 +18,47 @@
             border-radius: 0;
             background-color: #28322C;
             border-color: #28322C;
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #28322C;
+            color: white;
+            text-align: justify;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: lightgreen;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -35,71 +76,66 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Account Info</a></li>
-                    <li><a href="#">Gallery</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a></li>
+                    <li id='logout'><a href="index.html">Home</a></li>
+                    <li id='modalBtn'><a>Account Info</a></li>
+                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>My Portfolio</h1>
-            <p>Some text that represents "Me"...</p>
+            <h1>Template Page</h1>
+            <p id='username'>This is template page: </p>
         </div>
     </div>
 
-    <div class="container-fluid bg-3 text-center">
-        <h3>Some of my Work</h3><br>
-        <div class="row">
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <div class="col-sm-2 sidenav">
+                <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p>
             </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+            <div class="col-sm-8 text-left">
+                <h1>Welcome</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                    officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <hr>
+                <h3>Test</h3>
+                <p>Lorem ipsum...</p>
             </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-        </div>
-    </div><br>
-
-    <div class="container-fluid bg-3 text-center">
-        <div class="row">
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+            <div class="col-sm-2 sidenav">
+                <div class="well">
+                    <p>ADS</p>
+                </div>
+                <div class="well">
+                    <p>ADS</p>
+                </div>
             </div>
         </div>
-    </div><br><br>
-
-    <footer class="container-fluid text-center">
-        <p>Footer Text</p>
-    </footer>
+    </div>
 
 
 
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Here are your account details:</h3>
+            <p id='accountDetails'></p>
+        </div>
+
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
@@ -127,6 +163,70 @@
 
     </script>
 
+    <script>
+        //log out 
+        const logout = document.querySelector('#logout');
+        logout.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth.signOut().then(() => {
+                alert('User signed out')
+            })
+        });
+        const accountDetails = document.querySelector('.accountDetails');
+        // for some reason, user is logged in from the start
+        //listen for the auth status of user (whether theyre signed in or out)
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log('User logged in: ', user)
+                setupUI(user);
+            } else {
+                console.log('User logged out');
+                location.replace('index.html');
+            }
+        });
+
+
+        const setupUI = (user) => {
+            //<div>password: ${doc.data().password} </div>
+            if (user) {
+                //acount info 
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    const name = `<span>${doc.data().username} </span>`;
+                    const html = `
+                <div>email: ${user.email} </div>
+                <div>username: ${doc.data().username} </div>
+                <div>user level: ${doc.data().userLevel} </div>
+                `;
+                    document.getElementById('accountDetails').innerHTML += html;
+                    document.getElementById('username').innerHTML += name;
+                });
+
+            }
+            else {
+                accountDetails.innerHtml = '';
+                document.getElementById('username').innerHTML
+
+            }
+        }
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // Get the button that opens the modal
+        var btn = document.getElementById("modalBtn");
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 
 </body>
 
