@@ -13,7 +13,7 @@
     #candidate{
       position:absolute;
       top:200px;
-      left:30px;
+      left:70px;
       font-size: 20px;
       width: 400px;
     }
@@ -24,16 +24,34 @@
       border-color: #28322C;
     }
   </style>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Higher Exam</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
   <div id="candidate">
     <span>Candidate Name:</span><br>
     <span>Candidate ID:</span><br>
     <span>Exam Code:</span>
   </div>
-<!--  <form action="" method="post">
-    <strong>Question</strong>
-  </form>-->
+  <form action="" method="post">
+    <input type="submit"></input>
+  </form>
   <script>
     var questionNumber = 0;
-        examQuestion = "Question " + questionNumber + ":";
+        enterExamQuestion = "";
+        examQuestion = "Question " + questionNumber + ": " + enterExamQuestion;
   </script>
 </html>
