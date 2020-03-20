@@ -12,16 +12,28 @@
     }
     #candidate{
       position:absolute;
-      top:200px;
+      top:100px;
       left:70px;
       font-size: 20px;
       width: 400px;
     }
-    .navbar {
+    #questionsAnswered{
+      position:absolute;
+      top: 100px;  
+      left:900px;
+      font-size:20px;
+    }
+    .navbar{
       margin-bottom: 0;
       border-radius: 0;
       background-color: #28322C;
       border-color: #28322C;
+    }
+    #questions{
+      position:absolute;
+      top: 200px;
+      width:180px;
+      border:solid 2px black;
     }
   </style>
   <nav class="navbar navbar-inverse">
@@ -46,12 +58,22 @@
     <span>Candidate ID:</span><br>
     <span>Exam Code:</span>
   </div>
-  <form action="" method="post">
+  <div id="questionsAnswered">
+      <span>Questions Answered:</span>
+      <span id="currentQuestion"> </span>/
+      <span id="totalNumber"></span>
+  </div>
+  <form action="" method="post" id="questions">
     <input type="submit"></input>
   </form>
   <script>
-    var questionNumber = 0;
+   /* var questionNumber = 0;
         enterExamQuestion = "";
-        examQuestion = "Question " + questionNumber + ": " + enterExamQuestion;
+        examQuestion = "Question " + questionNumber + ": " + enterExamQuestion;*/
+    var questionAnswered = 0;
+        totalQuestions = 0;
+    function questionsAnsweredFunction(questionAnswered,totalQuestions){
+        
+    }
   </script>
 </html>
