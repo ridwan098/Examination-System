@@ -61,12 +61,58 @@
             cursor: pointer;
         }
 
-        tr:hover {
-            background-color:#f5f5f5;
+        /* Style the button that is used to open and close the collapsible content */
+        .collapsible {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
         }
 
-        #paper:hover{
-            cursor: pointer;
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active, .collapsible:hover {
+            background-color: #ccc;
+        }
+
+        /* Style the collapsible content. Note: hidden by default */
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+
+        .form-inline {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+        }
+
+            /* Add some margins for each label */
+        .form-inline label {
+            margin: 5px 10px 5px 0;
+        }
+
+        /* Style the input fields */
+        .form-inline input {
+            vertical-align: middle;
+            margin: 5px 10px 5px 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        /* Style the submit button */
+        .form-inline button {
+            padding: 10px 20px;
+            background-color: dodgerblue;
+            border: 1px solid #ddd;
+            color: white;
         }
     </style>
 </head>
@@ -93,36 +139,25 @@
         </div>
     </nav>
 
-
     <div class="jumbotron">
-        <div class="container text-center">
-            <h1>Grader Page</h1>
-            <p id='username'>Welcome </p>
-        </div>
+        <center>
+            <h1>Exam Paper Name</h1>
+            <h3>Candidate Name: Jon Smith</h3>
+            <h3>Candidate ID: 0123456789</h3>
+        </center>
     </div>
 
-    <div class="container-fluid text-center">
-        <div class="row content">
-            <div class="col-sm-8 text-left">
-                <h1>Exams ready to be marked</h1>
-                <p>
-                <table style="width:100%">
-                    <tr>
-                        <th>Subject</th>
-                        <th>Student Name</th>
-                        <th>Student ID</th>
-                    </tr>
-                    <tr id="paper" onclick="window.location='gradePaper.html?id=1'">
-                        <td>Software Engineering</td>
-                        <td>Jon Smith</td>
-                        <td>1784947394</td>
-					</tr>
-                </table>
-                </p>
-            </div>
-        </div>
+    <button type="button" class="collapsible"><b>Question 1</b></button>
+    <div class="content">
+        <p><b>This is a question?</p></b>
+        Sample answer here.
+        <br>
+        <form class="form-inline">
+            <input type="text" id="anotes" name="anotes" placeholder="Type feedback here...">
+            <input type="number" id="mark" name="mark" placeholder="Mark out of x">
+            <button type="submit">Update</button>
+        </form> 
     </div>
-
 
 
     <!-- The Modal -->
@@ -136,6 +171,23 @@
         </div>
 
     </div>
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+            content.style.display = "none";
+            } else {
+            content.style.display = "block";
+            }
+        });
+    }
+</script>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
