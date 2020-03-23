@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>Grader Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -61,24 +61,58 @@
             cursor: pointer;
         }
 
-        #adminBtn {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 30px;
-            z-index: 99;
-            font-size: 18px;
-            border: none;
-            outline: none;
-            background-color: grey;
-            color: white;
+        /* Style the button that is used to open and close the collapsible content */
+        .collapsible {
+            background-color: #eee;
+            color: #444;
             cursor: pointer;
-            padding: 15px;
-            border-radius: 4px;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
         }
 
-        #adminBtn:hover {
-            background-color: #555;
+        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active, .collapsible:hover {
+            background-color: #ccc;
+        }
+
+        /* Style the collapsible content. Note: hidden by default */
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+
+        .form-inline {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+        }
+
+            /* Add some margins for each label */
+        .form-inline label {
+            margin: 5px 10px 5px 0;
+        }
+
+        /* Style the input fields */
+        .form-inline input {
+            vertical-align: middle;
+            margin: 5px 10px 5px 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        /* Style the submit button */
+        .form-inline button {
+            padding: 10px 20px;
+            background-color: dodgerblue;
+            border: 1px solid #ddd;
+            color: white;
         }
     </style>
 </head>
@@ -105,44 +139,25 @@
         </div>
     </nav>
 
-
     <div class="jumbotron">
-        <div class="container text-center">
-            <h1>Examiner Page</h1>
-            <p id='username'>Welcome </p>
-        </div>
+        <center>
+            <h1>Exam Paper Name</h1>
+            <h3>Candidate Name: Jon Smith</h3>
+            <h3>Candidate ID: 0123456789</h3>
+        </center>
     </div>
 
-    <div class="container-fluid text-center">
-        <div class="row content">
-            <div class="col-sm-2 sidenav">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-            </div>
-            <div class="col-sm-8 text-left">
-                <h1>Welcome</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                    officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <hr>
-                <h3>Test</h3>
-                <p>Lorem ipsum...</p>
-            </div>
-            <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>ADS</p>
-                </div>
-                <div class="well">
-                    <p>ADS</p>
-                </div>
-            </div>
-        </div>
+    <button type="button" class="collapsible"><b>Question 1</b></button>
+    <div class="content">
+        <p><b>This is a question?</p></b>
+        Sample answer here.
+        <br>
+        <form class="form-inline">
+            <input type="text" id="anotes" name="anotes" placeholder="Type feedback here...">
+            <input type="number" id="mark" name="mark" placeholder="Mark out of x">
+            <button type="submit">Update</button>
+        </form> 
     </div>
-
 
 
     <!-- The Modal -->
@@ -157,18 +172,26 @@
 
     </div>
 
-    <!---      From here below -->
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
 
-    <footer class="container-fluid text-center adminOnly" style='display:none;'>
-        <p>Admin Page</p>
-    </footer>
-
-    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
+        for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+            content.style.display = "none";
+            } else {
+            content.style.display = "block";
+            }
+        });
+    }
+</script>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -176,7 +199,7 @@
             authDomain: "examination-system-f53f3.firebaseapp.com",
             databaseURL: "https://examination-system-f53f3.firebaseio.com",
             projectId: "examination-system-f53f3",
-
+ 
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -184,7 +207,6 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const functions = firebase.functions();
 
         //update firestore settings
         db.settings({ timestampsInSnapshots: true });
@@ -207,30 +229,18 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                user.getIdTokenResult().then(idTokenResult => {
-                    user.admin = idTokenResult.claims.admin
-                    setupUI(user);
-                })
-                console.log('User logged in: ', user)
-
+                console.log('User logged in: ', user);
+                setupUI(user);
             } else {
                 console.log('User logged out');
                 location.replace('index.html');
             }
         });
 
-        const adminItems = document.querySelectorAll('.adminOnly');
+
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
-                if (user.admin) {
-                    //document.getElementById("adminBtn").style.display = "block";
-                    //adminItems[1].style.display = 'block';
-                    for (i = 0; i < adminItems.length; i++) {
-                        adminItems[i].style.display = 'block';
-                    }
-
-                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -245,14 +255,11 @@
 
             }
             else {
-                for (i = 0; i < adminItems.length; i++) {
-                    adminItems[i].style.display = 'none';
-                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
+
             }
         }
-
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -270,26 +277,6 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }
-
-        //add admin clous function
-        const adminFrom = document.getElementById('adminActions');
-        adminFrom.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const adminEmail = document.getElementById('adminEmail').value;
-            const addAdminRole = functions.httpsCallable('addAdminRole');
-            addAdminRole({ email: adminEmail }).then(result => {
-                console.log(result);
-
-            });
-
-
-        })
-
-
-        //when admin returns to page
-        function returnTopage() {
-            location.replace('adminPage.html');
         }
     </script>
 

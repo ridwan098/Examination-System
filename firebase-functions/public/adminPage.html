@@ -60,6 +60,26 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        #adminBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        #adminBtn:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 
@@ -92,52 +112,39 @@
         </div>
     </div>
 
-    <div class="container-fluid bg-3 text-center">
-        <h3>Some of my Work</h3><br>
-        <div class="row">
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+    <div class="container-fluid text-center">
+        <div class="row content">
+            <div class="col-sm-2 sidenav">
+                <h3>Browse pages</h3>
+                <p><a href="studentPage.html">Student Page</a></p>
+                <p><a href="examinerPage.html">Examiner Page</a></p>
+                <p><a href="invigilatorPage.html">Invigilator Page</a></p>
+                <p><a href="graderPage.html">Grader Page</a></p>
             </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+            <div class="col-sm-8 text-left">
+                <h1>Welcome</h1>
+                <p>This is the admin page. Here, you have access to creating and deleting user accounts. Each of these
+                    functions have a respective button down below. Alternatively, you may wish to promote a user to the
+                    admin status. You can do this by simply entering their email down below:
+                    <form id='adminActions'>
+                        <input class='input' type='email' placeholder="Enter user email" id='adminEmail' required />
+                        <button class='btn'> Make User admin</button>
+                    </form>
+                    <hr>
+                    <h3>Core Functions</h3>
+                    <p>You can create and delete user accounts. Otherwsie, you can browse through other pages using the
+                        links</p>
             </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-        </div>
-    </div><br>
-
-    <div class="container-fluid bg-3 text-center">
-        <div class="row">
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-            </div>
-            <div class="col-sm-3">
-                <p>Some text..</p>
-                <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
+            <div class="col-sm-2 sidenav">
+                <div class="well">
+                    <p>Create new user</p>
+                </div>
+                <div class="well">
+                    <p>Delete user account</p>
+                </div>
             </div>
         </div>
-    </div><br><br>
-
-    <footer class="container-fluid text-center">
-        <p>Footer Text</p>
-    </footer>
+    </div>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -152,13 +159,18 @@
     </div>
 
 
+    <!---      From here below -->
 
+    <footer class="container-fluid text-center adminOnly" style='display:none;'>
+        <p>Admin Page</p>
+    </footer>
 
-
+    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -174,6 +186,7 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const functions = firebase.functions();
 
         //update firestore settings
         db.settings({ timestampsInSnapshots: true });
@@ -196,21 +209,33 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin
+                    setupUI(user);
+                })
                 console.log('User logged in: ', user)
-                setupUI(user);
+
             } else {
                 console.log('User logged out');
                 location.replace('index.html');
             }
         });
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                if (user.admin) {
+                    //document.getElementById("adminBtn").style.display = "block";
+                    //adminItems[1].style.display = 'block';
+                    for (i = 0; i < adminItems.length; i++) {
+                        adminItems[i].style.display = 'block';
+                    }
+
+                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
-                    const name = `<span>${doc.data().username} </span>`;
+                    const name = `<span>${doc.data().username}</span>`;
                     const html = `
                 <div>email: ${user.email} </div>
                 <div>username: ${doc.data().username} </div>
@@ -222,9 +247,11 @@
 
             }
             else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
-
             }
         }
 
@@ -245,6 +272,26 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
+        }
+
+        //add admin clous function
+        const adminFrom = document.getElementById('adminActions');
+        adminFrom.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const adminEmail = document.getElementById('adminEmail').value;
+            const addAdminRole = functions.httpsCallable('addAdminRole');
+            addAdminRole({ email: adminEmail }).then(result => {
+                console.log(result);
+
+            });
+
+
+        })
+
+
+        //when admin returns to page
+        function returnTopage() {
+            location.replace('adminPage.html');
         }
     </script>
 
