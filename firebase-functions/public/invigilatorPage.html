@@ -60,6 +60,26 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        #adminBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        #adminBtn:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 
@@ -137,9 +157,18 @@
 
     </div>
 
+    <!---      From here below -->
+
+    <footer class="container-fluid text-center adminOnly" style='display:none;'>
+        <p>Admin Page</p>
+    </footer>
+
+    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
+
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -155,6 +184,7 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const functions = firebase.functions();
 
         //update firestore settings
         db.settings({ timestampsInSnapshots: true });
@@ -177,18 +207,30 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin
+                    setupUI(user);
+                })
                 console.log('User logged in: ', user)
-                setupUI(user);
+
             } else {
                 console.log('User logged out');
                 location.replace('index.html');
             }
         });
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                if (user.admin) {
+                    //document.getElementById("adminBtn").style.display = "block";
+                    //adminItems[1].style.display = 'block';
+                    for (i = 0; i < adminItems.length; i++) {
+                        adminItems[i].style.display = 'block';
+                    }
+
+                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -203,11 +245,14 @@
 
             }
             else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
-
             }
         }
+
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -225,6 +270,26 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
+        }
+
+        //add admin clous function
+        const adminFrom = document.getElementById('adminActions');
+        adminFrom.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const adminEmail = document.getElementById('adminEmail').value;
+            const addAdminRole = functions.httpsCallable('addAdminRole');
+            addAdminRole({ email: adminEmail }).then(result => {
+                console.log(result);
+
+            });
+
+
+        })
+
+
+        //when admin returns to page
+        function returnTopage() {
+            location.replace('adminPage.html');
         }
     </script>
 
