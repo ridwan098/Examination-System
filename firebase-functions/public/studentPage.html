@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>Student Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -122,15 +122,21 @@
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                    officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p id="welcomeMessage">error on welcome message</p>
                 <hr>
-                <h3>Test</h3>
-                <p>Lorem ipsum...</p>
+                <!--show tests button-->
+                <button id="examButton">Your Tests</button>
+               
+                <div id="examModalId">
+
+                    <!-- Exam modal content -->
+                    <div class="examModal-content">
+                        <span class="close">&times;</span>
+                        <h3>Here are your exam details:</h3>
+                        <p id='examDetails'></p>
+                    </div>
+            
+                </div>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
@@ -143,7 +149,7 @@
         </div>
     </div>
 
-
+    
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -204,7 +210,7 @@
         });
         const accountDetails = document.querySelector('.accountDetails');
         // for some reason, user is logged in from the start
-        //listen for the auth status of user (whether theyre signed in or out)
+        //listen for the auth status of user (whether they're signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
                 user.getIdTokenResult().then(idTokenResult => {
@@ -241,8 +247,11 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                // Mention number of exams to do and a little message for the student
+                    var welcomeMessage = " Hello " + name + " you have " + "[NUMBER VARIABLE]" + " to attempt by " + "[DATE VARIABLE]"+"." ;
+                    document.getElementById('welcomeMessage').innerHTML = welcomeMessage;
                 });
-
+                
             }
             else {
                 for (i = 0; i < adminItems.length; i++) {
