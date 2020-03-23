@@ -6,9 +6,12 @@
         
 
         .tx{
-            font-size: 27px;
+            font-size: 18px;
         }
-
+        
+        #labelx{
+            font-size: 18px;
+        }
 
         #textreport{
             width:100%;

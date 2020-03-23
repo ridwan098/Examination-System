@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script defer src="invig.js"></script>
     <style>
         /* Remove the navbar's default margin-bottom and rounded borders */
         .navbar {
@@ -102,21 +103,32 @@
             </div>
             <div class="col-sm-8 text-left">
                 <h1 class="tx">In order to submit a report you must give a student id number or student username along side with a report detailing all malicious behaviour.</h1>
-                <form><p>
-                    <label>Enter Username/User ID:</label>
+                
+                <div id = "error" ></div>
+                
+                <form id = "form" action="/" method="GET">
+                
+                    
+                    <label id = labelx>Enter Student Username/User ID:</label>
                     <input type = "text"
-                           id = "myText"
-                           value = "" />
-                  </p>
-                </form>
+                           id = "idx"
+                           name = 'idx'
+                           />
+     
+                
                 <hr>
                 <h3>Report Details:</h3>
-                <form>
+            
                     <p>
-                        <input type = "text"
+                        <input 
+                        type = "text"
                         id = "textreport"
-                        value = "">
-                    </p></form>
+                        name = 'textreport'
+                        >
+                    </p>
+                     
+                    <button type="submit">Submit Report</button>
+                </form>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
