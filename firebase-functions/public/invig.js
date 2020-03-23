@@ -1,3 +1,14 @@
+var config{
+    apiKey: "AIzaSyDiUrWvr_XfF3o-YVinV_D9JuKXJpWbPaI",
+    authDomain: "examination-system-f53f3.firebaseapp.com",
+    databaseURL: "https://examination-system-f53f3.firebaseio.com",
+    projectId: "examination-system-f53f3"
+};
+
+firfebase.initializeApp(config)
+
+var messagesRef = firebase.database().ref('messages');
+
 
 const userid = document.getElementById('idx')
 const report = document.getElementById('textreport')
@@ -8,7 +19,7 @@ const errorElement = document.getElementById("error")
 
 form.addEventListener('submit', (e) => {
 
-    errorElement.innerText = "XXX"
+    e.preventDefault()
 
     let messages = []
 
@@ -25,7 +36,31 @@ form.addEventListener('submit', (e) => {
     }
 
     if (messages.length > 0){
-        e.preventDefault()
         errorElement.innerText = messages.join(", ")
     }
+    else{
+        e.preventDefault()
+        var name = getInputVal('idx')
+        var report = getInputVal('textreport')
+        saveMessage(name, report)
+        e.preventDefault()
+        errorElement.innerText.set("Report submitted")
+        e.preventDefault()
+    }
+
+
+
 })
+
+function getInputVal(id){
+
+    return document.getElementById(id).value;
+
+}
+
+
+function saveMessage(name, report){
+    var newMessageRef = messagesRef.push();
+    newMessageRef.set({name: name,
+    report: report})
+}
