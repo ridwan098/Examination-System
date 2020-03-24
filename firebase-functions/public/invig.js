@@ -2,13 +2,12 @@ var config{
     apiKey: "AIzaSyDiUrWvr_XfF3o-YVinV_D9JuKXJpWbPaI",
     authDomain: "examination-system-f53f3.firebaseapp.com",
     databaseURL: "https://examination-system-f53f3.firebaseio.com",
-    projectId: "examination-system-f53f3",
+    projectId: "examination-system-f53f3"
 };
 
 firfebase.initializeApp(config)
 
-var messagesRef = firebase.database().ref('messages');
-
+var messagesRef = firebase.database().ref('messages')
 
 const userid = document.getElementById('idx')
 const report = document.getElementById('textreport')
@@ -46,9 +45,7 @@ function submitform(e) {
         errorElement.innerText.set("Report submitted")
     }
 
-
-
-})
+}
 
 function getInputVal(id){
     return document.getElementById(id).value;
