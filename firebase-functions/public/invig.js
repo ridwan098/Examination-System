@@ -7,17 +7,16 @@ var config{
 
 firfebase.initializeApp(config)
 
-var messagesRef = firebase.database().ref('messages');
-
+var messagesRef = firebase.database().ref('messages')
 
 const userid = document.getElementById('idx')
 const report = document.getElementById('textreport')
 const form = document.getElementById('form')
 const errorElement = document.getElementById("error")
 
+form.addEventListener('submit', submitform);
 
-
-form.addEventListener('submit', (e) => {
+function submitform(e) {
 
     e.preventDefault()
 
@@ -38,24 +37,18 @@ form.addEventListener('submit', (e) => {
     if (messages.length > 0){
         errorElement.innerText = messages.join(", ")
     }
-    else{
-        e.preventDefault()
+
+    if(messages.length == 0){
         var name = getInputVal('idx')
         var report = getInputVal('textreport')
         saveMessage(name, report)
-        e.preventDefault()
         errorElement.innerText.set("Report submitted")
-        e.preventDefault()
     }
 
-
-
-})
+}
 
 function getInputVal(id){
-
     return document.getElementById(id).value;
-
 }
 
 
