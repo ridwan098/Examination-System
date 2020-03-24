@@ -2,7 +2,7 @@ var config{
     apiKey: "AIzaSyDiUrWvr_XfF3o-YVinV_D9JuKXJpWbPaI",
     authDomain: "examination-system-f53f3.firebaseapp.com",
     databaseURL: "https://examination-system-f53f3.firebaseio.com",
-    projectId: "examination-system-f53f3"
+    projectId: "examination-system-f53f3",
 };
 
 firfebase.initializeApp(config)
@@ -15,9 +15,9 @@ const report = document.getElementById('textreport')
 const form = document.getElementById('form')
 const errorElement = document.getElementById("error")
 
+form.addEventListener('submit', submitform);
 
-
-form.addEventListener('submit', (e) => {
+function submitform(e) {
 
     e.preventDefault()
 
@@ -38,14 +38,12 @@ form.addEventListener('submit', (e) => {
     if (messages.length > 0){
         errorElement.innerText = messages.join(", ")
     }
-    else{
-        e.preventDefault()
+
+    if(messages.length == 0){
         var name = getInputVal('idx')
         var report = getInputVal('textreport')
         saveMessage(name, report)
-        e.preventDefault()
         errorElement.innerText.set("Report submitted")
-        e.preventDefault()
     }
 
 
@@ -53,9 +51,7 @@ form.addEventListener('submit', (e) => {
 })
 
 function getInputVal(id){
-
     return document.getElementById(id).value;
-
 }
 
 
