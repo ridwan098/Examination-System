@@ -1,4 +1,3 @@
-var messagesRef = firebase.database().ref('messages')
 
 const userid = document.getElementById('idx')
 const report = document.getElementById('textreport')
