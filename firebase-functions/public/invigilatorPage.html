@@ -121,31 +121,25 @@
                 <p><a href="#">Link</a></p>
             </div>
             <div class="col-sm-8 text-left">
-                <h1 class="tx">In order to submit a report you must give a student id number or student username along side with a report detailing all malicious behaviour.</h1>
-                
-                <div id = "error" ></div>
-                
-                <form id = "form">
-                
-                    
-                    <label id = labelx>Enter Student Username/User ID:</label>
-                    <input type = "text"
-                           id = "idx"
-                           name = 'idx'
-                           />
-     
-                
-                <hr>
-                <h3>Report Details:</h3>
-            
+                <h1 class="tx">In order to submit a report you must give a student id number or student username along
+                    side with a report detailing all malicious behaviour.</h1>
+
+                <div id="error"></div>
+
+                <form id="form">
+
+
+                    <label id=labelx>Enter Student Username/User ID:</label>
+                    <input type="text" id="idx" name='idx' />
+
+
+                    <hr>
+                    <h3>Report Details:</h3>
+
                     <p>
-                        <input 
-                        type = "text"
-                        id = "textreport"
-                        name = 'textreport'
-                        >
+                        <input type="text" id="textreport" name='textreport'>
                     </p>
-                     
+
                     <button type="submit">Submit Report</button>
                 </form>
             </div>
@@ -289,19 +283,6 @@
             }
         }
 
-        //add admin clous function
-        const adminFrom = document.getElementById('adminActions');
-        adminFrom.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const adminEmail = document.getElementById('adminEmail').value;
-            const addAdminRole = functions.httpsCallable('addAdminRole');
-            addAdminRole({ email: adminEmail }).then(result => {
-                console.log(result);
-
-            });
-
-
-        })
 
 
         //when admin returns to page

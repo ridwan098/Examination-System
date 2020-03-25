@@ -21,7 +21,8 @@ signupForm.addEventListener("submit", (e) => {
             email: email1,
             password: password1,
             userLevel: userLevel1,
-            username: username1
+            username: username1,
+            userID: cred.user.uid
         }).then(() => {
             console.log(cred);
             document.getElementById('errorMessage').innerHTML = "Account Created Successfully " + '<br /> <br />';

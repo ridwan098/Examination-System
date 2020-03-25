@@ -274,20 +274,6 @@
             }
         }
 
-        //add admin clous function
-        const adminFrom = document.getElementById('adminActions');
-        adminFrom.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const adminEmail = document.getElementById('adminEmail').value;
-            const addAdminRole = functions.httpsCallable('addAdminRole');
-            addAdminRole({ email: adminEmail }).then(result => {
-                console.log(result);
-
-            });
-
-
-        })
-
 
         //when admin returns to page
         function returnTopage() {
