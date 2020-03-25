@@ -1,9 +1,41 @@
+<?php
+
+	$servername = "35.233.45.51";
+    $username = "root";
+    $password = "password";
+
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    catch(PDOException $e)
+    {
+        die("Connection failed: " . $e->getMessage());
+    }
+    $sql = "select * from FinishedExam fe, Exams e, Student s, Users u
+    where fe.examId = e.id 
+    and fe.studentId = s.studentId
+    and s.userId = u.id;";
+    $result = $conn->query($sql);
+    $unmarkedExams = [];
+    while($row = $result->fetch()) {
+        if ($row["marked"] == 0){
+            $unmarkedExams[] = $row;
+        }
+    }
+
+    
+    $conn = null;
+?>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>Grader Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -61,24 +93,12 @@
             cursor: pointer;
         }
 
-        #adminBtn {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 30px;
-            z-index: 99;
-            font-size: 18px;
-            border: none;
-            outline: none;
-            background-color: grey;
-            color: white;
-            cursor: pointer;
-            padding: 15px;
-            border-radius: 4px;
+        tr:hover {
+            background-color:#f5f5f5;
         }
 
-        #adminBtn:hover {
-            background-color: #555;
+        #paper:hover{
+            cursor: pointer;
         }
     </style>
 </head>
@@ -92,7 +112,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a id='logout' class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
@@ -105,46 +125,41 @@
         </div>
     </nav>
 
+
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Admin Page</h1>
-            <p id='username'>Welcome to admin page </p>
+            <h1>Grader Page</h1>
+            <p id='username'>Welcome </p>
         </div>
     </div>
 
     <div class="container-fluid text-center">
         <div class="row content">
-            <div class="col-sm-2 sidenav">
-                <h3>Browse pages</h3>
-                <p><a href="studentPage.html">Student Page</a></p>
-                <p><a href="examinerPage.html">Examiner Page</a></p>
-                <p><a href="invigilatorPage.html">Invigilator Page</a></p>
-                <p><a href="graderPage.php">Grader Page</a></p>
-            </div>
             <div class="col-sm-8 text-left">
-                <h1>Welcome</h1>
-                <p>This is the admin page. Here, you have access to creating and deleting user accounts. Each of these
-                    functions have a respective button down below. Alternatively, you may wish to promote a user to the
-                    admin status. You can do this by simply entering their email down below:
-                    <form id='adminActions'>
-                        <input class='input' type='email' placeholder="Enter user email" id='adminEmail' required />
-                        <button class='btn'> Make User admin</button>
-                    </form>
-                    <hr>
-                    <h3>Core Functions</h3>
-                    <p>You can create and delete user accounts. Otherwsie, you can browse through other pages using the
-                        links above</p>
-            </div>
-            <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>Create new user</p>
-                </div>
-                <div class="well">
-                    <p>Delete user account</p>
-                </div>
+                <h1>Exams ready to be marked</h1>
+                <p>
+                <table style="width:100%">
+                    <tr>
+                        <th>Subject</th>
+                        <th>Student Name</th>
+                        <th>Student ID</th>
+                    </tr>
+                    <?php 
+                        for ($i = 0; $i < sizeof($unmarkedExams); $i++){
+                            echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$unmarkedExams[$i]['finishedId']}'\">";
+                            echo "<td>{$unmarkedExams[$i]['subject']}</td>";
+                            echo "<td>{$unmarkedExams[$i]['name']}</td>";
+                            echo "<td>{$unmarkedExams[$i]['studentId']}</td>";
+                            echo "</tr>";
+                        }
+                    ?>
+                </table>
+                </p>
             </div>
         </div>
     </div>
+
+
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -158,19 +173,9 @@
 
     </div>
 
-
-    <!---      From here below -->
-
-    <footer class="container-fluid text-center adminOnly" style='display:none;'>
-        <p>Admin Page</p>
-    </footer>
-
-    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
-
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -178,7 +183,7 @@
             authDomain: "examination-system-f53f3.firebaseapp.com",
             databaseURL: "https://examination-system-f53f3.firebaseio.com",
             projectId: "examination-system-f53f3",
-
+ 
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -186,7 +191,6 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const functions = firebase.functions();
 
         //update firestore settings
         db.settings({ timestampsInSnapshots: true });
@@ -209,30 +213,18 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                user.getIdTokenResult().then(idTokenResult => {
-                    user.admin = idTokenResult.claims.admin
-                    setupUI(user);
-                })
-                console.log('User logged in: ', user)
-
+                console.log('User logged in: ', user);
+                setupUI(user);
             } else {
                 console.log('User logged out');
                 location.replace('index.html');
             }
         });
 
-        const adminItems = document.querySelectorAll('.adminOnly');
+
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
-                if (user.admin) {
-                    //document.getElementById("adminBtn").style.display = "block";
-                    //adminItems[1].style.display = 'block';
-                    for (i = 0; i < adminItems.length; i++) {
-                        adminItems[i].style.display = 'block';
-                    }
-
-                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -247,14 +239,11 @@
 
             }
             else {
-                for (i = 0; i < adminItems.length; i++) {
-                    adminItems[i].style.display = 'none';
-                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
+
             }
         }
-
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -272,26 +261,6 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }
-
-        //add admin clous function
-        const adminFrom = document.getElementById('adminActions');
-        adminFrom.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const adminEmail = document.getElementById('adminEmail').value;
-            const addAdminRole = functions.httpsCallable('addAdminRole');
-            addAdminRole({ email: adminEmail }).then(result => {
-                console.log(result);
-
-            });
-
-
-        })
-
-
-        //when admin returns to page
-        function returnTopage() {
-            location.replace('adminPage.html');
         }
     </script>
 

@@ -109,7 +109,12 @@
                             var word = `${doc.data().userLevel}`;
                             word = word.toLowerCase();
                             console.log('This is the word', word + 'Page.html');
-                            location.replace(word + 'Page.html');
+                            if (word == "grader"){
+                                location.replace("graderPage.php");
+                            }
+                            else{
+                                location.replace(word + 'Page.html');
+                            }
                         });
 
                     }
