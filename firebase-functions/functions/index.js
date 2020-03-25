@@ -12,7 +12,6 @@ admin.initializeApp();
 
 exports.addAdminRole = functions.https.onCall((data, context) => {
     //get user and add data custom claim (admin)
-
     return admin.auth().getUserByEmail(data.email).then(user => {
         return admin.auth().setCustomUserClaims(user.uid, {
             admin: true
@@ -45,3 +44,28 @@ exports.sayHello = functions.https.onCall((data, context) => {
     console.log('You just pressed the button');
     return `hello, ninjas`;
 });
+
+
+exports.getUser = functions.https.onCall((data, context) => {
+    //get user and add data custom claim (admin)
+
+    return admin.auth().getUserByEmail(data.email).then(user => {
+        return admin.db.collection('users').doc(user.user.uid).set({
+            userLevel: 'Student'
+        });
+    }).then(() => {
+        return {
+            message: `Success! ${data.email} has been made a student`
+        }
+    }).catch(err => {
+        return {
+            message: `There was an error: ${err}`
+        }
+    });
+});
+
+
+
+db.collection('users').get().then((snapshot) => {
+    console.log(snapshot.docs)
+})
