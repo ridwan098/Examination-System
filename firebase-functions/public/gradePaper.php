@@ -1,3 +1,38 @@
+<?php
+    $servername = "35.233.45.51";
+    $username = "root";
+    $password = "password";
+
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    catch(PDOException $e)
+    {
+        die("Connection failed: " . $e->getMessage());
+    }
+    $sql = "select * from FinishedExam fe, Exams e, Student s, Users u
+    where fe.finishedId = ?
+    and fe.studentId = s.studentId
+    and s.userId = u.id;";
+    $result = $conn->prepare($sql);
+    $result->execute([$_GET['id']]);
+    $metaRow = $result->fetch();
+
+    $sql = "select * from CompletedQuestions cq, ExamQuestions eq
+    where cq.finExamId = ?
+    and cq.examqId = eq.examqId";
+    $result = $conn->prepare($sql);
+    $result->execute([$_GET['id']]);
+    $examqs = [];
+    while($row = $result->fetch()){
+        $examqs[] = $row;
+    }
+    $conn = null;
+?>
+
 <html lang="en">
 
 <head>
@@ -141,24 +176,31 @@
 
     <div class="jumbotron">
         <center>
-            <h1>Exam Paper Name</h1>
-            <h3>Candidate Name: Jon Smith</h3>
-            <h3>Candidate ID: 0123456789</h3>
+            <?php
+                echo "<h1>{$metaRow['subject']}</h1>";
+                echo "<h3>Candidate Name: {$metaRow['name']}</h3>";
+                echo "<h3>Candidate ID: {$metaRow['studentId']}</h3>";
+            ?>
         </center>
     </div>
 
-    <button type="button" class="collapsible"><b>Question 1</b></button>
-    <div class="content">
-        <p><b>This is a question?</p></b>
-        Sample answer here.
-        <br>
-        <form class="form-inline">
-            <input type="text" id="anotes" name="anotes" placeholder="Type feedback here...">
-            <input type="number" id="mark" name="mark" placeholder="Mark out of x">
-            <button type="submit">Update</button>
-        </form> 
-    </div>
+    <?php
 
+        for ($i = 0; $i < sizeof($examqs); $i++){
+            echo "<button type=\"button\" class=\"collapsible\"><b>Question ".($i+1)."</b></button>";
+            echo "<div class=\"content\">";
+            echo "<p><b>{$examqs[$i]['question']}</p></b>";
+            echo $examqs[$i]['answer'];
+            echo "<br>";
+            echo "<form class=\"form-inline\">
+                    <input type=\"text\" id=\"anotes\" name=\"anotes\" placeholder=\"Type feedback here...\">
+                    <input type=\"number\" id=\"mark\" name=\"mark\" placeholder=\"Mark out of {$examqs[$i]['maxMarks']}\">
+                    <button type=\"submit\">Update</button>
+                </form> 
+            </div>";
+        }
+
+    ?>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
