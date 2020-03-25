@@ -1,8 +1,5 @@
 <?php
-    $servername = "35.233.45.51";
-    $username = "root";
-    $password = "password";
-
+    require("db.php");
 
     try {
         $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
@@ -123,8 +120,6 @@
         }
 
         .form-inline {
-            display: flex;
-            flex-flow: row wrap;
             align-items: center;
         }
 
@@ -184,6 +179,7 @@
         </center>
     </div>
 
+    <iframe style="display:none" name="hidden-form"></iframe>
     <?php
 
         for ($i = 0; $i < sizeof($examqs); $i++){
@@ -192,9 +188,13 @@
             echo "<p><b>{$examqs[$i]['question']}</p></b>";
             echo $examqs[$i]['answer'];
             echo "<br>";
-            echo "<form class=\"form-inline\">
-                    <input type=\"text\" id=\"anotes\" name=\"anotes\" placeholder=\"Type feedback here...\">
-                    <input type=\"number\" id=\"mark\" name=\"mark\" placeholder=\"Mark out of {$examqs[$i]['maxMarks']}\">
+            echo "<form action=\"markQuestion.php\" target=\"hidden-form\" method=\"post\" class=\"form-inline\">
+                    <input type=\"hidden\" name=\"qid\" value=\"{$examqs[$i]['id']}\">
+                    <label>Comments:</label>
+                    <input style=\"width:100%;height:100px;\" value=\"{$examqs[$i]['comment']}\" type=\"text\" id=\"anotes\" name=\"comment\" placeholder=\"Type feedback here...\">
+                    <label>Marks:</label>
+                    <input type=\"number\" min='0' max=\"{$examqs[$i]['maxMarks']}\" id=\"mark\" name=\"mark\" placeholder=\"Marks\" value=\"{$examqs[$i]['markReceived']}\">
+                    / {$examqs[$i]['maxMarks']} 
                     <button type=\"submit\">Update</button>
                 </form> 
             </div>";

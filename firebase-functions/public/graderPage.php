@@ -1,9 +1,6 @@
 <?php
 
-	$servername = "35.233.45.51";
-    $username = "root";
-    $password = "password";
-
+	require("db.php");
 
     try {
         $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
@@ -26,7 +23,7 @@
         }
     }
 
-    
+
     $conn = null;
 ?>
 
@@ -135,6 +132,10 @@
 
     <div class="container-fluid text-center">
         <div class="row content">
+            <div class="col-sm-2 sidenav">
+                <h3>Browse pages</h3>
+                <p><a href="markedPapers.php">View marked papers</a></p>
+            </div>
             <div class="col-sm-8 text-left">
                 <h1>Exams ready to be marked</h1>
                 <p>
