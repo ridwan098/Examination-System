@@ -47,7 +47,8 @@
         }
 
         /* The Close Button */
-        .close {
+        .close,
+        .close1 {
             color: lightgreen;
             float: right;
             font-size: 28px;
@@ -55,7 +56,9 @@
         }
 
         .close:hover,
-        .close:focus {
+        .close1:hover,
+        .close:focus,
+        .close1:focus {
             color: white;
             text-decoration: none;
             cursor: pointer;
@@ -172,16 +175,33 @@
                     </a>
                 </div>
                 <div class="well">
-                    <a href='#'>
+                    <a href='#' id="deleteUserBtn">
                         <p>Delete user account</p>
                     </a>
+
+                    <!-- The Modal for deleting user account -->
+                    <div class="modal modal-dialog" id="deleteUserModal">
+                        <!-- Modal content -->
+                        <div class="modal-content">
+                            <span class="close1">&times;</span>
+                            <h3>Delete User Account</h3>
+                            <form id='deleteAcc'>
+                                <input class='input' type='email' name='email' placeholder="enter user's email"
+                                    required />
+                                <button class='btn btn-default'>Delete User</button>
+                                <p id="deleteUserInfo"></p>
+                            </form>
+                        </div>
+
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
+    <!-- The Modal for account details -->
+    <div id="myModal" class="modal modal-dialog">
 
         <!-- Modal content -->
         <div class="modal-content">
@@ -289,7 +309,7 @@
             }
         }
 
-
+        //modal for user info
         // Get the modal
         var modal = document.getElementById("myModal");
         // Get the button that opens the modal
@@ -307,6 +327,45 @@
                 modal.style.display = "none";
             }
         }
+
+
+        //modal for delete user account
+        // Get the modal
+        var modal1 = document.getElementById("deleteUserModal");
+        // Get the button that opens the modal
+        var btn1 = document.getElementById("deleteUserBtn");
+        // Get the <span> element that closes the modal
+        var span1 = document.getElementsByClassName("close1")[0];
+        btn1.onclick = function () {
+            modal1.style.display = "block";
+        }
+        span1.onclick = function () {
+            modal1.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal1) {
+                modal1.style.display = "none";
+            }
+        }
+
+        const deleteUserBtn = document.getElementById('deleteAcc');
+        deleteUserBtn.addEventListener('submit', (e) => {
+            e.preventDefault();
+            var user = firebase.auth().currentUser;
+            var name, email, password, userID, email;
+
+            if (user != null) {
+                name = user.username;
+                email = user.email;
+                password = user.password;
+                userLevel = user.userLevel;
+                userID = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
+                // this value to authenticate with your backend server, if
+                // you have one. Use User.getToken() instead.
+            }
+            console.log('Delete user button clicked', user.admin, email, password, userID, email, user);
+        });
+
 
         //add admin clous function
         const adminForm = document.getElementById('adminActions');
