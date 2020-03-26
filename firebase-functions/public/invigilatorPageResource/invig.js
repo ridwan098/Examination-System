@@ -49,3 +49,8 @@ function saveMessage(name, report) {
         report: report
     })
 }
+
+console.log('Hello invig.js')
+
+
+
