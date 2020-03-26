@@ -50,7 +50,6 @@ function saveMessage(name, report) {
     })
 }
 
-console.log('Hello invig.js')
 
 
 
