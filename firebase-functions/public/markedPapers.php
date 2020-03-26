@@ -12,14 +12,14 @@
         die("Connection failed: " . $e->getMessage());
     }
     $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
-            WHERE fe.marked = 0
+            WHERE fe.marked = 1
             AND fe.examId = e.id 
             AND fe.studentId = s.studentId
             AND s.userId = u.id;";
     $result = $conn->query($sql);
-    $unmarkedExams = [];
+    $markedExams = [];
     while($row = $result->fetch()) {
-        $unmarkedExams[] = $row;
+        $markedExams[] = $row;
     }
 
 
@@ -31,7 +31,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grader Page</title>
+    <title>Marked Papers</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -124,8 +124,7 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Grader Page</h1>
-            <p id='username'>Welcome </p>
+            <h1>Marked Papers</h1>
         </div>
     </div>
 
@@ -133,28 +132,36 @@
         <div class="row content">
             <div class="col-sm-2 sidenav">
                 <h3>Browse pages</h3>
-                <p><a href="markedPapers.php">View marked papers</a></p>
+                <p><a href="graderPage.php">Grader page</a></p>
             </div>
             <div class="col-sm-8 text-left">
-                <h1>Exams ready to be marked</h1>
+                <?php
+                    if (sizeof($markedExams) > 0){
+                ?>
                 <p>
-                <table style="width:100%">
-                    <tr>
-                        <th>Subject</th>
-                        <th>Student Name</th>
-                        <th>Student ID</th>
-                    </tr>
-                    <?php 
-                        for ($i = 0; $i < sizeof($unmarkedExams); $i++){
-                            echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$unmarkedExams[$i]['finishedId']}'\">";
-                            echo "<td>{$unmarkedExams[$i]['subject']}</td>";
-                            echo "<td>{$unmarkedExams[$i]['name']}</td>";
-                            echo "<td>{$unmarkedExams[$i]['studentId']}</td>";
-                            echo "</tr>";
-                        }
-                    ?>
-                </table>
+                    <table style="width:100%">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                        </tr>
+                        <?php 
+                            for ($i = 0; $i < sizeof($unmarkedExams); $i++){
+                                echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$unmarkedExams[$i]['finishedId']}'\">";
+                                echo "<td>{$unmarkedExams[$i]['subject']}</td>";
+                                echo "<td>{$unmarkedExams[$i]['name']}</td>";
+                                echo "<td>{$unmarkedExams[$i]['studentId']}</td>";
+                                echo "</tr>";
+                            }
+                        ?>
+                    </table>
                 </p>
+                <?php
+                }
+                else{
+                    echo "<h1>No papers found</h1>";
+                }
+            ?>
             </div>
         </div>
     </div>
