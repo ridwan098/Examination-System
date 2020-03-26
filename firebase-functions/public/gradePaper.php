@@ -1,6 +1,7 @@
 <?php
     require("db.php");
 
+    // Connect to sql db
     try {
         $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
         // set the PDO error mode to exception
@@ -10,6 +11,8 @@
     {
         die("Connection failed: " . $e->getMessage());
     }
+
+    // Execute query
     $sql = "select * from FinishedExam fe, Exams e, Student s, Users u
     where fe.finishedId = ?
     and fe.studentId = s.studentId
@@ -123,7 +126,7 @@
             align-items: center;
         }
 
-            /* Add some margins for each label */
+        /* Add some margins for each label */
         .form-inline label {
             margin: 5px 10px 5px 0;
         }
@@ -138,7 +141,7 @@
         }
 
         /* Style the submit button */
-        .form-inline button {
+        .form-inline button, #saveAll {
             padding: 10px 20px;
             background-color: dodgerblue;
             border: 1px solid #ddd;
@@ -185,22 +188,26 @@
         for ($i = 0; $i < sizeof($examqs); $i++){
             echo "<button type=\"button\" class=\"collapsible\"><b>Question ".($i+1)."</b></button>";
             echo "<div class=\"content\">";
-            echo "<p><b>{$examqs[$i]['question']}</p></b>";
+            echo "<p><b>{$examqs[$i]['question']}</b></p>";
             echo $examqs[$i]['answer'];
             echo "<br>";
+            $comment = htmlspecialchars($examqs[$i]['comment']);
             echo "<form action=\"markQuestion.php\" target=\"hidden-form\" method=\"post\" class=\"form-inline\">
-                    <input type=\"hidden\" name=\"qid\" value=\"{$examqs[$i]['id']}\">
+                    <input type=\"hidden\" id=\"qid$i\" name=\"qid\" value=\"{$examqs[$i]['id']}\"/>
                     <label>Comments:</label>
-                    <input style=\"width:100%;height:100px;\" value=\"{$examqs[$i]['comment']}\" type=\"text\" id=\"anotes\" name=\"comment\" placeholder=\"Type feedback here...\">
+                    <input autocomplete=\"off\" style=\"width:100%;height:100px;\" value=\"$comment\" type=\"text\" id=\"comment$i\" name=\"comment\" placeholder=\"Type feedback here...\"/>
                     <label>Marks:</label>
-                    <input type=\"number\" min='0' max=\"{$examqs[$i]['maxMarks']}\" id=\"mark\" name=\"mark\" placeholder=\"Marks\" value=\"{$examqs[$i]['markReceived']}\">
+                    <input type=\"number\" min='0' max=\"{$examqs[$i]['maxMarks']}\" id=\"mark$i\" name=\"mark\" placeholder=\"Marks\" value=\"{$examqs[$i]['markReceived']}\"/>
                     / {$examqs[$i]['maxMarks']} 
-                    <button type=\"submit\">Update</button>
+                    <button type=\"submit\">Save</button>
                 </form> 
             </div>";
         }
 
     ?>
+
+    <br>
+    <button id="saveAll" onclick="saveAll()" type="submit">Save All</button>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -219,17 +226,39 @@
         var i;
 
         for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var content = this.nextElementSibling;
-            if (content.style.display === "block") {
-            content.style.display = "none";
-            } else {
-            content.style.display = "block";
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function saveAll(){
+
+            // compile data
+            var marks, comment, qid, i = 0;
+            var data = "";
+            while ((marks = document.getElementById("mark" + i)) != null && 
+            (comment = document.getElementById("comment" + i)) != null &&
+            (qid = document.getElementById("qid" + i)) != null){
+                data += "qid" + i + "=" + encodeURIComponent(qid.value);
+                data += "&mark" + i + "=" + encodeURIComponent(marks.value);
+                data += "&comment" + i + "=" + encodeURIComponent(comment.value) + "&";
+                i++;
             }
-        });
-    }
-</script>
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "markQuestion.php", true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(data);
+        }
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>

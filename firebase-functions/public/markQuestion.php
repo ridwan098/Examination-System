@@ -2,10 +2,6 @@
 
     require("db.php");
 
-    $qid = $_POST['qid'];
-    $mark = $_POST['mark'];
-    $comment = $_POST['comment'];
-
     try {
         $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
         // set the PDO error mode to exception
@@ -15,12 +11,35 @@
     {
         die(0);
     }
-    $sql = "UPDATE CompletedQuestions 
-            SET markReceived=?, comment=?
-            WHERE id=?";
-    $result = $conn->prepare($sql);
-    $result->execute([$mark, $comment, $qid]);
+
+    if (isset($_POST['qid']) && isset($_POST['mark']) && isset($_POST['comment'])){
+        $qid = $_POST['qid'];
+        $mark = $_POST['mark'];
+        $comment = $_POST['comment'];
+
+        markQuestion($conn, $qid, $mark, $comment);
+        echo 1;
+    }
+    else {
+        $i = 0;
+        while (isset($_POST["qid$i"]) && isset($_POST["mark$i"]) && isset($_POST["comment$i"])){
+            $qid = $_POST["qid$i"];
+            $mark = $_POST["mark$i"];
+            $comment = $_POST["comment$i"];
+
+            markQuestion($conn, $qid, $mark, $comment);
+            $i++;
+        }
+        echo 1;
+    }
+
     $conn = null;
 
-    echo 1;
+    function markQuestion($conn, $qid, $mark, $comment){
+        $sql = "UPDATE CompletedQuestions 
+                SET markReceived=?, comment=?
+                WHERE id=?";
+        $result = $conn->prepare($sql);
+        $result->execute([$mark, $comment, $qid]);
+    }
 ?>
