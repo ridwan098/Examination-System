@@ -65,7 +65,17 @@ exports.getUser = functions.https.onCall((data, context) => {
 });
 
 
-
-db.collection('users').get().then((snapshot) => {
-    console.log(snapshot.docs)
-})
+exports.deleteUser = functions.https.onCall((data, context) => {
+    //get user and add data custom claim (admin)
+    return admin.auth().getUserByEmail(data.email).then(user => {
+        return admin.auth().deleteUser(user.uid);
+    }).then(() => {
+        return {
+            message: `Success! ${data.email} has been deleted`
+        }
+    }).catch(err => {
+        return {
+            message: `There was an error deleting user: ${err}`
+        }
+    });
+});

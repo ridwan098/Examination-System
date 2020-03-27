@@ -351,19 +351,14 @@
         const deleteUserBtn = document.getElementById('deleteAcc');
         deleteUserBtn.addEventListener('submit', (e) => {
             e.preventDefault();
-            var user = firebase.auth().currentUser;
-            var name, email, password, userID, email;
+            var userEmail = deleteUserBtn.email.value;
 
-            if (user != null) {
-                name = user.username;
-                email = user.email;
-                password = user.password;
-                userLevel = user.userLevel;
-                userID = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
-                // this value to authenticate with your backend server, if
-                // you have one. Use User.getToken() instead.
-            }
-            console.log('Delete user button clicked', user.admin, email, password, userID, email, user);
+            const getUserFunction = functions.httpsCallable('deleteUser');
+            getUserFunction({ email: userEmail }).then(result => {
+                console.log(result.data.message);
+                document.getElementById('deleteUserInfo').innerHTML = result.data.message;
+            });
+            console.log('Delete user button clicked, and function has completed execution');
         });
 
 
