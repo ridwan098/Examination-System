@@ -80,6 +80,48 @@
         #adminBtn:hover {
             background-color: #555;
         }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 20px;
+            background: #f6f6f6;
+            font-size: 20px;
+            color: #555;
+            position: relative;
+            border-bottom: 1px solid #e6e6e6;
+            height: 46px;
+        }
+
+        li:nth-child(even) {
+            padding: 20px;
+            background: #f2f2f2;
+        }
+
+        li span {
+            display: block;
+        }
+
+        li span:nth-child(3) {
+            font-size: 16px;
+            margin-top: 6px;
+            color: #999;
+        }
+
+        li div {
+            position: absolute;
+            top: 0;
+            right: 0px;
+            background: rgba(255, 255, 255, 0.6);
+            width: 40px;
+            text-align: center;
+            padding: 10px 0;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -131,15 +173,47 @@
                     the system.
                 </p>
                 <hr>
-                <h3>Test</h3>
+                <h3>Report Details:</h3>
                 <p>Enter Student Username <b>or</b> Exam ID</p>
                 <form id='incidentRecord'>
                     <h5>ID:</h5> <input type='input' placeholder="Enter ID" class='input' required>
                     <h5>Comments:</h5><textarea name="comment" form="incidentRecord" class='input'
                         placeholder='Enter text here...' required></textarea>
 
-                    <button class='btn'>Enter Record</button>
+                    <button class='btn'>Submit Report</button><br />
+                    <hr />
                 </form>
+            </div>
+            <div class="col-sm-2 sidenav">
+                <div class="well">
+                    <p>ADS</p>
+                </div>
+                <div class="well">
+                    <p>ADS</p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row content">
+            <div class="col-sm-2 sidenav">
+                <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p>
+            </div>
+            <div class="col-sm-8 text-left">
+
+                <hr>
+                <h3>Report Log</h3>
+
+                <div class="content">
+
+                    <form id="add-cafe-form"></form>
+
+                    <ul id="reportList"></ul>
+                </div>
+
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
