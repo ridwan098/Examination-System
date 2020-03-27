@@ -1,5 +1,5 @@
 <?php
-    require("db.php");
+    require("../db.php");
 
     // Connect to sql db
     try {
@@ -147,6 +147,11 @@
             border: 1px solid #ddd;
             color: white;
         }
+
+        #saveAll:disabled, #saveAll[disabled]{
+            background-color: #706e6e;
+            color: white;
+        }
     </style>
 </head>
 
@@ -159,11 +164,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="../index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="index.html">Home</a></li>
+                    <li id='logout'><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
                     <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
@@ -207,7 +212,13 @@
     ?>
 
     <br>
-    <button id="saveAll" onclick="saveAll()" type="submit">Save All</button>
+    <div id="saveAllForm">
+        <center>
+            <input type="hidden" name="examid" id="examid" value=<?php echo '"' . $_GET['id'] . '"'; ?> />
+            <button id="saveAll" onclick="saveAll(this)" type="submit">Save All</button>
+            <input id="finalSave" type="checkbox" name="final" value="1">Finalize</input>
+        </center>
+    </div>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -239,11 +250,16 @@
     </script>
 
     <script>
-        function saveAll(){
+        function saveAll(caller){
+
+            caller.disabled = true;
+
+            var finalize = document.getElementById("finalSave");
+            var examid = document.getElementById("examid").value;
 
             // compile data
             var marks, comment, qid, i = 0;
-            var data = "";
+            var data = "examid=" + examid + "&finalize=" + (finalize.checked ? "1" : "0") + "&";
             while ((marks = document.getElementById("mark" + i)) != null && 
             (comment = document.getElementById("comment" + i)) != null &&
             (qid = document.getElementById("qid" + i)) != null){
@@ -254,6 +270,19 @@
             }
 
             var xhr = new XMLHttpRequest();
+
+            var postComplete = function (response) {
+                if (response == 1)
+                    alert("Save successfully completed!");
+                else
+                    alert("Failed to save changes");
+                caller.disabled = false;
+            }
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    postComplete(xhr.response);
+                }
+            }
             xhr.open("POST", "markQuestion.php", true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.send(data);
@@ -304,7 +333,7 @@
                 setupUI(user);
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
 
