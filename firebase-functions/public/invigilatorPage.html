@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invigilator Page</title>
-    <link rel="stylesheet" type="text/css" href="invigilatorPageResource/Invig.css">
+    <title>Admin Page</title>
+    <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -134,7 +134,11 @@
                 <h3>Test</h3>
                 <p>Enter Student Username <b>or</b> Exam ID</p>
                 <form id='incidentRecord'>
-                    <input type='input' placeholder="Enter ID" class='input' required>
+                    <h5>ID:</h5> <input type='input' placeholder="Enter ID" class='input' required>
+                    <h5>Comments:</h5><textarea name="comment" form="incidentRecord" class='input'
+                        placeholder='Enter text here...' required></textarea>
+
+                    <button class='btn'>Enter Record</button>
                 </form>
             </div>
             <div class="col-sm-2 sidenav">
