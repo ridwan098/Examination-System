@@ -142,7 +142,9 @@
                     <div class="examModal-content">
                         <span class="close">&times;</span>
                         <h3>Here are your exam details:</h3>
-                        <p id='examDetails'><a href="startExam.html"></a> Due: </p>
+                        <p id='examDetails'><a href="studentPageResource/startExam.html">Software Engineering</a> Due: 03/04/2020</p>
+                        <p id='examDetails'><a href="studentPageResource/startExam.html">Business Modelling</a> Due: 26/05/2020</p>
+                        <p id='examDetails'><a href="studentPageResource/startExam.html">Procedural Programming</a> Due: 02/04/2020</p>
                     </div>
                 </div>
             </div>
@@ -234,8 +236,8 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
-                // Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
-                    var welcomeMessage = "You have " + "[NUMBER VARIABLE]" + " to attempt by " + "[DATE VARIABLE]"+"." ;
+                //FOR ALEX Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
+                    var welcomeMessage = "You have " + "3" + " exams to attempt by " + "20/06/2020"+"." ;
                     document.getElementById('welcomeMessage').innerHTML = welcomeMessage;
                 });
                 
