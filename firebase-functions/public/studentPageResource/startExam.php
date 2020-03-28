@@ -96,6 +96,14 @@
       font-size: 20px;
       margin-top: 0px;
     }
+
+    iframe {
+        visibility: hidden;
+        position: absolute;
+        left: 0; top: 0;
+        height:0; width:0;
+        border: none;
+    }   
     .modal {
             display: none;
             position: fixed;
@@ -169,7 +177,19 @@
     <!--timer for how long exam will last-->
     <p id="countdown"></p>
     <!--Questions and  will be passed onto this tag below 'FOR ALEX'-->
-    <form class="questions-form" action="">
+
+    <script>
+        function checkSubmit(param){
+            if (param.contentWindow.document.body.innerHTML == 1){
+                alert("Exam successfully submitted!");
+                param.contentWindow.document.body.innerHTML = "";
+                window.location.replace("../studentPage.html");
+            }
+        }
+    </script>
+    <iframe  name="hidden-form" onload="checkSubmit(this)"></iframe>
+    <form class="questions-form" target="hidden-form" action="submitExam.php" method="post">
+        <input type="hidden" name="examid" value=<?php echo "\"$examId\""; ?> />
         <?php 
             $qnum = 1;
 
@@ -184,7 +204,7 @@
                     <div class='answers' style='position:relative;left: 20px;'>";
                 foreach ($answers as $a){
                     echo "
-                        <input type='radio' id='$a' name='Q$qnum' value='$a'>
+                        <input type='radio' id='$a' name='{$q['examqId']}' value='$a'>
                         <span for='$a'>$a</span><br>";
                 }
                 echo "</div></div>";
