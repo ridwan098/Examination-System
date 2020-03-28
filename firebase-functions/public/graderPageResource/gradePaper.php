@@ -1,5 +1,5 @@
 <?php
-    require("db.php");
+    require("../db.php");
 
     // Connect to sql db
     try {

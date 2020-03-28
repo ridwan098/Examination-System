@@ -1,9 +1,49 @@
+<?php
+
+    require("../db.php");
+
+    $examId = $_GET['examid'];
+
+    // Connect to sql db
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    catch(PDOException $e)
+    {
+        die("Connection failed: " . $e->getMessage());
+    }
+
+    // Execute query for exam data
+    $query = "SELECT * FROM Exams e WHERE e.id = ?";
+    $result = $conn->prepare($query);
+    $result->execute([$examId]);
+    $examData = $result->fetch();
+    if (!$examData){
+        die('failed to find exam');
+    }
+
+    // Execute query for question data
+    $query = "SELECT * FROM ExamQuestions eq, McqQuestion mcq
+            WHERE eq.examId = ?
+            AND mcq.examqId = eq.examqId";
+    $result = $conn->prepare($query);
+    $result->execute([$examId]);
+    $questionData = [];
+    while ($row = $result->fetch()){
+        $questionData[] = $row;
+    }
+    $conn = null;
+
+?>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grader Page</title>
+    <title>Start Exam</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -12,16 +52,51 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
-        /* Remove the navbar's default margin-bottom and rounded borders */
-        .navbar {
-            margin-bottom: 0;
-            border-radius: 0;
-            background-color: #28322C;
-            border-color: #28322C;
-        }
-
-        /* The Modal (background) */
-        .modal {
+    .fontSizeClass{
+      position: relative;
+      top: 50px;
+      left: 800px;
+      text-align: center;
+      font-size: 20px;
+      width: 400px;
+    }
+    .questions-form{
+      position: relative;
+      top:80px;
+      left: 400px;
+      font-size: 20px;
+      width: 400px;
+    }
+    .fontButtonClass{
+      background: transparent;
+      border-radius: 10px;
+      border: solid 0px transparent;
+      text-decoration: underline;
+      outline: none;
+    }
+    .normalSizedButton{
+      font-size: 20px;
+    }
+    .largeSizedButton{
+      font-size: 25px;
+    }
+    .extraSizedButton{
+      font-size: 30px;
+    }
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+      background-color: #28322C;
+      border-color: #28322C;
+    }
+    #countdown{
+      position:relative;
+      top: -20px;
+      left: 20px;
+      font-size: 20px;
+      margin-top: 0px;
+    }
+    .modal {
             display: none;
             position: fixed;
             z-index: 1;
@@ -60,37 +135,8 @@
             text-decoration: none;
             cursor: pointer;
         }
-
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        #paper:hover {
-            cursor: pointer;
-        }
-
-        #adminBtn {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 30px;
-            z-index: 99;
-            font-size: 18px;
-            border: none;
-            outline: none;
-            background-color: grey;
-            color: white;
-            cursor: pointer;
-            padding: 15px;
-            border-radius: 4px;
-        }
-
-        #adminBtn:hover {
-            background-color: #555;
-        }
     </style>
 </head>
-
 <body>
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -113,37 +159,42 @@
         </div>
     </nav>
 
-
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h1>Grader Page</h1>
-            <p id='username'>Welcome </p>
-        </div>
+    <!--changing font size-->
+    <div class="fontSizeClass">
+      <h3>Font Size:</h3>
+      <button class="normalSizedButton fontButtonClass" onclick="changeFontSize('normal')">Normal</button>
+      <button class="largeSizedButton fontButtonClass" onclick="changeFontSize('large')">Large</button>
+      <button class="extraSizedButton fontButtonClass" onclick="changeFontSize('extra')">Extra Large</button>
     </div>
+    <!--timer for how long exam will last-->
+    <p id="countdown"></p>
+    <!--Questions and  will be passed onto this tag below 'FOR ALEX'-->
+    <form class="questions-form" action="">
+        <?php 
+            $qnum = 1;
 
-    <div class="container-fluid text-center">
-        <div class="row content">
-            <div class="col-sm-8 text-left">
-                <h1>Exams ready to be marked</h1>
-                <p>
-                    <table style="width:100%">
-                        <tr>
-                            <th>Subject</th>
-                            <th>Student Name</th>
-                            <th>Student ID</th>
-                        </tr>
-                        <tr id="paper" onclick="window.location='gradePaper.html?id=1'">
-                            <td>Software Engineering</td>
-                            <td>Jon Smith</td>
-                            <td>1784947394</td>
-                        </tr>
-                    </table>
-                </p>
-            </div>
-        </div>
-    </div>
+            // display html for each mcq question
+            foreach ($questionData as $q){
+                $answers = explode("\0", $q['fakeOptions']);
+                $answers[] = $q['answer'];
+                shuffle($answers);
+                echo "
+                <div class='questions-tag'>  
+                    <strong>Question $qnum: {$q['question']}</strong><br>
+                    <div class='answers' style='position:relative;left: 20px;'>";
+                foreach ($answers as $a){
+                    echo "
+                        <input type='radio' id='$a' name='Q$qnum' value='$a'>
+                        <span for='$a'>$a</span><br>";
+                }
+                echo "</div></div>";
+                $qnum += 1;
+            }
+        ?>
+      <input type="submit" value="Submit Exam"style="position:relative;top:20px;left: 150px; border-radius: 10px;">
+    </form>
 
-
+    
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -157,15 +208,6 @@
 
     </div>
 
-
-
-    <!---      From here below -->
-
-    <footer class="container-fluid text-center adminOnly" style='display:none;'>
-        <p>Admin Page</p>
-    </footer>
-
-    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
@@ -206,7 +248,7 @@
         });
         const accountDetails = document.querySelector('.accountDetails');
         // for some reason, user is logged in from the start
-        //listen for the auth status of user (whether theyre signed in or out)
+        //listen for the auth status of user (whether they're signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
                 user.getIdTokenResult().then(idTokenResult => {
@@ -220,19 +262,13 @@
                 location.replace('index.html');
             }
         });
+        
 
         const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
-                if (user.admin) {
-                    //document.getElementById("adminBtn").style.display = "block";
-                    //adminItems[1].style.display = 'block';
-                    for (i = 0; i < adminItems.length; i++) {
-                        adminItems[i].style.display = 'block';
-                    }
-
-                }
+                
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -243,8 +279,11 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                // Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
+                    var welcomeMessage = "You have " + "[NUMBER VARIABLE]" + " to attempt by " + "[DATE VARIABLE]"+"." ;
+                    document.getElementById('welcomeMessage').innerHTML = welcomeMessage;
                 });
-
+                
             }
             else {
                 for (i = 0; i < adminItems.length; i++) {
@@ -273,14 +312,73 @@
                 modal.style.display = "none";
             }
         }
-
-
-        //when admin returns to page
-        function returnTopage() {
-            location.replace('adminPage.html');
+        
+        var checkExams = document.getElementById("examButton");
+        var examModal = document.getElementById('examModalId');
+        checkExams.onclick = function(){
+            examModal.style.display = "block";
         }
-    </script>
+        span.onclick = function () {
+            examModal.style.display = "none";
+        }
+        /*window.onclick = function (event) {
+            if (event.target == examModal) {
+                examModal.style.display = "none";
+            }
+        }*/
 
+    
+    </script>
+    <script name="font">
+      function changeFontSize(fontSize){
+            fontClass = document.getElementsByClassName("fontSizeClass");
+            questionsTag = document.getElementsByClassName("questions-tag");
+        if(fontSize=="normal"){
+            fontClass[0].style.fontSize = "20px";
+            questionsTag[0].style.fontSize = "20px";
+            countdown.style.fontSize = "20px";
+        }else if(fontSize=="large"){
+            fontClass[0].style.fontSize = "25px";
+            questionsTag[0].style.fontSize = "25px";
+            countdown.style.fontSize = "25px";
+        }else if(fontSize=="extra"){
+            fontClass[0].style.fontSize = "30px";
+            questionsTag[0].style.fontSize = "30px";
+            countdown.style.fontSize = "30px";
+        }
+      }
+  </script>
+  <script>
+    // The date and time we're counting down to will come from the examiner as well, and replace the figures in the variable "countdownDate"
+    var countDownDate = new Date().getTime() + <?php echo $examData['timerLength'] * 1000; ?>;
+
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        var examOver = countDownDate - now;
+
+        // Time calculations for minutes and seconds
+
+        var hours = Math.floor((examOver % (1000 * 60 * 60 * 24) / (1000 * 60 * 60)));
+        var minutes = Math.floor((examOver % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((examOver % (1000 * 60)) / 1000);
+
+        // Output the result in an element with id="countdown"
+        var countdown = document.getElementById("countdown");
+        countdown.innerHTML = "<b>Time remaining: " + hours + "h " + minutes + "m " + seconds + "s </b>";
+
+
+        // If the count down is over, write some text 
+        if (examOver < 0) {
+        clearInterval(x);
+        document.getElementById("countdown").innerHTML = "EXPIRED";
+        }
+    }, 500);
+  </script>
 </body>
 
 </html>
