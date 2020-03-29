@@ -1,60 +1,30 @@
-var firebaseConfig = {
-    apiKey: "AIzaSyDiUrWvr_XfF3o-YVinV_D9JuKXJpWbPaI",
-    authDomain: "examination-system-f53f3.firebaseapp.com",
-    databaseURL: "https://examination-system-f53f3.firebaseio.com",
-    projectId: "examination-system-f53f3",
-
-};
-
-//firebase.initializeApp(firebaseConfig);
-
-//var messagesRef = firebase.database().ref('messages');
+const reportList = document.getElementById('reportList');
 
 
-const userid = document.getElementById('idx')
-const report = document.getElementById('textreport')
-const form = document.getElementById('form')
-const errorElement = document.getElementById("error")
+// create element and render reports
+function renderReport(doc) {
+    let li = document.createElement('li');
 
-form.addEventListener('submit', (e) => {
+    let report = document.createElement('span');
+    let br = document.createElement('br');
+    let studentUsername = document.createElement('span');
+    let time = document.createElement('span');
 
-    e.preventDefault();
+    li.setAttribute('data-id', doc.id);
+    report.textContent = doc.data().report;
+    studentUsername.textContent = doc.data().studentUserName;
+    time.textContent = doc.data().time;
 
-    let messages = []
+    li.appendChild(report);
+    li.appendChild(studentUsername);
+    li.appendChild(time);
+    console.log(report, studentUsername, time, li)
 
-    if(userid.value.length != 8 ){
-        messages.push("UserID must have 8 characters")
-    }
-    
-    if(userid.value ==="" || userid.value == null){
-        messages.push("UserID is required")
-    }
+    reportList.appendChild(li);
 
-    if(report.value.length < 100) {
-        messages.push("Report must have atleast 100 characters.")
-    }
-
-    if (messages.length > 0){
-        e.preventDefault()
-        errorElement.innerText = messages.join(", ")
-    }
-
-    if (messages.length === 0){
-        //saveMessage(userid, report)
-        errorElement.innerText("Report Submitted")
-    }
-})
-
-
-//function getInputVal(id){
-//    return document.getElementById(id).value
-//}
-
-//function saveMessage(userid, report){
-  //  var newMessageRef = messageRef.push();
-    //newMessageRef.set({
-      //  userid: userid,
-        //report: report
- //   })
-
-//}
+}
+db.collection('invigilatorReport').get().then((snapshot) => {
+    snapshot.docs.forEach(doc => {
+        renderReport(doc)
+    });
+});
