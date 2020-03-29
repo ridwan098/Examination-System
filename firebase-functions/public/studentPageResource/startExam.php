@@ -1,9 +1,49 @@
+<?php
+
+    require("../db.php");
+
+    $examId = $_GET['examid'];
+
+    // Connect to sql db
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    catch(PDOException $e)
+    {
+        die("Connection failed: " . $e->getMessage());
+    }
+
+    // Execute query for exam data
+    $query = "SELECT * FROM Exams e WHERE e.id = ?";
+    $result = $conn->prepare($query);
+    $result->execute([$examId]);
+    $examData = $result->fetch();
+    if (!$examData){
+        die('failed to find exam');
+    }
+
+    // Execute query for question data
+    $query = "SELECT * FROM ExamQuestions eq, McqQuestion mcq
+            WHERE eq.examId = ?
+            AND mcq.examqId = eq.examqId";
+    $result = $conn->prepare($query);
+    $result->execute([$examId]);
+    $questionData = [];
+    while ($row = $result->fetch()){
+        $questionData[] = $row;
+    }
+    $conn = null;
+
+?>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Page</title>
+    <title>Start Exam</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -12,16 +52,59 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
-        /* Remove the navbar's default margin-bottom and rounded borders */
-        .navbar {
-            margin-bottom: 0;
-            border-radius: 0;
-            background-color: #28322C;
-            border-color: #28322C;
-        }
+    .fontSizeClass{
+      position: relative;
+      top: 50px;
+      left: 800px;
+      text-align: center;
+      font-size: 20px;
+      width: 400px;
+    }
+    .questions-form{
+      position: relative;
+      top:80px;
+      left: 400px;
+      font-size: 20px;
+      width: 400px;
+    }
+    .fontButtonClass{
+      background: transparent;
+      border-radius: 10px;
+      border: solid 0px transparent;
+      text-decoration: underline;
+      outline: none;
+    }
+    .normalSizedButton{
+      font-size: 20px;
+    }
+    .largeSizedButton{
+      font-size: 25px;
+    }
+    .extraSizedButton{
+      font-size: 30px;
+    }
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+      background-color: #28322C;
+      border-color: #28322C;
+    }
+    #countdown{
+      position:relative;
+      top: -20px;
+      left: 20px;
+      font-size: 20px;
+      margin-top: 0px;
+    }
 
-        /* The Modal (background) */
-        .modal {
+    iframe {
+        visibility: hidden;
+        position: absolute;
+        left: 0; top: 0;
+        height:0; width:0;
+        border: none;
+    }   
+    .modal {
             display: none;
             position: fixed;
             z-index: 1;
@@ -60,44 +143,8 @@
             text-decoration: none;
             cursor: pointer;
         }
-        #examButton{
-            border-radius: 20px;
-            text-align: center;
-            font-size: 20px;
-            width: 120px;
-            height: 40px;
-            outline: none;
-        }
-        #examModalId{
-            display: none;
-            position: fixed;
-            z-index: 1;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-        .examModal-content{
-            background-color: #28322C;
-            color: white;
-            text-align: justify;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-        .welcome-message{
-            position: relative;
-            left: 220px;
-            text-align: center;
-        }
     </style>
 </head>
-
 <body>
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -120,37 +167,52 @@
         </div>
     </nav>
 
-
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h1 id='username'>Welcome </h1>
-        </div>
+    <!--changing font size-->
+    <div class="fontSizeClass">
+      <h3>Font Size:</h3>
+      <button class="normalSizedButton fontButtonClass" onclick="changeFontSize('normal')">Normal</button>
+      <button class="largeSizedButton fontButtonClass" onclick="changeFontSize('large')">Large</button>
+      <button class="extraSizedButton fontButtonClass" onclick="changeFontSize('extra')">Extra Large</button>
     </div>
+    <!--timer for how long exam will last-->
+    <p id="countdown"></p>
+    <!--Questions and  will be passed onto this tag below 'FOR ALEX'-->
 
-    <div class="container-fluid text-center">
-        <div class="row content">
-            
-            <div class="col-sm-8 text-left welcome-message">
-                <p id="welcomeMessage">error on welcome message</p>
-                <hr>
-                <!--show tests button-->
-                <button id="examButton">Your Tests</button>
-               
-                <div id="examModalId">
+    <script>
+        function checkSubmit(param){
+            if (param.contentWindow.document.body.innerHTML == 1){
+                alert("Exam successfully submitted!");
+                param.contentWindow.document.body.innerHTML = "";
+                window.location.replace("../studentPage.html");
+            }
+        }
+    </script>
+    <iframe  name="hidden-form" onload="checkSubmit(this)"></iframe>
+    <form class="questions-form" target="hidden-form" action="submitExam.php" method="post">
+        <input type="hidden" name="examid" value=<?php echo "\"$examId\""; ?> />
+        <?php 
+            $qnum = 1;
 
-                    <!-- Exam modal content -->
-                    <div class="examModal-content">
-                        <span class="close">&times;</span>
-                        <h3>Here are your exam details:</h3>
-                        <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Software Engineering</a> Due: 03/04/2020</p>
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Business Modelling</a> Due: 26/05/2020</p>
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Procedural Programming</a> Due: 02/04/2020</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            // display html for each mcq question
+            foreach ($questionData as $q){
+                $answers = explode("\0", $q['fakeOptions']);
+                $answers[] = $q['answer'];
+                shuffle($answers);
+                echo "
+                <div class='questions-tag'>  
+                    <strong>Question $qnum: {$q['question']}</strong><br>
+                    <div class='answers' style='position:relative;left: 20px;'>";
+                foreach ($answers as $a){
+                    echo "
+                        <input type='radio' id='$a' name='{$q['examqId']}' value='$a'>
+                        <span for='$a'>$a</span><br>";
+                }
+                echo "</div></div>";
+                $qnum += 1;
+            }
+        ?>
+      <input type="submit" value="Submit Exam"style="position:relative;top:20px;left: 150px; border-radius: 10px;">
+    </form>
 
     
 
@@ -237,8 +299,8 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
-                //FOR ALEX Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
-                    var welcomeMessage = "You have " + "3" + " exams to attempt by " + "20/06/2020"+"." ;
+                // Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
+                    var welcomeMessage = "You have " + "[NUMBER VARIABLE]" + " to attempt by " + "[DATE VARIABLE]"+"." ;
                     document.getElementById('welcomeMessage').innerHTML = welcomeMessage;
                 });
                 
@@ -287,7 +349,56 @@
 
     
     </script>
+    <script name="font">
+      function changeFontSize(fontSize){
+            fontClass = document.getElementsByClassName("fontSizeClass");
+            questionsTag = document.getElementsByClassName("questions-tag");
+        if(fontSize=="normal"){
+            fontClass[0].style.fontSize = "20px";
+            questionsTag[0].style.fontSize = "20px";
+            countdown.style.fontSize = "20px";
+        }else if(fontSize=="large"){
+            fontClass[0].style.fontSize = "25px";
+            questionsTag[0].style.fontSize = "25px";
+            countdown.style.fontSize = "25px";
+        }else if(fontSize=="extra"){
+            fontClass[0].style.fontSize = "30px";
+            questionsTag[0].style.fontSize = "30px";
+            countdown.style.fontSize = "30px";
+        }
+      }
+  </script>
+  <script>
+    // The date and time we're counting down to will come from the examiner as well, and replace the figures in the variable "countdownDate"
+    var countDownDate = new Date().getTime() + <?php echo $examData['timerLength'] * 1000; ?>;
 
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        var examOver = countDownDate - now;
+
+        // Time calculations for minutes and seconds
+
+        var hours = Math.floor((examOver % (1000 * 60 * 60 * 24) / (1000 * 60 * 60)));
+        var minutes = Math.floor((examOver % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((examOver % (1000 * 60)) / 1000);
+
+        // Output the result in an element with id="countdown"
+        var countdown = document.getElementById("countdown");
+        countdown.innerHTML = "<b>Time remaining: " + hours + "h " + minutes + "m " + seconds + "s </b>";
+
+
+        // If the count down is over, write some text 
+        if (examOver < 0) {
+        clearInterval(x);
+        document.getElementById("countdown").innerHTML = "EXPIRED";
+        }
+    }, 500);
+  </script>
 </body>
 
 </html>
