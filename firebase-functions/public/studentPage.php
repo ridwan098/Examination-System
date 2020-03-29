@@ -1,5 +1,5 @@
 <?php
-    require("../db.php");
+    require("db.php");
 
     // Connect to sql db
     try {
@@ -13,32 +13,22 @@
     }
 
     // Execute query
-    $sql = "select * from FinishedExam fe, Exams e, Student s, Users u
-    where fe.finishedId = ?
-    and fe.studentId = s.studentId
-    and s.userId = u.id;";
-    $result = $conn->prepare($sql);
-    $result->execute([$_GET['id']]);
-    $metaRow = $result->fetch();
-
-    $sql = "select * from CompletedQuestions cq, ExamQuestions eq
-    where cq.finExamId = ?
-    and cq.examqId = eq.examqId";
-    $result = $conn->prepare($sql);
-    $result->execute([$_GET['id']]);
-    $examqs = [];
-    while($row = $result->fetch()){
-        $examqs[] = $row;
+    $sql = "SELECT * FROM Exams WHERE isMcq=1";
+    $result = $conn->query($sql);
+    $exams = [];
+    while ($row = $result->fetch()){
+        $exams[] = $row;
     }
     $conn = null;
 ?>
+
 
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grader Page</title>
+    <title>Student Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -95,57 +85,40 @@
             text-decoration: none;
             cursor: pointer;
         }
-
-        /* Style the button that is used to open and close the collapsible content */
-        .collapsible {
-            background-color: #eee;
-            color: #444;
-            cursor: pointer;
-            padding: 18px;
-            width: 100%;
-            border: none;
-            text-align: left;
+        #examButton{
+            border-radius: 20px;
+            text-align: center;
+            font-size: 20px;
+            width: 120px;
+            height: 40px;
             outline: none;
-            font-size: 15px;
         }
-
-        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-        .active, .collapsible:hover {
-            background-color: #ccc;
-        }
-
-        /* Style the collapsible content. Note: hidden by default */
-        .content {
-            padding: 0 18px;
+        #examModalId{
             display: none;
-            overflow: hidden;
-            background-color: #f1f1f1;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
         }
-
-        .form-inline {
-            align-items: center;
-        }
-
-        /* Add some margins for each label */
-        .form-inline label {
-            margin: 5px 10px 5px 0;
-        }
-
-        /* Style the input fields */
-        .form-inline input {
-            vertical-align: middle;
-            margin: 5px 10px 5px 0;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-
-        /* Style the submit button */
-        .form-inline button, #saveAll {
-            padding: 10px 20px;
-            background-color: dodgerblue;
-            border: 1px solid #ddd;
+        .examModal-content{
+            background-color: #28322C;
             color: white;
+            text-align: justify;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .welcome-message{
+            position: relative;
+            left: 220px;
+            text-align: center;
         }
     </style>
 </head>
@@ -159,11 +132,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html">Higher Exam</a>
+                <a class="navbar-brand" href="index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="../index.html">Home</a></li>
+                    <li id='logout'><a href="index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
                     <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
@@ -172,48 +145,47 @@
         </div>
     </nav>
 
+
     <div class="jumbotron">
-        <center>
-            <?php
-                echo "<h1>{$metaRow['subject']}</h1>";
-                echo "<h3>Candidate Name: {$metaRow['name']}</h3>";
-                echo "<h3>Candidate ID: {$metaRow['studentId']}</h3>";
-            ?>
-        </center>
+        <div class="container text-center">
+            <h1 id='username'>Welcome </h1>
+        </div>
     </div>
 
-    <iframe style="display:none" name="hidden-form"></iframe>
-    <?php
-
-        for ($i = 0; $i < sizeof($examqs); $i++){
-            echo "<button type=\"button\" class=\"collapsible\"><b>Question ".($i+1)."</b></button>";
-            echo "<div class=\"content\">";
-            echo "<p><b>{$examqs[$i]['question']}</b></p>";
-            echo $examqs[$i]['answer'];
-            echo "<br>";
-            $comment = htmlspecialchars($examqs[$i]['comment']);
-            echo "<form action=\"markQuestion.php\" target=\"hidden-form\" method=\"post\" class=\"form-inline\">
-                    <input type=\"hidden\" id=\"qid$i\" name=\"qid\" value=\"{$examqs[$i]['id']}\"/>
-                    <label>Comments:</label>
-                    <input autocomplete=\"off\" style=\"width:100%;height:100px;\" value=\"$comment\" type=\"text\" id=\"comment$i\" name=\"comment\" placeholder=\"Type feedback here...\"/>
-                    <label>Marks:</label>
-                    <input type=\"number\" min='0' max=\"{$examqs[$i]['maxMarks']}\" id=\"mark$i\" name=\"mark\" placeholder=\"Marks\" value=\"{$examqs[$i]['markReceived']}\"/>
-                    / {$examqs[$i]['maxMarks']} 
-                    <button type=\"submit\">Save</button>
-                </form> 
-            </div>";
+    <?php 
+        $latest = 0;
+        $examDetails = "";
+        foreach ($exams as $row){
+            $examDetails .= "<p id='examDetails'><a href=\"studentPageResource/startExam.php?examid={$row['id']}\">{$row['subject']}</a> Due: " . date("d/m/Y H:i:s", $row['date']) . "</p>";
+            if ($row['date'] > $latest)
+                $latest = $row['date'];
         }
-
     ?>
 
-    <br>
-    <div id="saveAllForm">
-        <center>
-            <input type="hidden" name="examid" id="examid" value=<?php echo '"' . $_GET['id'] . '"'; ?> />
-            <button id="saveAll" onclick="saveAll()" type="submit">Save All</button>
-            <input id="finalSave" type="checkbox" name="final" value="1">Finalize</input>
-        </center>
+    <div class="container-fluid text-center">
+        <div class="row content">
+            
+            <div class="col-sm-8 text-left welcome-message">
+                <p id="welcomeMessage"><?php echo "You have " . sizeof($exams) . " exams to attempt by " . date("d/m/Y", $latest) . "." ?></p>
+                <hr>
+                <!--show tests button-->
+                <button id="examButton">Your Tests</button>
+               
+                <div id="examModalId">
+
+                    <!-- Exam modal content -->
+                    <div class="examModal-content">
+                        <span class="close">&times;</span>
+                        <h3>Here are your exam details:</h3>
+                        <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
+                        <?php echo $examDetails; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -227,51 +199,11 @@
 
     </div>
 
-    <script>
-        var coll = document.getElementsByClassName("collapsible");
-        var i;
-
-        for (i = 0; i < coll.length; i++) {
-            coll[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var content = this.nextElementSibling;
-                if (content.style.display === "block") {
-                    content.style.display = "none";
-                } else {
-                    content.style.display = "block";
-                }
-            });
-        }
-    </script>
-
-    <script>
-        function saveAll(){
-
-            var finalize = document.getElementById("finalSave");
-            var examid = document.getElementById("examid").value;
-
-            // compile data
-            var marks, comment, qid, i = 0;
-            var data = "examid=" + examid + "&finalize=" + (finalize.checked ? "1" : "0") + "&";
-            while ((marks = document.getElementById("mark" + i)) != null && 
-            (comment = document.getElementById("comment" + i)) != null &&
-            (qid = document.getElementById("qid" + i)) != null){
-                data += "qid" + i + "=" + encodeURIComponent(qid.value);
-                data += "&mark" + i + "=" + encodeURIComponent(marks.value);
-                data += "&comment" + i + "=" + encodeURIComponent(comment.value) + "&";
-                i++;
-            }
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "markQuestion.php", true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.send(data);
-        }
-    </script>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -279,7 +211,7 @@
             authDomain: "examination-system-f53f3.firebaseapp.com",
             databaseURL: "https://examination-system-f53f3.firebaseio.com",
             projectId: "examination-system-f53f3",
- 
+
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -287,6 +219,7 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const functions = firebase.functions();
 
         //update firestore settings
         db.settings({ timestampsInSnapshots: true });
@@ -306,21 +239,27 @@
         });
         const accountDetails = document.querySelector('.accountDetails');
         // for some reason, user is logged in from the start
-        //listen for the auth status of user (whether theyre signed in or out)
+        //listen for the auth status of user (whether they're signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user);
-                setupUI(user);
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin
+                    setupUI(user);
+                })
+                console.log('User logged in: ', user)
+
             } else {
                 console.log('User logged out');
-                location.replace('../index.html');
+                location.replace('index.html');
             }
         });
+        
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -332,14 +271,17 @@
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
                 });
-
+                
             }
             else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
-
             }
         }
+
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -358,6 +300,22 @@
                 modal.style.display = "none";
             }
         }
+        
+        var checkExams = document.getElementById("examButton");
+        var examModal = document.getElementById('examModalId');
+        checkExams.onclick = function(){
+            examModal.style.display = "block";
+        }
+        span.onclick = function () {
+            examModal.style.display = "none";
+        }
+        /*window.onclick = function (event) {
+            if (event.target == examModal) {
+                examModal.style.display = "none";
+            }
+        }*/
+
+    
     </script>
 
 </body>

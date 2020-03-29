@@ -144,13 +144,14 @@
                             <th>Subject</th>
                             <th>Student Name</th>
                             <th>Student ID</th>
+                            <th>
                         </tr>
                         <?php 
-                            for ($i = 0; $i < sizeof($unmarkedExams); $i++){
-                                echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$unmarkedExams[$i]['finishedId']}'\">";
-                                echo "<td>{$unmarkedExams[$i]['subject']}</td>";
-                                echo "<td>{$unmarkedExams[$i]['name']}</td>";
-                                echo "<td>{$unmarkedExams[$i]['studentId']}</td>";
+                            for ($i = 0; $i < sizeof($markedExams); $i++){
+                                echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$markedExams[$i]['finishedId']}'\">";
+                                echo "<td>{$markedExams[$i]['subject']}</td>";
+                                echo "<td>{$markedExams[$i]['name']}</td>";
+                                echo "<td>{$markedExams[$i]['studentId']}</td>";
                                 echo "</tr>";
                             }
                         ?>
