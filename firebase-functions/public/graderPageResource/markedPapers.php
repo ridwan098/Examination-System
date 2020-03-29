@@ -89,6 +89,18 @@
             cursor: pointer;
         }
 
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+
         tr:hover {
             background-color:#f5f5f5;
         }
@@ -144,7 +156,6 @@
                             <th>Subject</th>
                             <th>Student Name</th>
                             <th>Student ID</th>
-                            <th>
                         </tr>
                         <?php 
                             for ($i = 0; $i < sizeof($markedExams); $i++){
