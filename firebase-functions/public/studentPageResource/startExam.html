@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Page</title>
+    <title>Start Exam</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -21,13 +21,12 @@
       width: 400px;
       border:solid 2px black;
     }
-    .questions-tag{
+    .questions-form{
       position: relative;
       top:80px;
       left: 400px;
       font-size: 20px;
       width: 400px;
-      border:solid 2px black;
     }
     .fontButtonClass{
       background: transparent;
@@ -130,10 +129,27 @@
     </div>
     <!--timer for how long exam will last-->
     <p id="countdown"></p>
-    <!--Questions and  will be passed onto this tag below-->
-    <form class="questions-tag" action="">
-      <strong>Question</strong><br>
-      <input type="submit" style="position:relative;left: 150px;">
+    <!--Questions and  will be passed onto this tag below 'FOR ALEX'-->
+    <form class="questions-form" action="">
+    <!--The number and question will come from examiner DB, along with the span and value for input type, these are the things that will need to be manipulated-->
+      <div class="questions-tag">  
+          <strong>Question 1: On which date is Christmas celebrated?</strong><br>
+          <div class="answers" style="position:relative;left: 20px;">
+            <input type="radio" id="4-JULY" name="Q1" value="4th July">
+            <span for="4th July">4th July</span><br>
+
+            <input type="radio" id="4-MAY" name="Q1" value="4th May">
+            <span for="4th May">4th May</span><br>
+
+            <input type="radio" id="25-DEC" name="Q1" value="25th December">
+            <span for="25th December">25th December</span><br>
+
+            <input type="radio" id="31-OCT" name="Q1" value="31st October">
+            <span for="31st Octobe">31st October</span><br>
+            
+          </div>
+        </div>
+      <input type="submit" value="Submit Exam"style="position:relative;top:20px;left: 120px; border-radius: 10px;">
     </form>
 
     
@@ -291,7 +307,7 @@
       }
   </script>
   <script>
-    // Set the date we're counting down to
+    // The date and time we're counting down to will come from the examiner as well, and replace the figures in the variable "countdownDate"
     var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
     
     // Update the count down every 1 second

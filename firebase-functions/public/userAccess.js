@@ -26,6 +26,9 @@ signupForm.addEventListener("submit", (e) => {
         }).then(() => {
             console.log(cred);
             document.getElementById('errorMessage').innerHTML = "Account Created Successfully " + '<br /> <br />';
+            // auth.signOut().then(() => {
+            //     alert('User signed out')
+            // })
         });
 
 
