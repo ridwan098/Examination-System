@@ -147,6 +147,11 @@
             border: 1px solid #ddd;
             color: white;
         }
+
+        #saveAll:disabled, #saveAll[disabled]{
+            background-color: #706e6e;
+            color: white;
+        }
     </style>
 </head>
 
@@ -207,7 +212,13 @@
     ?>
 
     <br>
-    <button id="saveAll" onclick="saveAll()" type="submit">Save All</button>
+    <div id="saveAllForm">
+        <center>
+            <input type="hidden" name="examid" id="examid" value=<?php echo '"' . $_GET['id'] . '"'; ?> />
+            <button id="saveAll" onclick="saveAll(this)" type="submit">Save All</button>
+            <input id="finalSave" type="checkbox" name="final" value="1">Finalize</input>
+        </center>
+    </div>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -239,11 +250,16 @@
     </script>
 
     <script>
-        function saveAll(){
+        function saveAll(caller){
+
+            caller.disabled = true;
+
+            var finalize = document.getElementById("finalSave");
+            var examid = document.getElementById("examid").value;
 
             // compile data
             var marks, comment, qid, i = 0;
-            var data = "";
+            var data = "examid=" + examid + "&finalize=" + (finalize.checked ? "1" : "0") + "&";
             while ((marks = document.getElementById("mark" + i)) != null && 
             (comment = document.getElementById("comment" + i)) != null &&
             (qid = document.getElementById("qid" + i)) != null){
@@ -254,6 +270,19 @@
             }
 
             var xhr = new XMLHttpRequest();
+
+            var postComplete = function (response) {
+                if (response == 1)
+                    alert("Save successfully completed!");
+                else
+                    alert("Failed to save changes");
+                caller.disabled = false;
+            }
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    postComplete(xhr.response);
+                }
+            }
             xhr.open("POST", "markQuestion.php", true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.send(data);

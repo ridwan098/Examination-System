@@ -33,6 +33,14 @@
         echo 1;
     }
 
+    if (isset($_POST['examid']) && isset($_POST['finalize']) && $_POST['finalize'] == 1){
+        $sql = "UPDATE FinishedExam
+                SET marked=1
+                WHERE finishedId=?";
+        $result = $conn->prepare($sql);
+        $result->execute([$_POST['examid']]);
+    }
+
     $conn = null;
 
     function markQuestion($conn, $qid, $mark, $comment){

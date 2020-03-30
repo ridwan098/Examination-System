@@ -1,7 +1,7 @@
 <?php
+    require("db.php");
 
-	require("../db.php");
-
+    // Connect to sql db
     try {
         $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
         // set the PDO error mode to exception
@@ -11,27 +11,24 @@
     {
         die("Connection failed: " . $e->getMessage());
     }
-    $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
-            WHERE fe.marked = 1
-            AND fe.examId = e.id 
-            AND fe.studentId = s.studentId
-            AND s.userId = u.id;";
+
+    // Execute query
+    $sql = "SELECT * FROM Exams WHERE isMcq=1";
     $result = $conn->query($sql);
-    $markedExams = [];
-    while($row = $result->fetch()) {
-        $markedExams[] = $row;
+    $exams = [];
+    while ($row = $result->fetch()){
+        $exams[] = $row;
     }
-
-
     $conn = null;
 ?>
+
 
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marked Papers</title>
+    <title>Student Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -88,25 +85,40 @@
             text-decoration: none;
             cursor: pointer;
         }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
+        #examButton{
+            border-radius: 20px;
+            text-align: center;
+            font-size: 20px;
+            width: 120px;
+            height: 40px;
+            outline: none;
+        }
+        #examModalId{
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
             width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
         }
-
-        td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
+        .examModal-content{
+            background-color: #28322C;
+            color: white;
+            text-align: justify;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
         }
-
-        tr:hover {
-            background-color:#f5f5f5;
-        }
-
-        #paper:hover{
-            cursor: pointer;
+        .welcome-message{
+            position: relative;
+            left: 220px;
+            text-align: center;
         }
     </style>
 </head>
@@ -120,11 +132,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html">Higher Exam</a>
+                <a class="navbar-brand" href="index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="../index.html">Home</a></li>
+                    <li id='logout'><a href="index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
                     <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
@@ -136,49 +148,44 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Marked Papers</h1>
+            <h1 id='username'>Welcome </h1>
         </div>
     </div>
+
+    <?php 
+        $latest = 0;
+        $examDetails = "";
+        foreach ($exams as $row){
+            $examDetails .= "<p id='examDetails'><a href=\"studentPageResource/startExam.php?examid={$row['id']}\">{$row['subject']}</a> Due: " . date("d/m/Y H:i:s", $row['date']) . "</p>";
+            if ($row['date'] > $latest)
+                $latest = $row['date'];
+        }
+    ?>
 
     <div class="container-fluid text-center">
         <div class="row content">
-            <div class="col-sm-2 sidenav">
-                <h3>Browse pages</h3>
-                <p><a href="graderPage.php">Grader page</a></p>
-            </div>
-            <div class="col-sm-8 text-left">
-                <?php
-                    if (sizeof($markedExams) > 0){
-                ?>
-                <p>
-                    <table style="width:100%">
-                        <tr>
-                            <th>Subject</th>
-                            <th>Student Name</th>
-                            <th>Student ID</th>
-                        </tr>
-                        <?php 
-                            for ($i = 0; $i < sizeof($markedExams); $i++){
-                                echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$markedExams[$i]['finishedId']}'\">";
-                                echo "<td>{$markedExams[$i]['subject']}</td>";
-                                echo "<td>{$markedExams[$i]['name']}</td>";
-                                echo "<td>{$markedExams[$i]['studentId']}</td>";
-                                echo "</tr>";
-                            }
-                        ?>
-                    </table>
-                </p>
-                <?php
-                }
-                else{
-                    echo "<h1>No papers found</h1>";
-                }
-            ?>
+            
+            <div class="col-sm-8 text-left welcome-message">
+                <p id="welcomeMessage"><?php echo "You have " . sizeof($exams) . " exams to attempt by " . date("d/m/Y", $latest) . "." ?></p>
+                <hr>
+                <!--show tests button-->
+                <button id="examButton">Your Tests</button>
+               
+                <div id="examModalId">
+
+                    <!-- Exam modal content -->
+                    <div class="examModal-content">
+                        <span class="close">&times;</span>
+                        <h3>Here are your exam details:</h3>
+                        <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
+                        <?php echo $examDetails; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-
+    
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -192,9 +199,11 @@
 
     </div>
 
+
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -202,7 +211,7 @@
             authDomain: "examination-system-f53f3.firebaseapp.com",
             databaseURL: "https://examination-system-f53f3.firebaseio.com",
             projectId: "examination-system-f53f3",
- 
+
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -210,6 +219,7 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const functions = firebase.functions();
 
         //update firestore settings
         db.settings({ timestampsInSnapshots: true });
@@ -229,21 +239,27 @@
         });
         const accountDetails = document.querySelector('.accountDetails');
         // for some reason, user is logged in from the start
-        //listen for the auth status of user (whether theyre signed in or out)
+        //listen for the auth status of user (whether they're signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user);
-                setupUI(user);
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin
+                    setupUI(user);
+                })
+                console.log('User logged in: ', user)
+
             } else {
                 console.log('User logged out');
-                location.replace('../index.html');
+                location.replace('index.html');
             }
         });
+        
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -255,14 +271,17 @@
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
                 });
-
+                
             }
             else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
-
             }
         }
+
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -281,6 +300,22 @@
                 modal.style.display = "none";
             }
         }
+        
+        var checkExams = document.getElementById("examButton");
+        var examModal = document.getElementById('examModalId');
+        checkExams.onclick = function(){
+            examModal.style.display = "block";
+        }
+        span.onclick = function () {
+            examModal.style.display = "none";
+        }
+        /*window.onclick = function (event) {
+            if (event.target == examModal) {
+                examModal.style.display = "none";
+            }
+        }*/
+
+    
     </script>
 
 </body>
