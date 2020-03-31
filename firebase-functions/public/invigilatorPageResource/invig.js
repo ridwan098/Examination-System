@@ -92,7 +92,7 @@ form.addEventListener('submit', (e) => {
     console.log(mo1, today, 'is the long version of month');
     const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(today)
     var date = da + ' ' + mo + ', ' + ye + '.';
-    console.log(form.id.value, form.comment.value, date);
+
 
     db.collection('invigilatorReport').add({
         report: form.comment.value,
