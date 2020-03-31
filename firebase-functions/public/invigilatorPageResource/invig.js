@@ -71,7 +71,7 @@ function renderReport(doc) {
 }
 
 function loadContent() {
-    db.collection('invigilatorReport').get().then((snapshot) => {
+    db.collection('invigilatorReport').orderBy('timestamp').get().then((snapshot) => {
         snapshot.docs.forEach(doc => {
             renderReport(doc)
         });
@@ -88,6 +88,8 @@ form.addEventListener('submit', (e) => {
     var today = new Date();
     const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(today)
     const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(today)
+    const mo1 = new Intl.DateTimeFormat('en', { month: 'long' }).format(today)
+    console.log(mo1, today, 'is the long version of month');
     const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(today)
     var date = da + ' ' + mo + ', ' + ye + '.';
     console.log(form.id.value, form.comment.value, date);
@@ -95,7 +97,8 @@ form.addEventListener('submit', (e) => {
     db.collection('invigilatorReport').add({
         report: form.comment.value,
         studentUserName: form.id.value,
-        time: date
+        time: date,
+        timestamp: today
     });
     alert('Your report has been logged');
     setTimeout(function () { location.reload(1); }, 1000);
