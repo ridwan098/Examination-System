@@ -60,7 +60,8 @@
             text-decoration: none;
             cursor: pointer;
         }
-        #examButton{
+
+        #examButton {
             border-radius: 20px;
             text-align: center;
             font-size: 20px;
@@ -68,7 +69,8 @@
             height: 40px;
             outline: none;
         }
-        #examModalId{
+
+        #examModalId {
             display: none;
             position: fixed;
             z-index: 1;
@@ -81,7 +83,8 @@
             background-color: rgb(0, 0, 0);
             background-color: rgba(0, 0, 0, 0.4);
         }
-        .examModal-content{
+
+        .examModal-content {
             background-color: #28322C;
             color: white;
             text-align: justify;
@@ -90,7 +93,8 @@
             border: 1px solid #888;
             width: 80%;
         }
-        .welcome-message{
+
+        .welcome-message {
             position: relative;
             left: 220px;
             text-align: center;
@@ -111,12 +115,13 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="index.html">Home</a></li>
+                    <li><a href="index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
                     <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
+
         </div>
     </nav>
 
@@ -124,18 +129,18 @@
     <div class="jumbotron">
         <div class="container text-center">
             <h1 id='username'>Welcome </h1>
+            <p id="welcomeMessage">error on welcome message</p>
         </div>
     </div>
 
     <div class="container-fluid text-center">
         <div class="row content">
-            
+
             <div class="col-sm-8 text-left welcome-message">
-                <p id="welcomeMessage">error on welcome message</p>
-                <hr>
+
                 <!--show tests button-->
                 <button id="examButton">Your Tests</button>
-               
+
                 <div id="examModalId">
 
                     <!-- Exam modal content -->
@@ -143,16 +148,18 @@
                         <span class="close">&times;</span>
                         <h3>Here are your exam details:</h3>
                         <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Software Engineering</a> Due: 03/04/2020</p>
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Business Modelling</a> Due: 26/05/2020</p>
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Procedural Programming</a> Due: 02/04/2020</p>
+                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Software
+                                Engineering</a> Due: 03/04/2020</p>
+                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Business Modelling</a>
+                            Due: 26/05/2020</p>
+                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Procedural
+                                Programming</a> Due: 02/04/2020</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -220,13 +227,13 @@
                 location.replace('index.html');
             }
         });
-        
+
 
         const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
-                
+
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -237,11 +244,11 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
-                //FOR ALEX Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
-                    var welcomeMessage = "You have " + "3" + " exams to attempt by " + "20/06/2020"+"." ;
+                    //FOR ALEX Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
+                    var welcomeMessage = "You have " + "3" + " exams to attempt by " + "20/06/2020" + ".";
                     document.getElementById('welcomeMessage').innerHTML = welcomeMessage;
                 });
-                
+
             }
             else {
                 for (i = 0; i < adminItems.length; i++) {
@@ -270,10 +277,10 @@
                 modal.style.display = "none";
             }
         }
-        
+
         var checkExams = document.getElementById("examButton");
         var examModal = document.getElementById('examModalId');
-        checkExams.onclick = function(){
+        checkExams.onclick = function () {
             examModal.style.display = "block";
         }
         span.onclick = function () {
@@ -285,7 +292,7 @@
             }
         }*/
 
-    
+
     </script>
 
 </body>
