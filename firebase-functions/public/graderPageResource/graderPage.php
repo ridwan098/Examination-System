@@ -1,6 +1,8 @@
 <?php
 
-	require("../db.php");
+    require("../db.php");
+    
+    $NUM_PAPERS_DISPLAY = 5;
 
     try {
         $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
@@ -15,13 +17,23 @@
             WHERE fe.marked = 0
             AND fe.examId = e.id 
             AND fe.studentId = s.studentId
-            AND s.userId = u.id;";
+            AND s.userId = u.id";
     $result = $conn->query($sql);
     $unmarkedExams = [];
     while($row = $result->fetch()) {
         $unmarkedExams[] = $row;
     }
 
+    $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
+            WHERE fe.marked = 1
+            AND fe.examId = e.id
+            AND fe.studentId = s.studentId
+            AND s.userId = u.id";
+    $result = $conn->query($sql);
+    $markedExams = [];
+    while ($row = $result->fetch()){
+        $markedExams[] = $row;
+    }
 
     $conn = null;
 ?>
@@ -32,7 +44,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grader Page</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -89,24 +101,28 @@
             cursor: pointer;
         }
 
-        tr:hover {
-            background-color:#f5f5f5;
-        }
-
-        #paper:hover{
+        .paperRow:hover{
             cursor: pointer;
         }
 
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
+        #adminBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
         }
 
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
+        #adminBtn:hover {
+            background-color: #555;
         }
     </style>
 </head>
@@ -126,7 +142,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li id='logout'><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -141,37 +157,98 @@
         </div>
     </div>
 
-    <div class="container-fluid text-center">
+    <div class="container-fluid">
         <div class="row content">
-            <div class="col-sm-2 sidenav">
-                <h3>Browse pages</h3>
-                <p><a href="markedPapers.php">View marked papers</a></p>
+            <div class="col-sm-3 sidenav">
+                <h4>Browse pages</h4>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#welcome">Welcome</a></li>
+                    <li><a href="#mark">Pending Papers</a></li>
+                    <li><a href="#archive">Paper Archive</a></li>
+                </ul><br>
             </div>
-            <div class="col-sm-8 text-left">
-                <h1>Exams ready to be marked</h1>
-                <p>
-                <table style="width:100%">
-                    <tr>
-                        <th>Subject</th>
-                        <th>Student Name</th>
-                        <th>Student ID</th>
-                    </tr>
-                    <?php 
-                        for ($i = 0; $i < sizeof($unmarkedExams); $i++){
-                            echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$unmarkedExams[$i]['finishedId']}'\">";
-                            echo "<td>{$unmarkedExams[$i]['subject']}</td>";
-                            echo "<td>{$unmarkedExams[$i]['name']}</td>";
-                            echo "<td>{$unmarkedExams[$i]['studentId']}</td>";
-                            echo "</tr>";
-                        }
-                    ?>
-                </table>
-                </p>
+
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default text-left">
+                            <div class="panel-body">
+                                <!-- Text here -->
+                                <h4 id='welcome'>Welcome</h4>
+                                <p>This is the grader page. This page can be used to view and grade any papers that are still pending,
+                                    or can be used to view previously marked papers in the paper archive.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+
+                <div id='mark'>
+                    <h3>Exams ready to be marked</h3>
+                    <p>
+                        <table class="table table-bordered table-hover">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                            </tr>
+                            <?php 
+                                for ($i = 0; $i < sizeof($unmarkedExams); $i++){
+                                    echo "<tr id=\"unmarked$i\" class=\"paperRow\" onclick=\"window.location='gradePaper.php?id={$unmarkedExams[$i]['finishedId']}'\"";
+                                    if ($i >= $NUM_PAPERS_DISPLAY){
+                                        echo "style='display:none;' >";
+                                    }
+                                    else{
+                                        echo ">";
+                                    }
+                                    echo "<td>{$unmarkedExams[$i]['subject']}</td>";
+                                    echo "<td>{$unmarkedExams[$i]['name']}</td>";
+                                    echo "<td>{$unmarkedExams[$i]['studentId']}</td>";
+                                    echo "</tr>";
+                                }
+                            ?>
+                        </table>
+                    </p>
+                    <button onclick="toggleHiddenRows(this, 'unmarked');" id="previous" type="button" class="btn btn-primary btn-sm">
+                                    View All
+                    </button>
+                </div>
+                <hr>
+                <div id='archive'>
+                    <h3>Marked exams</h3>
+                    <p>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                        </tr>
+                        <?php 
+                            for ($i = 0; $i < sizeof($markedExams); $i++){
+                                echo "<tr id=\"marked$i\" class=\"paperRow\" onclick=\"window.location='gradePaper.php?id={$markedExams[$i]['finishedId']}'\" ";
+                                if ($i >= $NUM_PAPERS_DISPLAY){
+                                    echo "style='display:none;' >";
+                                }
+                                else{
+                                    echo ">";
+                                }
+                                echo "<td>{$markedExams[$i]['subject']}</td>";
+                                echo "<td>{$markedExams[$i]['name']}</td>";
+                                echo "<td>{$markedExams[$i]['studentId']}</td>";
+                                echo "</tr>";
+                            }
+                        ?>
+                    </table>
+                    </p>
+                    <button onclick="toggleHiddenRows(this,'marked');" id="previous" type="button" class="btn btn-primary btn-sm">
+                                    View All
+                    </button>
+                </div>
+                <hr>
             </div>
         </div>
     </div>
-
-
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -184,6 +261,34 @@
         </div>
 
     </div>
+
+    <script>
+        function toggleHiddenRows(btn, id){
+            for (var i = <?php echo $NUM_PAPERS_DISPLAY; ?>; ; i++){
+                var el = document.getElementById(id + "" + i);
+                if (el){
+                    if (el.style.display == "none"){
+                        el.style.display = "";
+                    }
+                    else{
+                        el.style.display = "none";
+                    }
+                }
+                else{
+                    break;
+                }
+            }
+
+            if (btn.innerHTML.includes("View All")){
+                btn.innerHTML = "Show Less";
+            }
+            else{
+                btn.innerHTML = "View All";
+            }
+        }
+    </script>
+
+    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
@@ -225,18 +330,30 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user);
-                setupUI(user);
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin;
+                    setupUI(user);
+                })
+                console.log('User logged in: ', user)
+
             } else {
                 console.log('User logged out');
-                location.replace('../index.html');
+                location.replace('index.html');
             }
         });
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                if (user.admin) {
+                    //document.getElementById("adminBtn").style.display = "block";
+                    //adminItems[1].style.display = 'block';
+                    for (i = 0; i < adminItems.length; i++) {
+                        adminItems[i].style.display = 'block';
+                    }
+
+                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -251,9 +368,11 @@
 
             }
             else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
-                document.getElementById('username').innerHTML
-
+                document.getElementById('username').innerHTML;
             }
         }
 
@@ -273,6 +392,11 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
+        }
+
+        //when admin returns to page
+        function returnTopage() {
+            location.replace('../adminPage.html');
         }
     </script>
 

@@ -39,7 +39,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grader Page</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -152,6 +152,26 @@
             background-color: #706e6e;
             color: white;
         }
+
+        #adminBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        #adminBtn:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 
@@ -170,7 +190,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li id='logout'><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -231,6 +251,8 @@
         </div>
 
     </div>
+
+    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
 
     <script>
         var coll = document.getElementsByClassName("collapsible");
@@ -329,18 +351,30 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user);
-                setupUI(user);
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin;
+                    setupUI(user);
+                })
+                console.log('User logged in: ', user)
+
             } else {
                 console.log('User logged out');
-                location.replace('../index.html');
+                location.replace('index.html');
             }
         });
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                if (user.admin) {
+                    //document.getElementById("adminBtn").style.display = "block";
+                    //adminItems[1].style.display = 'block';
+                    for (i = 0; i < adminItems.length; i++) {
+                        adminItems[i].style.display = 'block';
+                    }
+
+                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -355,9 +389,11 @@
 
             }
             else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
-                document.getElementById('username').innerHTML
-
+                document.getElementById('username').innerHTML;
             }
         }
 
