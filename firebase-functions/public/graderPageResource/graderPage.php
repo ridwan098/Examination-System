@@ -4,21 +4,14 @@
     
     $NUM_PAPERS_DISPLAY = 5;
 
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-    catch(PDOException $e)
-    {
-        die("Connection failed: " . $e->getMessage());
-    }
+    $db = new Class_DB($servername, $username, $password);
+    $db->connectToDb("higherexam");
     $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
             WHERE fe.marked = 0
             AND fe.examId = e.id 
             AND fe.studentId = s.studentId
             AND s.userId = u.id";
-    $result = $conn->query($sql);
+    $result = $db->executeQuery($sql);
     $unmarkedExams = [];
     while($row = $result->fetch()) {
         $unmarkedExams[] = $row;
@@ -29,13 +22,11 @@
             AND fe.examId = e.id
             AND fe.studentId = s.studentId
             AND s.userId = u.id";
-    $result = $conn->query($sql);
+    $result = $db->executeQuery($sql);
     $markedExams = [];
     while ($row = $result->fetch()){
         $markedExams[] = $row;
     }
-
-    $conn = null;
 ?>
 
 <html lang="en">
@@ -159,8 +150,8 @@
 
     <div class="container-fluid">
         <div class="row content">
-            <div class="col-sm-3 sidenav">
-                <h4>Browse pages</h4>
+            <div id="sidenav" class="col-sm-3 sidenav">
+                <h4>Page Navigation</h4>
                 <ul class="nav nav-pills nav-stacked">
                     <li class="active"><a href="#welcome">Welcome</a></li>
                     <li><a href="#mark">Pending Papers</a></li>
@@ -211,7 +202,7 @@
                         </table>
                     </p>
                     <button onclick="toggleHiddenRows(this, 'unmarked');" id="previous" type="button" class="btn btn-primary btn-sm">
-                                    View All
+                                    Show More
                     </button>
                 </div>
                 <hr>
@@ -242,7 +233,7 @@
                     </table>
                     </p>
                     <button onclick="toggleHiddenRows(this,'marked');" id="previous" type="button" class="btn btn-primary btn-sm">
-                                    View All
+                                    Show More
                     </button>
                 </div>
                 <hr>
@@ -279,11 +270,11 @@
                 }
             }
 
-            if (btn.innerHTML.includes("View All")){
+            if (btn.innerHTML.includes("Show More")){
                 btn.innerHTML = "Show Less";
             }
             else{
-                btn.innerHTML = "View All";
+                btn.innerHTML = "Show More";
             }
         }
     </script>
@@ -338,7 +329,7 @@
 
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
 
