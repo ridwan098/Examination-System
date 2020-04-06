@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Paper</title>
+    <title>Admin Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -85,14 +85,6 @@
         </div>
     </nav>
 
-
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h1>Template Page</h1>
-            <p id='username'>This is template page: </p>
-        </div>
-    </div>
-
     <div class="container-fluid text-center">
         <div class="row content">
             <div class="col-sm-2 sidenav">
@@ -101,24 +93,27 @@
                 <p><a href="#">Link</a></p>
             </div>
             <div class="col-sm-8 text-left">
-                <h1>Welcome</h1>
-                <p>On this page you will be able to create a paper. The details needed to start creating your paper would be the module number, the time
-                    which you would like for the paper to start and a total number of questions.
-                </p>
-                <iframe style="display:none" name="hidden-form"></iframe>
-                <form onsubmit="return false;" action="addexam.php" target="hidden-frame" method="post" id='createp'>
-                    <h5>Please enter the module number</h5> 
-                    <h5>Module:</h5><input name="mname" form="createp" class='input'
-                        placeholder='Enter module name ' required>
-                    <h5>Date of Exam:</h5><input type="date" name = "date" required>
-                    <h5>Time of Exam:</h5><input type="time" id="time" name="time"
-                        min="09:00" max="18:00" required>
-                    <h5>Length:</h5><input type="time" id="time" name="length" required>
-                    <hr>
-                    <button onclick="postForm(this, 'createp', examPosted)" class='btn'>Submit Paper</button><br/>
+                <h1>Multiple Choice Question</h1>
+                <form onsubmit="return false;" action="addquestion.php" method="post" id='question'>
+                    <input type="hidden" name="examid" value=<?php echo '"' . $_GET['examid'] . '"'; ?> >
+                    <input type="hidden" name="type" value=1 >
+                    <h5>Please enter a multiple choice question here along with the correct and fake answers.</h5> 
+                    <textarea name="question" type='input' placeholder="Question" class='input' required></textarea>
+                    <h5>Answer:</h5><input name="answer" form="question" class='input'
+                        placeholder='Enter answer here...' required>
+                    <h5>Fake Answers: <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button></h5>
+                    <div id='fakeAnswers'>
+                        <input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>
+                    </div>
+                    <h5>Marks:</h5><input name="marks" form="question" class='input'
+                        placeholder='Enter marks here...' required>
+                    <button onclick="postForm(this, 'question', questionPosted);" class='btn'>Submit Question</button><br/>
+                    <hr />
                 </form>
+
                 <hr>
-                <p id="qtext" style="visibility:hidden;">The exam has been successfully created, time to <a id="qlink" href="multipleCQ.html?">add some questions</a>.</p>
+                <h3>Test</h3>
+                <p>Lorem ipsum...</p>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
@@ -146,18 +141,28 @@
     </div>
 
     <script>
+        let fakeAnswers = 1;
 
-        var examPosted = function (response) {
-            if (response != 0){
-                alert("Added exam successfully!");
-                var link = document.getElementById("qlink");
-                link.href = "multipleCQ.php?examid=" + response;
-                var text = document.getElementById("qtext");
-                text.style = "";
-            }
-            else
-                alert("Failed to add exam");
+        function addFormInput(id){
+            fakeAnswers++;
+            var node = document.createElement("input");
+            node.setAttribute("name", "fakeAnswer" + fakeAnswers);
+            node.setAttribute("form", "question");
+            node.setAttribute("class", "input");
+            node.setAttribute("placeholder", "Enter answer here...");
+            node.setAttribute("required", "true");
+
+            var div = document.getElementById(id);
+            div.appendChild(document.createElement("br"));
+            div.appendChild(node);
+        }
+
+        var questionPosted = function (caller, response) {
+            
             caller.disabled = false;
+            if (response == 1){
+                alert("Success!");
+            }
         }
 
         function postForm(caller, formId, callback){
@@ -177,7 +182,7 @@
 
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
-                    callback(xhr.response);
+                    callback(caller, xhr.response);
                 }
             }
             xhr.open("POST", form.action, true);
