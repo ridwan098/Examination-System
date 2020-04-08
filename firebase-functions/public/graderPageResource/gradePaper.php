@@ -1,36 +1,24 @@
 <?php
     require("../db.php");
 
-    // Connect to sql db
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-    catch(PDOException $e)
-    {
-        die("Connection failed: " . $e->getMessage());
-    }
-
+    $db = new Class_DB($servername,$username, $password);
+    $db->connectToDb("higherexam");
     // Execute query
     $sql = "select * from FinishedExam fe, Exams e, Student s, Users u
     where fe.finishedId = ?
     and fe.studentId = s.studentId
     and s.userId = u.id;";
-    $result = $conn->prepare($sql);
-    $result->execute([$_GET['id']]);
+    $result = $db->executeQuery($sql, [$_GET['id']]);
     $metaRow = $result->fetch();
 
     $sql = "select * from CompletedQuestions cq, ExamQuestions eq
     where cq.finExamId = ?
     and cq.examqId = eq.examqId";
-    $result = $conn->prepare($sql);
-    $result->execute([$_GET['id']]);
+    $result = $db->executeQuery($sql, [$_GET['id']]);
     $examqs = [];
     while($row = $result->fetch()){
         $examqs[] = $row;
     }
-    $conn = null;
 ?>
 
 <html lang="en">
@@ -39,7 +27,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grader Page</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -96,32 +84,6 @@
             cursor: pointer;
         }
 
-        /* Style the button that is used to open and close the collapsible content */
-        .collapsible {
-            background-color: #eee;
-            color: #444;
-            cursor: pointer;
-            padding: 18px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 15px;
-        }
-
-        /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-        .active, .collapsible:hover {
-            background-color: #ccc;
-        }
-
-        /* Style the collapsible content. Note: hidden by default */
-        .content {
-            padding: 0 18px;
-            display: none;
-            overflow: hidden;
-            background-color: #f1f1f1;
-        }
-
         .form-inline {
             align-items: center;
         }
@@ -152,6 +114,26 @@
             background-color: #706e6e;
             color: white;
         }
+
+        #adminBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        #adminBtn:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 
@@ -170,7 +152,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li id='logout'><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -188,36 +170,68 @@
     </div>
 
     <iframe style="display:none" name="hidden-form"></iframe>
-    <?php
+    <div class="container-fluid">
+        <div class="row content">
+            <div id="sidenav" class="col-sm-3 sidenav">
+                <div>
+                    <h4>Browse pages</h4>
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="graderPage.php">Return to main page</a></li>
+                    </ul><br>
+                </div>
+                <hr>
+                <h4>Options</h4>
+                <div id="saveAllForm">
+                    <div class="checkbox">
+                        <label>
+                            <input id="finalSave" type="checkbox" title="Used when all marking is complete. This will finalize all changes and move the exam to the paper archives." name="final" value="1">Finalize</input>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <button id="saveAll" class="btn btn-primary" onclick="saveAll(this)" type="submit">Save All</button>
+                    </div>
+                    <input type="hidden" name="examid" id="examid" value=<?php echo '"' . $_GET['id'] . '"'; ?> />
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="panel-group" id="accordion">
+                    <?php
 
-        for ($i = 0; $i < sizeof($examqs); $i++){
-            echo "<button type=\"button\" class=\"collapsible\"><b>Question ".($i+1)."</b></button>";
-            echo "<div class=\"content\">";
-            echo "<p><b>{$examqs[$i]['question']}</b></p>";
-            echo $examqs[$i]['answer'];
-            echo "<br>";
-            $comment = htmlspecialchars($examqs[$i]['comment']);
-            echo "<form action=\"markQuestion.php\" target=\"hidden-form\" method=\"post\" class=\"form-inline\">
-                    <input type=\"hidden\" id=\"qid$i\" name=\"qid\" value=\"{$examqs[$i]['id']}\"/>
-                    <label>Comments:</label>
-                    <input autocomplete=\"off\" style=\"width:100%;height:100px;\" value=\"$comment\" type=\"text\" id=\"comment$i\" name=\"comment\" placeholder=\"Type feedback here...\"/>
-                    <label>Marks:</label>
-                    <input type=\"number\" min='0' max=\"{$examqs[$i]['maxMarks']}\" id=\"mark$i\" name=\"mark\" placeholder=\"Marks\" value=\"{$examqs[$i]['markReceived']}\"/>
-                    / {$examqs[$i]['maxMarks']} 
-                    <button type=\"submit\">Save</button>
-                </form> 
-            </div>";
-        }
+                        for ($i = 0; $i < sizeof($examqs); $i++){
+                            echo '<div class="panel panel-default">
+                                    <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse'.$i.'">
+                                        Question '. ($i+1). '</a>
+                                    </h4>
+                                    </div>
+                                    <div id="collapse'.$i.'" class="panel-collapse collapse">
+                                    <div class="panel-body">';
+                            echo "<p><b>{$examqs[$i]['question']}</b></p>";
+                            echo $examqs[$i]['answer'];
+                            echo "<hr>";
+                            $comment = htmlspecialchars($examqs[$i]['comment']);
+                            echo "<form action=\"markQuestion.php\" target=\"hidden-form\" method=\"post\">
+                                    <input type=\"hidden\" id=\"qid$i\" name=\"qid\" value=\"{$examqs[$i]['id']}\"/>
+                                    <div class=\"form-group\">
+                                        <label>Comments:</label>
+                                        <textarea class=\"form-control\" autocomplete=\"off\" type=\"text\" id=\"comment$i\" name=\"comment\" placeholder=\"Type feedback here...\">$comment</textarea>
+                                    </div>
+                                    <div class=\"form-group\">
+                                        <label>Marks:</label>
+                                        <input class=\"form-control\" type=\"number\" min='0' max=\"{$examqs[$i]['maxMarks']}\" id=\"mark$i\" name=\"mark\" placeholder=\"Marks\" value=\"{$examqs[$i]['markReceived']}\"/>
+                                    </div>
+                                    / {$examqs[$i]['maxMarks']} 
+                                    <button type=\"submit\" class=\"btn btn-primary\">Save</button>
+                                </form>";
+                            echo '</div></div></div>';
+                        }
 
-    ?>
-
-    <br>
-    <div id="saveAllForm">
-        <center>
-            <input type="hidden" name="examid" id="examid" value=<?php echo '"' . $_GET['id'] . '"'; ?> />
-            <button id="saveAll" onclick="saveAll(this)" type="submit">Save All</button>
-            <input id="finalSave" type="checkbox" name="final" value="1">Finalize</input>
-        </center>
+                    ?>
+                </div>
+                <hr>
+            </div>
+        </div>
     </div>
 
     <!-- The Modal -->
@@ -231,6 +245,8 @@
         </div>
 
     </div>
+
+    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
 
     <script>
         var coll = document.getElementsByClassName("collapsible");
@@ -329,18 +345,30 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user);
-                setupUI(user);
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin;
+                    setupUI(user);
+                })
+                console.log('User logged in: ', user)
+
             } else {
                 console.log('User logged out');
                 location.replace('../index.html');
             }
         });
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                if (user.admin) {
+                    //document.getElementById("adminBtn").style.display = "block";
+                    //adminItems[1].style.display = 'block';
+                    for (i = 0; i < adminItems.length; i++) {
+                        adminItems[i].style.display = 'block';
+                    }
+
+                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
                     const name = `<span>${doc.data().username}</span>`;
@@ -355,9 +383,11 @@
 
             }
             else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
-                document.getElementById('username').innerHTML
-
+                document.getElementById('username').innerHTML;
             }
         }
 
@@ -377,6 +407,10 @@
             if (event.target == modal) {
                 modal.style.display = "none";
             }
+        }
+        //when admin returns to page
+        function returnTopage() {
+            location.replace('../adminPage.html');
         }
     </script>
 

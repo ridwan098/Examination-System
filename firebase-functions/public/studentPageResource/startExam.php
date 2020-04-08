@@ -203,6 +203,7 @@
                     <strong>Question $qnum: {$q['question']}</strong><br>
                     <div class='answers' style='position:relative;left: 20px;'>";
                 foreach ($answers as $a){
+                    if ($a == "") continue;
                     echo "
                         <input type='radio' id='$a' name='{$q['examqId']}' value='$a'>
                         <span for='$a'>$a</span><br>";

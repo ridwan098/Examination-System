@@ -1,37 +1,9 @@
-<?php
-
-	require("../db.php");
-
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-    catch(PDOException $e)
-    {
-        die("Connection failed: " . $e->getMessage());
-    }
-    $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
-            WHERE fe.marked = 1
-            AND fe.examId = e.id 
-            AND fe.studentId = s.studentId
-            AND s.userId = u.id;";
-    $result = $conn->query($sql);
-    $markedExams = [];
-    while($row = $result->fetch()) {
-        $markedExams[] = $row;
-    }
-
-
-    $conn = null;
-?>
-
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marked Papers</title>
+    <title>Admin Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -88,26 +60,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-        }
-
-        tr:hover {
-            background-color:#f5f5f5;
-        }
-
-        #paper:hover{
-            cursor: pointer;
-        }
     </style>
 </head>
 
@@ -120,11 +72,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html">Higher Exam</a>
+                <a class="navbar-brand" href="index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="../index.html">Home</a></li>
+                    <li id='logout'><a href="index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
                     <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
@@ -133,47 +85,43 @@
         </div>
     </nav>
 
-
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h1>Marked Papers</h1>
-        </div>
-    </div>
-
     <div class="container-fluid text-center">
         <div class="row content">
             <div class="col-sm-2 sidenav">
-                <h3>Browse pages</h3>
-                <p><a href="graderPage.php">Grader page</a></p>
+                <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p>
             </div>
             <div class="col-sm-8 text-left">
-                <?php
-                    if (sizeof($markedExams) > 0){
-                ?>
-                <p>
-                    <table style="width:100%">
-                        <tr>
-                            <th>Subject</th>
-                            <th>Student Name</th>
-                            <th>Student ID</th>
-                        </tr>
-                        <?php 
-                            for ($i = 0; $i < sizeof($markedExams); $i++){
-                                echo "<tr id=\"paper\" onclick=\"window.location='gradePaper.php?id={$markedExams[$i]['finishedId']}'\">";
-                                echo "<td>{$markedExams[$i]['subject']}</td>";
-                                echo "<td>{$markedExams[$i]['name']}</td>";
-                                echo "<td>{$markedExams[$i]['studentId']}</td>";
-                                echo "</tr>";
-                            }
-                        ?>
-                    </table>
-                </p>
-                <?php
-                }
-                else{
-                    echo "<h1>No papers found</h1>";
-                }
-            ?>
+                <h1>Multiple Choice Question</h1>
+                <form onsubmit="return false;" action="addquestion.php" method="post" id='question'>
+                    <input type="hidden" name="examid" value=<?php echo '"' . $_GET['examid'] . '"'; ?> >
+                    <input type="hidden" name="type" value=1 >
+                    <h5>Please enter a multiple choice question here along with the correct and fake answers.</h5> 
+                    <textarea name="question" type='input' placeholder="Question" class='input' required></textarea>
+                    <h5>Answer:</h5><input name="answer" form="question" class='input'
+                        placeholder='Enter answer here...' required>
+                    <h5>Fake Answers: <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button></h5>
+                    <div id='fakeAnswers'>
+                        <input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>
+                    </div>
+                    <h5>Marks:</h5><input name="marks" form="question" class='input'
+                        placeholder='Enter marks here...' required>
+                    <button onclick="postForm(this, 'question', questionPosted);" class='btn'>Submit Question</button><br/>
+                    <hr />
+                </form>
+
+                <hr>
+                <h3>Test</h3>
+                <p>Lorem ipsum...</p>
+            </div>
+            <div class="col-sm-2 sidenav">
+                <div class="well">
+                    <p>ADS</p>
+                </div>
+                <div class="well">
+                    <p>ADS</p>
+                </div>
             </div>
         </div>
     </div>
@@ -192,6 +140,57 @@
 
     </div>
 
+    <script>
+        let fakeAnswers = 1;
+
+        function addFormInput(id){
+            fakeAnswers++;
+            var node = document.createElement("input");
+            node.setAttribute("name", "fakeAnswer" + fakeAnswers);
+            node.setAttribute("form", "question");
+            node.setAttribute("class", "input");
+            node.setAttribute("placeholder", "Enter answer here...");
+            node.setAttribute("required", "true");
+
+            var div = document.getElementById(id);
+            div.appendChild(document.createElement("br"));
+            div.appendChild(node);
+        }
+
+        var questionPosted = function (caller, response) {
+            
+            caller.disabled = false;
+            if (response == 1){
+                alert("Success!");
+            }
+        }
+
+        function postForm(caller, formId, callback){
+            caller.disabled = true;
+
+            var form = document.getElementById(formId);
+            var inputs = Array.from(form.elements).filter(e => e.getAttribute("name"));
+
+            // compile data
+            var data = "";
+            for (var i = 0; i < inputs.length; i++){
+
+                data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
+            }
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    callback(caller, xhr.response);
+                }
+            }
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(data);
+        }
+    </script>
+
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
@@ -202,7 +201,7 @@
             authDomain: "examination-system-f53f3.firebaseapp.com",
             databaseURL: "https://examination-system-f53f3.firebaseio.com",
             projectId: "examination-system-f53f3",
- 
+
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -232,11 +231,11 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user);
+                console.log('User logged in: ', user)
                 setupUI(user);
             } else {
                 console.log('User logged out');
-                location.replace('../index.html');
+                location.replace('index.html');
             }
         });
 
@@ -246,7 +245,7 @@
             if (user) {
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
-                    const name = `<span>${doc.data().username}</span>`;
+                    const name = `<span>${doc.data().username} </span>`;
                     const html = `
                 <div>email: ${user.email} </div>
                 <div>username: ${doc.data().username} </div>
