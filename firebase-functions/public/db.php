@@ -2,7 +2,7 @@
 
     $servername = "35.233.45.51";
     $username = "root";
-    $password = "password";
+    $password = "ViBOAFp8ua";
 
     class Class_DB{
         public function __construct($servername, $username, $password){
