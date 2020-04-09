@@ -6,6 +6,8 @@
 
     $db = new Class_DB($servername, $username, $password);
     $db->connectToDb("higherexam");
+
+    // query to get list of unmarked exams
     $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
             WHERE fe.marked = 0
             AND fe.examId = e.id 
@@ -17,7 +19,14 @@
         $unmarkedExams[] = $row;
     }
 
-    $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
+    // query to get list of marked exams
+    $sql = "SELECT fe.*, e.*,s.*,u.*,(
+                SELECT (SUM(cq.markReceived) / SUM(eq.maxMarks))*100 AS totalMarks
+                FROM ExamQuestions eq, CompletedQuestions cq
+                WHERE eq.examId = fe.examId
+                AND cq.finExamId = fe.finishedId
+                AND cq.examqId = eq.examqId) AS totalMarks 
+            FROM FinishedExam fe, Exams e, Student s, Users u
             WHERE fe.marked = 1
             AND fe.examId = e.id
             AND fe.studentId = s.studentId
@@ -27,6 +36,16 @@
     while ($row = $result->fetch()){
         $markedExams[] = $row;
     }
+
+    // get total number of marks for paper
+    /*$sql = "SELECT fe.finishedId, (
+                SELECT (SUM(cq.markReceived) / SUM(eq.maxMarks))*100 AS totalMarks
+                FROM ExamQuestions eq, CompletedQuestions cq
+                WHERE eq.examId = fe.examId
+                AND cq.finExamId = fe.finishedId
+                AND cq.examqId = eq.examqId) AS totalMarks
+            FROM FinishedExam fe
+            WHERE fe.marked=1";*/
 ?>
 
 <html lang="en">
@@ -214,9 +233,14 @@
                             <th>Subject</th>
                             <th>Student Name</th>
                             <th>Student ID</th>
+                            <th>Grade (%)</th>
                         </tr>
                         <?php 
                             for ($i = 0; $i < sizeof($markedExams); $i++){
+
+                                // format number properly for printing
+                                $totalMarks = number_format($markedExams[$i]['totalMarks'], 2, '.', '');
+
                                 echo "<tr id=\"marked$i\" class=\"paperRow\" onclick=\"window.location='gradePaper.php?id={$markedExams[$i]['finishedId']}'\" ";
                                 if ($i >= $NUM_PAPERS_DISPLAY){
                                     echo "style='display:none;' >";
@@ -227,6 +251,7 @@
                                 echo "<td>{$markedExams[$i]['subject']}</td>";
                                 echo "<td>{$markedExams[$i]['name']}</td>";
                                 echo "<td>{$markedExams[$i]['studentId']}</td>";
+                                echo "<td>{$totalMarks}</td>";
                                 echo "</tr>";
                             }
                         ?>
