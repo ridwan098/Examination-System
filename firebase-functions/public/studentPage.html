@@ -19,7 +19,7 @@
             background-color: #28322C;
             border-color: #28322C;
         }
-
+        
         /* The Modal (background) */
         .modal {
             display: none;
@@ -60,76 +60,53 @@
             text-decoration: none;
             cursor: pointer;
         }
-        #examButton{
-            border-radius: 20px;
-            text-align: center;
-            left: 220px;
-            font-size: 20px;
-            width: 120px;
-            height: 40px;
-            outline: none;
-        }
-        #examModalId{
-            display: none;
+        .exam-content{
             position: fixed;
-            z-index: 1;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
+            left:450px;   
+            text-align: left;
+            
         }
-        .examModal-content{
-            background-color: #28322C;
-            color: white;
-            text-align: justify;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-        .button-container{
-            position: relative;
-            left: 550px;
-            text-align: center;
-            width:160px;
-        }
-        .calendar-container{
-            position:relative;
-            top:-280px;
-            left:900px;
-            font-size:20px;
-            border:solid 1px rgb(220, 220, 220);
-            text-align:center;
-            width:265px;
-        }
-        .calendar-table{
-            margin-left:30px;
-            margin-bottom:20px;
-        }
-        button{
-            border-radius: 20px;
+        .examsClass{
+            padding-left:2%;
+            width: 700px;
             font-size: 20px;
-            width: 120px;
-            height: 40px;
+        }
+        .fontSizeClass{
+            position: fixed;
+            top: 60px;
+            left: 950px;
+            text-align: center;
+            font-size: 20px;
+            width: 300px;
+            border: solid 1px black;
+            border-radius: 10px;
+        }
+        .fontButtonClass{
+            background: transparent;
+            border-radius: 10px;
+            border: solid 0px transparent;
+            text-decoration: underline;
             outline: none;
-
         }
-        th{
-            border:solid 2px black;
+        .normalSizedButton{
+            font-size: 20px;
         }
-        #time-container{
-            position:relative;
-            text-align:center;
-            top:-650px;
+        .largeSizedButton{
+            font-size: 25px;
+        }
+        .extraSizedButton{
+            font-size: 30px;
+        }
+        h3{
+            font-size: 30px;
+        }
+        #examiners-id{
+            position:fixed;
+            top:100px;
             left:20px;
-            border:solid 1px rgb(220, 220, 220);
-            border-radius:10px;
-            width:100px;
-            height:25px;
+            width:auto; 
+            border:solid 1px black; 
+            border-radius: 10px;
             font-size:20px;
         }
     </style>
@@ -156,43 +133,34 @@
             </div>
         </div>
     </nav>
-
-
     <div class="jumbotron">
         <div class="container text-center">
             <h1 id='username'>Welcome </h1>
             <p id="welcomeMessage">error on welcome message</p>
         </div>
     </div>
-
-    <div class="container-fluid text-center">
-        <div class="row content">
-            
-            <div class="col-sm-8 text-left button-container">
-
-                <!--show tests button-->
-                <button id="examButton">Your Tests</button>
-               
-                <div id="examModalId">
-
-                    <!-- Exam modal content -->
-                    <div class="examModal-content">
-                        <span class="close">&times;</span>
+                    <!-- Exam content -->
+                    <div class="exam-content">
                         <h3>Here are your exam details:</h3>
-                        <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Software Engineering</a> Due: 03/04/2020</p>
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Business Modelling</a> Due: 26/05/2020</p>
-                        <p id='examDetails'><a href="studentPageResource/startExam.php?examid=1">Procedural Programming</a> Due: 02/04/2020</p>
+                        <div class='examsClass'>
+                            <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
+                            <p><a href="studentPageResource/startExam.php?examid=1">Software Engineering</a> Due: 03/04/2020</p>
+                            <p><a href="studentPageResource/startExam.php?examid=1">Software Engineering</a> Due: 03/04/2020</p>
+                        </div>
                     </div>
+                
+                <!--changing font size-->
+                <div class="fontSizeClass">
+                    <h3>Font Size:</h3>
+                    <button class="normalSizedButton fontButtonClass" onclick="changeFontSize('normal')">Normal</button>
+                    <button class="largeSizedButton fontButtonClass" onclick="changeFontSize('large')">Large</button>
+                    <button class="extraSizedButton fontButtonClass" onclick="changeFontSize('extra')">Extra Large</button>
                 </div>
-            </div>
-        </div>
-    </div>
 
     <!--Notice dropbox-->
-    <div style="position: relative;top:30px; left:20px; border: solid 1px rgb(220, 220, 220);border-radius: 10px; width:500px;">
+<!-- <div id="C-O-C-button">
         <h4>Exam Code of Conduct</h4>
-        <!--This can be changed, remember to ask if it should come from examiner or have just one form of it.-->
+        This can be changed, remember to ask if it should come from examiner or have just one form of it.
         <p>Possession of unauthorised material at any time when under examination conditions is an
             assessment offence and can lead to expulsion from the institution. Check now to ensure you do not have
             any notes, mobile phones or unauthorised electronic devices on your person. If you do, raise your
@@ -202,11 +170,12 @@
             Unauthorised material found on your mobile phone or other electronic device will be considered
             the same as being in possession of paper notes. A mobile phone that causes a disruption in the
             exam is also an assessment offence.</p>
-    </div>
+    </div>-->
     <!--Examiners coming from DB-->
-    <div style="position:relative;top:-300px;left:800px;width:400px;border:solid 1px rgb(220, 220, 220); border-radius: 10px;">
-        <p><h4>Examiners: </h4></p>
+    <div id="examiners-id">
+        <p><b>Examiners: </b></p>
     </div>
+
     <!-- The Modal -->
     <div id="myModal" class="modal">
 
@@ -219,212 +188,10 @@
 
     </div>
 
-    <div class="calendar-container" style="border-radius: 10px;">
-        <div class="card">
-            <h3 class="month-and-year-holder" id="monthAndYear"></h3>
-            <table class="calendar-table" id="calendar">
-                <thead>
-                <tr>
-                    <th>Sun</th>
-                    <th>Mon</th>
-                    <th>Tue</th>
-                    <th>Wed</th>
-                    <th>Thu</th>
-                    <th>Fri</th>
-                    <th>Sat</th>
-                </tr>
-                </thead>
-    
-                <tbody id="calendar-body">
-    
-                </tbody>
-            </table>
-    
-            <div class="previous-and-next-container">
-    
-                <button  id="previous" onclick="previous()">Previous</button>
-    
-                <button id="next" onclick="next()">Next</button>
-            </div>
-            <br/>
-            <form class="change-month-class">
-                <label for="month">Change Month:</label>
-                <select name="month" id="month" onchange="jump()">
-                    <option value=0>Jan</option>
-                    <option value=1>Feb</option>
-                    <option value=2>Mar</option>
-                    <option value=3>Apr</option>
-                    <option value=4>May</option>
-                    <option value=5>Jun</option>
-                    <option value=6>Jul</option>
-                    <option value=7>Aug</option>
-                    <option value=8>Sep</option>
-                    <option value=9>Oct</option>
-                    <option value=10>Nov</option>
-                    <option value=11>Dec</option>
-                </select>
-    
-    
-                <label for="year"></label><select name="year" id="year" onchange="jump()">
-                <option value=1990>1990</option>
-                <option value=1991>1991</option>
-                <option value=1992>1992</option>
-                <option value=1993>1993</option>
-                <option value=1994>1994</option>
-                <option value=1995>1995</option>
-                <option value=1996>1996</option>
-                <option value=1997>1997</option>
-                <option value=1998>1998</option>
-                <option value=1999>1999</option>
-                <option value=2000>2000</option>
-                <option value=2001>2001</option>
-                <option value=2002>2002</option>
-                <option value=2003>2003</option>
-                <option value=2004>2004</option>
-                <option value=2005>2005</option>
-                <option value=2006>2006</option>
-                <option value=2007>2007</option>
-                <option value=2008>2008</option>
-                <option value=2009>2009</option>
-                <option value=2010>2010</option>
-                <option value=2011>2011</option>
-                <option value=2012>2012</option>
-                <option value=2013>2013</option>
-                <option value=2014>2014</option>
-                <option value=2015>2015</option>
-                <option value=2016>2016</option>
-                <option value=2017>2017</option>
-                <option value=2018>2018</option>
-                <option value=2019>2019</option>
-                <option value=2020>2020</option>
-                <option value=2021>2021</option>
-                <option value=2022>2022</option>
-                <option value=2023>2023</option>
-                <option value=2024>2024</option>
-                <option value=2025>2025</option>
-                <option value=2026>2026</option>
-                <option value=2027>2027</option>
-                <option value=2028>2028</option>
-                <option value=2029>2029</option>
-                <option value=2030>2030</option>
-            </select></form>
-        </div>
-    </div>
-<!--adding time tag-->
-    <div id="time-container" >
-        <p id="output"></p>
-    </div>
-    <script name="time js">
-        function showTime(){
-  var time = new Date();
-   var   currentH =  time.getHours();
-  //setting hour to 24hr clock
-      if(currentH < 12){
-        currentH =  "0"+currentH;
-      var f =  document.getElementById("output").innerHTML = currentH;
-      }
-  // adding "0" before 10minute mark
-  var currentM = time.getMinutes();
-      if(currentM <10){
-        currentM = "0"+currentM;
-        document.getElementById("output").innerHTML = currentH + " : " + currentM;
-      }else{
-        document.getElementById("output").innerHTML = currentH + " : " + currentM;
-      }    
-}
-window.addEventListener("load", function(){
-  setInterval(showTime, 1000)
-});
-    </script>
-    <script name="calendar">
-        d = new Date();
-currentMonth = d.getMonth();
-currentYear = d.getFullYear();
-selectYear = document.getElementById("year");
-selectMonth = document.getElementById("month");
 
-months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-monthAndYear = document.getElementById("monthAndYear");
-showCalendar(currentMonth, currentYear);
-
-
-function next() {
-    currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
-    currentMonth = (currentMonth + 1) % 12;
-    showCalendar(currentMonth, currentYear);
-}
-
-function previous() {
-    currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
-    currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-    showCalendar(currentMonth, currentYear);
-}
-
-function jump() {
-    currentYear = parseInt(selectYear.value);
-    currentMonth = parseInt(selectMonth.value);
-    showCalendar(currentMonth, currentYear);
-}
-
-function showCalendar(month, year) {
-
-    let firstDay = (new Date(year, month)).getDay();
-
-    tbl = document.getElementById("calendar-body"); // body of the calendar
-
-    // clearing all previous cells
-    tbl.innerHTML = "";
-
-    // filing data about month and in the page via DOM.
-    monthAndYear.innerHTML = months[month] + " " + year;
-    selectYear.value = year;
-    selectMonth.value = month;
-
-    // creating all cells
-    let date = 1;
-    for (let i = 0; i < 6; i++) {
-        // creates a table row
-        let row = document.createElement("tr");
-
-        //creating individual cells, filling them up with data.
-        for (let j = 0; j < 7; j++) {
-            if (i === 0 && j < firstDay) {
-                cell = document.createElement("td");
-                cellText = document.createTextNode("");
-                cell.appendChild(cellText);
-                row.appendChild(cell);
-            }
-            else if (date > daysInMonth(month, year)) {
-                break;
-            }
-
-            else {
-                cell = document.createElement("td");
-                cellText = document.createTextNode(date);
-                if (date === d.getDate() && year === d.getFullYear() && month === d.getMonth()) {
-                   
-                } // color today's date
-                cell.appendChild(cellText);
-                row.appendChild(cell);
-                date++;
-            }
-
-
-        }
-
-        tbl.appendChild(row); // appending each row into calendar body.
-    }
-
-}
-
-
-// check days in a month code from 
-function daysInMonth(iMonth, iYear) {
-    return 32 - new Date(iYear, iMonth, 32).getDate();
-}
-
-    </script>
+   <!-- <div id="C-O-C-button">
+        <a href="#C-O-C">Code of Conduct</a>
+    </div>-->
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
@@ -452,6 +219,29 @@ function daysInMonth(iMonth, iYear) {
 
 
 
+    </script>
+    <script name="font">
+        function changeFontSize(fontSize){
+              examsId = document.getElementsByClassName("examsClass")[0];
+              fontSizeClass = document.getElementsByClassName("fontSizeClass")[0];
+              examinersId = document.getElementById("examiners-id");
+              normal = 20;
+              large = 25;
+              extra = 30;
+          if(fontSize=="normal"){
+                examsId.style.fontSize = normal;
+                fontSizeClass.style.fontSize = normal;
+                examinersId.style.fontSize = normal;
+          }else if(fontSize=="large"){
+                examsId.style.fontSize = large;
+                fontSizeClass.style.fontSize = large;
+                examinersId.style.fontSize = large;
+          }else if(fontSize=="extra"){
+                examsId.style.fontSize = extra;
+                fontSizeClass.style.fontSize = extra;
+                examinersId.style.fontSize = extra;
+          }
+        }
     </script>
 
     <script>
@@ -529,24 +319,6 @@ function daysInMonth(iMonth, iYear) {
                 modal.style.display = "none";
             }
         }
-    </script>
-    <script>
-        
-        /*var checkExams = document.getElementById("examButton");
-        var examModal = document.getElementById('examModalId');
-        var examSpan = document.getElementsByClassName('close')[0];
-        checkExams.onclick = function(){
-            examModal.style.display = "block";
-        }
-        examSpan.onclick = function () {
-            examModal.style.display = "none";
-        }
-        window.onclick = function (event) {
-            if (event.target == examModal) {
-                examModal.style.display = "none";
-            }
-        }*/
-
     </script>
 
 </body>
