@@ -107,7 +107,6 @@
                 </p>
                 <iframe style="display:none" name="hidden-form"></iframe>
                 <form onsubmit="return false;" action="addexam.php" target="hidden-frame" method="post" id='createp'>
-                    <h5>Please enter the module number</h5> 
                     <h5>Module:</h5><input name="mname" form="createp" class='input'
                         placeholder='Enter module name ' required>
                     <h5>Date of Exam:</h5><input type="date" name = "date" required>
@@ -148,7 +147,7 @@
     <script>
 
         var examPosted = function (response) {
-            if (response != 0){
+            if (response != 0 && !isNaN(response)){
                 alert("Added exam successfully!");
                 var link = document.getElementById("qlink");
                 link.href = "multipleCQ.php?examid=" + response;
