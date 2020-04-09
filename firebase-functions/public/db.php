@@ -3,6 +3,7 @@
     $servername = "35.233.45.51";
     $username = "root";
     $password = "ViBOAFp8ua";
+    $dbname = "higherexam";
 
     class Class_DB{
         public function __construct($servername, $username, $password){
@@ -30,7 +31,7 @@
         }
 
         public function executeQuery($query, $inputParams=null){
-            if ($this>conn){
+            if ($this->conn){
                 $result = $this->conn->prepare($query);
                 $result->execute($inputParams);
                 return $result;
