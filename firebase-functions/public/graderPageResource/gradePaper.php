@@ -6,6 +6,7 @@
     // Execute query
     $sql = "select * from FinishedExam fe, Exams e, Student s, Users u
     where fe.finishedId = ?
+    AND fe.examId = e.id
     and fe.studentId = s.studentId
     and s.userId = u.id;";
     $result = $db->executeQuery($sql, [$_GET['id']]);
@@ -103,15 +104,10 @@
         }
 
         /* Style the submit button */
-        .form-inline button, #saveAll {
+        .form-inline button {
             padding: 10px 20px;
             background-color: dodgerblue;
             border: 1px solid #ddd;
-            color: white;
-        }
-
-        #saveAll:disabled, #saveAll[disabled]{
-            background-color: #706e6e;
             color: white;
         }
 
@@ -218,10 +214,9 @@
                                         <textarea class=\"form-control\" autocomplete=\"off\" type=\"text\" id=\"comment$i\" name=\"comment\" placeholder=\"Type feedback here...\">$comment</textarea>
                                     </div>
                                     <div class=\"form-group\">
-                                        <label>Marks:</label>
+                                        <label>Marks (out of {$examqs[$i]['maxMarks']}):</label>
                                         <input class=\"form-control\" type=\"number\" min='0' max=\"{$examqs[$i]['maxMarks']}\" id=\"mark$i\" name=\"mark\" placeholder=\"Marks\" value=\"{$examqs[$i]['markReceived']}\"/>
                                     </div>
-                                    / {$examqs[$i]['maxMarks']} 
                                     <button type=\"submit\" class=\"btn btn-primary\">Save</button>
                                 </form>";
                             echo '</div></div></div>';
