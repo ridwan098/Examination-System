@@ -100,7 +100,7 @@
         h3{
             font-size: 30px;
         }
-        #examiners-id{
+       /* #examiners-id{
             position:fixed;
             top:100px;
             left:20px;
@@ -108,7 +108,7 @@
             border:solid 1px black; 
             border-radius: 10px;
             font-size:20px;
-        }
+        }*/
     </style>
 </head>
 
@@ -172,9 +172,9 @@
             exam is also an assessment offence.</p>
     </div>-->
     <!--Examiners coming from DB-->
-    <div id="examiners-id">
+    <!--<div id="examiners-id">
         <p><b>Examiners: </b></p>
-    </div>
+    </div>-->
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -224,22 +224,22 @@
         function changeFontSize(fontSize){
               examsId = document.getElementsByClassName("examsClass")[0];
               fontSizeClass = document.getElementsByClassName("fontSizeClass")[0];
-              examinersId = document.getElementById("examiners-id");
+              //examinersId = document.getElementById("examiners-id");
               normal = 20;
               large = 25;
               extra = 30;
           if(fontSize=="normal"){
                 examsId.style.fontSize = normal;
                 fontSizeClass.style.fontSize = normal;
-                examinersId.style.fontSize = normal;
+              //  examinersId.style.fontSize = normal;
           }else if(fontSize=="large"){
                 examsId.style.fontSize = large;
                 fontSizeClass.style.fontSize = large;
-                examinersId.style.fontSize = large;
+              //  examinersId.style.fontSize = large;
           }else if(fontSize=="extra"){
                 examsId.style.fontSize = extra;
                 fontSizeClass.style.fontSize = extra;
-                examinersId.style.fontSize = extra;
+              //  examinersId.style.fontSize = extra;
           }
         }
     </script>
