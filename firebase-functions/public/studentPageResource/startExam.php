@@ -202,13 +202,12 @@
             $qnum = 1;
 
             // display html for each mcq question
+            echo "<div class='questions-tag'>";
             foreach ($questionData as $q){
                 $answers = explode("\0", $q['fakeOptions']);
                 $answers[] = $q['answer'];
                 shuffle($answers);
-                echo "
-                <div class='questions-tag'>  
-                    <strong>Question $qnum: {$q['question']}</strong><br>
+                echo "<strong>Question $qnum: {$q['question']}</strong><br>
                     <div class='answers' style='position:relative;left: 20px;'>";
                 foreach ($answers as $a){
                     if ($a == "") continue;
@@ -216,9 +215,10 @@
                         <input type='radio' id='$a' name='{$q['examqId']}' value='$a'>
                         <span for='$a'>$a</span><br>";
                 }
-                echo "</div></div>";
+                echo "</div>";
                 $qnum += 1;
             }
+            echo "</div>";
         ?>
       <input type="submit" value="Submit Exam"style="position:relative;top:20px;left: 150px; border-radius: 10px;">
     </form>
