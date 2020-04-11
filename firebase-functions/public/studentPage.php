@@ -164,10 +164,27 @@
             </div>
         </div>
     </nav>
+
+    <?php
+        if (sizeof($exams) == 0){
+            $examDetails = "<p>No exams to show</p>";
+            $welcome = "You have 0 exams to attempt!";
+        }
+        else{
+            $latest = 0;
+            $examDetails = "";
+            foreach ($exams as $row){
+                $examDetails .= "<p><a href=\"studentPageResource/startExam.php?examid={$row['id']}\">{$row['subject']}</a> Due: " . date("d/m/Y H:i:s", $row['date']) . " (Examiner: {$row['name']})</p>";
+                if ($row['date'] > $latest)
+                    $latest = $row['date'];
+            }
+            $welcome = "You have " . sizeof($exams) . " exam(s) to attempt by " . date("d/m/Y", $latest);
+        }
+    ?>
     <div class="jumbotron">
         <div class="container text-center">
             <h1 id='username'>Welcome </h1>
-            <p id="welcomeMessage">error on welcome message</p>
+            <p id="welcomeMessage"><?php echo $welcome; ?></p>
         </div>
     </div>
                     <!-- Exam content -->
@@ -176,19 +193,7 @@
                         <div class='examsClass'>
                             <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
                             <?php 
-                                if (sizeof($exams) == 0){
-                                    echo "<p>No exams to show</p>";
-                                }
-                                else{
-                                    $latest = 0;
-                                    $examDetails = "";
-                                    foreach ($exams as $row){
-                                        $examDetails .= "<p><a href=\"studentPageResource/startExam.php?examid={$row['id']}\">{$row['subject']}</a> Due: " . date("d/m/Y H:i:s", $row['date']) . " (Examiner: {$row['name']})</p>";
-                                        if ($row['date'] > $latest)
-                                            $latest = $row['date'];
-                                    }
-                                    echo $examDetails;
-                                }
+                                echo $examDetails;
                             ?>
                         </div>
                     </div>
@@ -330,9 +335,6 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
-                //FOR ALEX Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
-                    var welcomeMessage = "You have " + "3" + " exams to attempt by " + "20/06/2020"+"." ;
-                    document.getElementById('welcomeMessage').innerHTML = welcomeMessage;
                 });
                 
             }
