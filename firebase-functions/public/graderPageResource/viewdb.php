@@ -1,5 +1,5 @@
 <?php
-    require("../db.php");
+    require("../global/db.php");
     try {
         $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
         // set the PDO error mode to exception
@@ -16,6 +16,7 @@
         "Examiner",
         "Grader",
         "Exams",
+        "StudentExamRelation",
         "FinishedExam",
         "ExamQuestions",
         "McqQuestion",

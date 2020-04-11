@@ -1,6 +1,6 @@
 <?php
 
-    require("../db.php");
+    require("../global/db.php");
 
     $conn = new Class_DB($servername, $username, $password);
     $conn->connectToDb($dbname);

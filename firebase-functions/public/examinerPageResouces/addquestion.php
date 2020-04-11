@@ -1,6 +1,6 @@
 <?php
 
-    require('../db.php');
+    require("../global/db.php");
 
     $examid = getPostArg('examid');
     $question = getPostArg('question');
@@ -34,8 +34,4 @@
     }
 
     echo 1;
-
-    function getPostArg($name){
-        return isset($_POST[$name]) ? $_POST[$name] : die(0);
-    }
 ?>
