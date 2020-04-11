@@ -1,27 +1,33 @@
 <?php
-    require("db.php");
+    require("global/db.php");
+    require("global/util.php");
+
+    session_start();
+
+    if (!isSessionLoggedIn()){
+        header("Location: index.html");
+    }
 
     // Connect to sql db
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-    catch(PDOException $e)
-    {
-        die("Connection failed: " . $e->getMessage());
-    }
+    $db = new Class_DB($servername, $username, $password);
+    $db->connectToDb($dbname);
+
+    $time = time();
 
     // Execute query
-    $sql = "SELECT * FROM Exams WHERE isMcq=1";
-    $result = $conn->query($sql);
+    $sql = "SELECT e.*, u.name FROM StudentExamRelation ser, Exams e, Users u 
+            WHERE ser.userId=? 
+            AND e.examinerId = u.id
+            AND ser.examId = e.id
+            AND (e.date+e.timerLength) > ?";
+    $result = $db->executeQuery($sql, [$_SESSION['userid'], $time]);
     $exams = [];
     while ($row = $result->fetch()){
         $exams[] = $row;
     }
+
     $conn = null;
 ?>
-
 
 <html lang="en">
 
@@ -44,7 +50,7 @@
             background-color: #28322C;
             border-color: #28322C;
         }
-
+        
         /* The Modal (background) */
         .modal {
             display: none;
@@ -85,41 +91,55 @@
             text-decoration: none;
             cursor: pointer;
         }
-        #examButton{
-            border-radius: 20px;
+        .exam-content{
+            position: fixed;
+            left:450px;   
+            text-align: left;
+            
+        }
+        .examsClass{
+            padding-left:2%;
+            width: 700px;
+            font-size: 20px;
+        }
+        .fontSizeClass{
+            position: fixed;
+            top: 60px;
+            left: 950px;
             text-align: center;
             font-size: 20px;
-            width: 120px;
-            height: 40px;
+            width: 300px;
+            border: solid 1px black;
+            border-radius: 10px;
+        }
+        .fontButtonClass{
+            background: transparent;
+            border-radius: 10px;
+            border: solid 0px transparent;
+            text-decoration: underline;
             outline: none;
         }
-        #examModalId{
-            display: none;
-            position: fixed;
-            z-index: 1;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
+        .normalSizedButton{
+            font-size: 20px;
         }
-        .examModal-content{
-            background-color: #28322C;
-            color: white;
-            text-align: justify;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+        .largeSizedButton{
+            font-size: 25px;
         }
-        .welcome-message{
-            position: relative;
-            left: 220px;
-            text-align: center;
+        .extraSizedButton{
+            font-size: 30px;
         }
+        h3{
+            font-size: 30px;
+        }
+       /* #examiners-id{
+            position:fixed;
+            top:100px;
+            left:20px;
+            width:auto; 
+            border:solid 1px black; 
+            border-radius: 10px;
+            font-size:20px;
+        }*/
     </style>
 </head>
 
@@ -144,48 +164,61 @@
             </div>
         </div>
     </nav>
-
-
     <div class="jumbotron">
         <div class="container text-center">
             <h1 id='username'>Welcome </h1>
+            <p id="welcomeMessage">error on welcome message</p>
         </div>
     </div>
-
-    <?php 
-        $latest = 0;
-        $examDetails = "";
-        foreach ($exams as $row){
-            $examDetails .= "<p id='examDetails'><a href=\"studentPageResource/startExam.php?examid={$row['id']}\">{$row['subject']}</a> Due: " . date("d/m/Y H:i:s", $row['date']) . "</p>";
-            if ($row['date'] > $latest)
-                $latest = $row['date'];
-        }
-    ?>
-
-    <div class="container-fluid text-center">
-        <div class="row content">
-            
-            <div class="col-sm-8 text-left welcome-message">
-                <p id="welcomeMessage"><?php echo "You have " . sizeof($exams) . " exams to attempt by " . date("d/m/Y", $latest) . "." ?></p>
-                <hr>
-                <!--show tests button-->
-                <button id="examButton">Your Tests</button>
-               
-                <div id="examModalId">
-
-                    <!-- Exam modal content -->
-                    <div class="examModal-content">
-                        <span class="close">&times;</span>
+                    <!-- Exam content -->
+                    <div class="exam-content">
                         <h3>Here are your exam details:</h3>
-                        <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
-                        <?php echo $examDetails; ?>
+                        <div class='examsClass'>
+                            <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
+                            <?php 
+                                if (sizeof($exams) == 0){
+                                    echo "<p>No exams to show</p>";
+                                }
+                                else{
+                                    $latest = 0;
+                                    $examDetails = "";
+                                    foreach ($exams as $row){
+                                        $examDetails .= "<p><a href=\"studentPageResource/startExam.php?examid={$row['id']}\">{$row['subject']}</a> Due: " . date("d/m/Y H:i:s", $row['date']) . " (Examiner: {$row['name']})</p>";
+                                        if ($row['date'] > $latest)
+                                            $latest = $row['date'];
+                                    }
+                                    echo $examDetails;
+                                }
+                            ?>
+                        </div>
                     </div>
+                
+                <!--changing font size-->
+                <div class="fontSizeClass">
+                    <h3>Font Size:</h3>
+                    <button class="normalSizedButton fontButtonClass" onclick="changeFontSize('normal')">Normal</button>
+                    <button class="largeSizedButton fontButtonClass" onclick="changeFontSize('large')">Large</button>
+                    <button class="extraSizedButton fontButtonClass" onclick="changeFontSize('extra')">Extra Large</button>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    
+    <!--Notice dropbox-->
+<!-- <div id="C-O-C-button">
+        <h4>Exam Code of Conduct</h4>
+        This can be changed, remember to ask if it should come from examiner or have just one form of it.
+        <p>Possession of unauthorised material at any time when under examination conditions is an
+            assessment offence and can lead to expulsion from the institution. Check now to ensure you do not have
+            any notes, mobile phones or unauthorised electronic devices on your person. If you do, raise your
+            hand and give them to an invigilator immediately. It is also an offence to have any writing of any
+            kind on your person, including on your body. If you are found to have hidden unauthorised material
+            elsewhere, including toilets and cloakrooms it will be treated as being found in your possession.
+            Unauthorised material found on your mobile phone or other electronic device will be considered
+            the same as being in possession of paper notes. A mobile phone that causes a disruption in the
+            exam is also an assessment offence.</p>
+    </div>-->
+    <!--Examiners coming from DB-->
+    <!--<div id="examiners-id">
+        <p><b>Examiners: </b></p>
+    </div>-->
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -199,6 +232,10 @@
 
     </div>
 
+
+   <!-- <div id="C-O-C-button">
+        <a href="#C-O-C">Code of Conduct</a>
+    </div>-->
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
@@ -226,6 +263,29 @@
 
 
 
+    </script>
+    <script name="font">
+        function changeFontSize(fontSize){
+              examsId = document.getElementsByClassName("examsClass")[0];
+              fontSizeClass = document.getElementsByClassName("fontSizeClass")[0];
+              //examinersId = document.getElementById("examiners-id");
+              normal = 20;
+              large = 25;
+              extra = 30;
+          if(fontSize=="normal"){
+                examsId.style.fontSize = normal;
+                fontSizeClass.style.fontSize = normal;
+              //  examinersId.style.fontSize = normal;
+          }else if(fontSize=="large"){
+                examsId.style.fontSize = large;
+                fontSizeClass.style.fontSize = large;
+              //  examinersId.style.fontSize = large;
+          }else if(fontSize=="extra"){
+                examsId.style.fontSize = extra;
+                fontSizeClass.style.fontSize = extra;
+              //  examinersId.style.fontSize = extra;
+          }
+        }
     </script>
 
     <script>
@@ -270,6 +330,9 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                //FOR ALEX Mention number of exams to do and a little message for the student, NOTE: number and date variable will come from the examiner database
+                    var welcomeMessage = "You have " + "3" + " exams to attempt by " + "20/06/2020"+"." ;
+                    document.getElementById('welcomeMessage').innerHTML = welcomeMessage;
                 });
                 
             }
@@ -278,7 +341,7 @@
                     adminItems[i].style.display = 'none';
                 }
                 accountDetails.innerHtml = '';
-                document.getElementById('username').innerHTML
+                document.getElementById('username').innerHTML;
             }
         }
 
@@ -300,22 +363,6 @@
                 modal.style.display = "none";
             }
         }
-        
-        var checkExams = document.getElementById("examButton");
-        var examModal = document.getElementById('examModalId');
-        checkExams.onclick = function(){
-            examModal.style.display = "block";
-        }
-        span.onclick = function () {
-            examModal.style.display = "none";
-        }
-        /*window.onclick = function (event) {
-            if (event.target == examModal) {
-                examModal.style.display = "none";
-            }
-        }*/
-
-    
     </script>
 
 </body>

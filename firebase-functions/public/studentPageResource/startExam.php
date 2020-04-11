@@ -1,24 +1,32 @@
 <?php
 
-    require("../db.php");
+    require("../global/db.php");
+    require("../global/util.php");
+
+    session_start();
+
+    if (!isSessionLoggedIn()){
+        header("Location: index.html");
+    }
 
     $examId = $_GET['examid'];
+    $userId = $_SESSION['userid'];
 
     // Connect to sql db
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-    catch(PDOException $e)
-    {
-        die("Connection failed: " . $e->getMessage());
+    $db = new Class_DB($servername, $username, $password);
+    $db->connectToDb($dbname);
+
+    // check user is authorised to view exam
+    if ($_SESSION['type'] == "student"){
+        $result = $db->executeQuery("SELECT * FROM StudentExamRelation WHERE userId=? AND examId=?", [$userId, $examId]);
+        if (!$result->fetch()){
+            header("Location: ../studentPage.php");
+        }
     }
 
     // Execute query for exam data
     $query = "SELECT * FROM Exams e WHERE e.id = ?";
-    $result = $conn->prepare($query);
-    $result->execute([$examId]);
+    $result = $db->executeQuery($query, [$examId]);
     $examData = $result->fetch();
     if (!$examData){
         die('failed to find exam');
@@ -28,8 +36,7 @@
     $query = "SELECT * FROM ExamQuestions eq, McqQuestion mcq
             WHERE eq.examId = ?
             AND mcq.examqId = eq.examqId";
-    $result = $conn->prepare($query);
-    $result->execute([$examId]);
+    $result = $db->executeQuery($query, [$examId]);
     $questionData = [];
     while ($row = $result->fetch()){
         $questionData[] = $row;
@@ -183,13 +190,14 @@
             if (param.contentWindow.document.body.innerHTML == 1){
                 alert("Exam successfully submitted!");
                 param.contentWindow.document.body.innerHTML = "";
-                window.location.replace("../studentPage.html");
+                window.location.replace("../studentPage.php");
             }
         }
     </script>
     <iframe  name="hidden-form" onload="checkSubmit(this)"></iframe>
     <form class="questions-form" target="hidden-form" action="submitExam.php" method="post">
         <input type="hidden" name="examid" value=<?php echo "\"$examId\""; ?> />
+        <input type="hidden" name="userid" value=<?php echo "\"$userId\""; ?> />
         <?php 
             $qnum = 1;
 
@@ -280,7 +288,7 @@
 
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
         
@@ -395,8 +403,8 @@
 
         // If the count down is over, write some text 
         if (examOver < 0) {
-        clearInterval(x);
-        document.getElementById("countdown").innerHTML = "EXPIRED";
+            clearInterval(x);
+            document.getElementById("countdown").innerHTML = "EXPIRED";
         }
     }, 500);
   </script>

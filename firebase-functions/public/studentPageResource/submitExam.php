@@ -1,27 +1,19 @@
 <?php
-    require("../db.php");
+    require("../global/db.php");
 
-    if (isset($_POST['examid'])){
+    if (isset($_POST['examid']) && isset($_POST['userid'])){
         
         $examId = $_POST['examid'];
-        $studentId = 123456789;
+        $studentId = $_POST['userid'];
 
         // Connect to sql db
-        try {
-            $conn = new PDO("mysql:host=$servername;dbname=higherexam", $username, $password);
-            // set the PDO error mode to exception
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-        catch(PDOException $e)
-        {
-            die("Connection failed: " . $e->getMessage());
-        }
+        $db = new Class_DB($servername, $username, $password);
+        $db->connectToDb($dbname);
 
         // Execute query for finished exam
-        $query = "INSERT INTO FinishedExam (examId, studentId, marked)
+        $query = "INSERT INTO FinishedExam (examId, userId, marked)
                 VALUES (?, ?, 0)";
-        $result = $conn->prepare($query);
-        $result->execute([$examId, $studentId]);
+        $result = $db->executeQuery($query, [$examId, $studentId]);
 
         // Execute queries for answers
         $query = "INSERT INTO CompletedQuestions (examqId, finExamId, answer)
@@ -35,14 +27,17 @@
                 }
                 $query .= "(?, ?, ?)";
                 $values[] = $key;
-                $values[] = $conn->lastInsertId();
+                $values[] = $db->getLastInsertId();
                 $values[] = $value;
                 $needcomma = true;
             }
         }
-        $result = $conn->prepare($query);
-        $result->execute($values);
+        $result = $db->executeQuery($query, $values);
+
+        // Remove from database after student has sat exam
+        $query = "DELETE FROM StudentExamRelation WHERE examId=? AND userId=?";
+        $db->executeQuery($query, [$examId, $studentId]);
+
         echo "1";
-        $conn = null;
     }
 ?>
