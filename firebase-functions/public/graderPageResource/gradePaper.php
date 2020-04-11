@@ -1,14 +1,13 @@
 <?php
-    require("../db.php");
+    require("../global/db.php");
 
     $db = new Class_DB($servername,$username, $password);
     $db->connectToDb("higherexam");
     // Execute query
-    $sql = "select * from FinishedExam fe, Exams e, Student s, Users u
-    where fe.finishedId = ?
+    $sql = "SELECT * FROM FinishedExam fe, Exams e, Users u
+    WHERE fe.finishedId = ?
     AND fe.examId = e.id
-    and fe.studentId = s.studentId
-    and s.userId = u.id;";
+    AND fe.userId = u.id";
     $result = $db->executeQuery($sql, [$_GET['id']]);
     $metaRow = $result->fetch();
 
@@ -160,7 +159,7 @@
             <?php
                 echo "<h1>{$metaRow['subject']}</h1>";
                 echo "<h3>Candidate Name: {$metaRow['name']}</h3>";
-                echo "<h3>Candidate ID: {$metaRow['studentId']}</h3>";
+                //echo "<h3>Candidate ID: {$metaRow['studentId']}</h3>";
             ?>
         </center>
     </div>

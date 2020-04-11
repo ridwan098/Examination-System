@@ -1,6 +1,6 @@
 <?php
 
-    require("../db.php");
+    require("../global/db.php");
     
     $NUM_PAPERS_DISPLAY = 5;
 
@@ -8,11 +8,10 @@
     $db->connectToDb("higherexam");
 
     // query to get list of unmarked exams
-    $sql = "SELECT * FROM FinishedExam fe, Exams e, Student s, Users u
+    $sql = "SELECT * FROM FinishedExam fe, Exams e, Users u
             WHERE fe.marked = 0
             AND fe.examId = e.id 
-            AND fe.studentId = s.studentId
-            AND s.userId = u.id";
+            AND fe.userId = u.id";
     $result = $db->executeQuery($sql);
     $unmarkedExams = [];
     while($row = $result->fetch()) {
@@ -20,17 +19,16 @@
     }
 
     // query to get list of marked exams
-    $sql = "SELECT fe.*, e.*,s.*,u.*,(
+    $sql = "SELECT fe.*, e.*,u.*,(
                 SELECT (SUM(cq.markReceived) / SUM(eq.maxMarks))*100 AS totalMarks
                 FROM ExamQuestions eq, CompletedQuestions cq
                 WHERE eq.examId = fe.examId
                 AND cq.finExamId = fe.finishedId
                 AND cq.examqId = eq.examqId) AS totalMarks 
-            FROM FinishedExam fe, Exams e, Student s, Users u
+            FROM FinishedExam fe, Exams e, Users u
             WHERE fe.marked = 1
             AND fe.examId = e.id
-            AND fe.studentId = s.studentId
-            AND s.userId = u.id";
+            AND fe.userId = u.id";
     $result = $db->executeQuery($sql);
     $markedExams = [];
     while ($row = $result->fetch()){
@@ -214,7 +212,7 @@
                                     }
                                     echo "<td>{$unmarkedExams[$i]['subject']}</td>";
                                     echo "<td>{$unmarkedExams[$i]['name']}</td>";
-                                    echo "<td>{$unmarkedExams[$i]['studentId']}</td>";
+                                    echo "<td>{$unmarkedExams[$i]['id']}</td>";
                                     echo "</tr>";
                                 }
                             ?>
@@ -250,7 +248,7 @@
                                 }
                                 echo "<td>{$markedExams[$i]['subject']}</td>";
                                 echo "<td>{$markedExams[$i]['name']}</td>";
-                                echo "<td>{$markedExams[$i]['studentId']}</td>";
+                                echo "<td>{$markedExams[$i]['id']}</td>";
                                 echo "<td>{$totalMarks}</td>";
                                 echo "</tr>";
                             }
