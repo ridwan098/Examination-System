@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creating Paper...</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -72,13 +72,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="../index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="index.html">Home</a></li>
+                    <li id='logout'><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -106,14 +106,15 @@
                     Once all students have been added click on a question type to create the first question.</p>
                 <hr>
 
-                <form id='addS'>
-                    <h5>Please enter the studen ID number</h5> 
-                    <h5>Student ID:</h5><input name="adds" form="addS" class='input'
+                <form onsubmit="return false;" action="addstudent.php" method="post" id='addS'>
+                    <input type="hidden" name="examid" value=<?php echo "\"{$_GET['examid']}\""; ?> >
+                    <h5>Please enter the student ID number</h5> 
+                    <h5>Student ID:</h5><input name="student" form="addS" class='input'
                         placeholder='Enter student number' minlength="8" maxlength="8"><br>
-                    <button class='btn'>Add Student</button><br/>
+                    <button onclick="postForm(this, 'addS', studentAdded);" class='btn'>Add Student</button><br/>
                 </form>
                 <hr>
-                <form>
+                <!--<form>
                     
                     <p>Please select your first question type:</p>
                     <input type="radio" id="mcq" name="qtype" value="Multiple Choice Question">
@@ -124,7 +125,7 @@
                     <label for="text">Text based answer Question</label><br>
                     <button class='btn'>Start making first question</button><br/>
                     
-                </form>
+                </form>-->
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
@@ -150,6 +151,43 @@
         </div>
 
     </div>
+
+    <script>
+        var studentAdded = function(caller, response){
+            caller.disabled = false;
+            if (response == 1){
+                alert("Student added successfully!");
+            }
+            else{
+                alert("Failed to add student");
+            }
+        }
+
+        function postForm(caller, formId, callback){
+            caller.disabled = true;
+
+            var form = document.getElementById(formId);
+            var inputs = Array.from(form.elements).filter(e => e.getAttribute("name"));
+
+            // compile data
+            var data = "";
+            for (var i = 0; i < inputs.length; i++){
+
+                data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
+            }
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    callback(caller, xhr.response);
+                }
+            }
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(data);
+        }
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
@@ -177,6 +215,8 @@
 
     </script>
 
+
+
     <script>
         //log out 
         const logout = document.querySelector('#logout');
@@ -195,7 +235,7 @@
                 setupUI(user);
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
 

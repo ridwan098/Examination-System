@@ -1,6 +1,7 @@
 <?php
 
     require("../global/db.php");
+    require("../global/util.php");
 
     $examid = getPostArg('examid');
     $question = getPostArg('question');

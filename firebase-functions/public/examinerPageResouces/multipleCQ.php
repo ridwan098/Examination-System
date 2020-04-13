@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -72,13 +72,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="../index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="index.html">Home</a></li>
+                    <li id='logout'><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -110,6 +110,8 @@
                     <button onclick="postForm(this, 'question', questionPosted);" class='btn'>Submit Question</button><br/>
                     <hr />
                 </form>
+
+                <p id="addtext" style="visibility: hidden">Question successfully added. Continue adding more questions or <a href=<?php echo "\"addingStudent.php?examid={$_GET['examid']}\""; ?>>add students to the exam</a>.</p>
 
                 <hr>
                 <h3>Test</h3>
@@ -162,6 +164,11 @@
             caller.disabled = false;
             if (response == 1){
                 alert("Success!");
+                var link = document.getElementById("addtext");
+                link.style ="";
+            }
+            else{
+                alert("Failed to add question");
             }
         }
 
@@ -235,7 +242,7 @@
                 setupUI(user);
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
 
