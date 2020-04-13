@@ -94,21 +94,21 @@
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Multiple Choice Question</h1>
-                <form onsubmit="return false;" action="addquestion.php" method="post" id='question'>
+                <form onsubmit="postForm(this, 'question', questionPosted); return false;" action="addquestion.php" method="post" id='question'>
                     <input type="hidden" name="examid" value=<?php echo '"' . $_GET['examid'] . '"'; ?> >
                     <input type="hidden" name="type" value=1 >
                     <h5>Please enter a multiple choice question here along with the correct and fake answers.</h5> 
                     <textarea name="question" type='input' placeholder="Question" class='input' required></textarea>
-                    <h5>Answer:</h5><input name="answer" form="question" class='input'
+                    <h5>Correct Answer:</h5><input name="answer" form="question" class='input'
                         placeholder='Enter answer here...' required>
-                    <h5>Fake Answers:</h5>
+                    <h5>Other Answers:</h5>
                     <div id='fakeAnswers'>
                         <input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>
                     </div>
                     <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button>
                     <h5>Marks:</h5><input name="marks" form="question" class='input'
                         placeholder='Enter marks here...' required>
-                    <button onclick="postForm(this, 'question', questionPosted);" class='btn'>Submit Question</button><br/>
+                    <button type="submit" class='btn'>Submit Question</button><br/>
                     <hr />
                 </form>
 
@@ -153,7 +153,6 @@
             node.setAttribute("form", "question");
             node.setAttribute("class", "input");
             node.setAttribute("placeholder", "Enter answer here...");
-            node.setAttribute("required", "true");
 
             var div = document.getElementById(id);
             div.appendChild(document.createElement("br"));

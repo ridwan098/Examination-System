@@ -106,7 +106,7 @@
                     which you would like for the paper to start and a total number of questions.
                 </p>
                 <iframe style="display:none" name="hidden-form"></iframe>
-                <form onsubmit="return false;" action="addexam.php" target="hidden-frame" method="post" id='createp'>
+                <form onsubmit="postForm(this, 'createp', examPosted); return false;" action="addexam.php" target="hidden-frame" method="post" id='createp'>
 
                     <h5>Module:</h5><input name="mname" form="createp" class='input'
                         placeholder='Enter module name ' required>
@@ -115,7 +115,7 @@
                         min="09:00" max="18:00" required>
                     <h5>Length:</h5><input type="time" class="input" id="time" name="length" required>
                     <hr>
-                    <button onclick="postForm(this, 'createp', examPosted)" class='btn'>Submit Paper</button><br/>
+                    <button type="submit" class='btn'>Submit Paper</button><br/>
                 </form>
                 <hr>
                 <p id="qtext" style="visibility:hidden;">The exam has been successfully created, time to <a id="qlink" href="multipleCQ.html?">add some questions</a>.</p>
@@ -169,7 +169,6 @@
             // compile data
             var data = "";
             for (var i = 0; i < inputs.length; i++){
-
                 data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
             }
 
