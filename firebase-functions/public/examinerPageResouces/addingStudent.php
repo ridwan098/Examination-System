@@ -102,16 +102,15 @@
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
-                <p>On this page you will add students to the exam paper. 
-                    Once all students have been added click on a question type to create the first question.</p>
+                <p>On this page you will add students to the exam paper.</p>
                 <hr>
 
-                <form onsubmit="return false;" action="addstudent.php" method="post" id='addS'>
+                <form onsubmit="postForm(this, 'addS', studentAdded); return false;" action="addstudent.php" method="post" id='addS'>
                     <input type="hidden" name="examid" value=<?php echo "\"{$_GET['examid']}\""; ?> >
-                    <h5>Please enter the student ID number</h5> 
-                    <h5>Student ID:</h5><input name="student" form="addS" class='input'
-                        placeholder='Enter student number' minlength="8" maxlength="8"><br>
-                    <button onclick="postForm(this, 'addS', studentAdded);" class='btn'>Add Student</button><br/>
+                    <h5>Please enter the student email address</h5> 
+                    <h5>Student Email:</h5><input name="student" form="addS" class='input'
+                        placeholder='Enter student email' required><br>
+                    <button type="submit" class='btn'>Add Student</button><br/>
                 </form>
                 <hr>
                 <!--<form>

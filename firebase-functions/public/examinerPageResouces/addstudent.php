@@ -4,12 +4,12 @@
     require('../global/db.php');
 
     $examid = getPostArg('examid');
-    $userid = getPostArg('student');
+    $email = getPostArg('student');
 
     $db = new Class_DB($servername,$username,$password);
     $db->connectToDb($dbname);
     $db->executeQuery("INSERT INTO StudentExamRelation
-                        VALUES (?,?)", [$examid, $userid]);
+                        SELECT ?, id FROM Users WHERE email=?", [$examid, $email]);
 
     echo 1;
 ?>
