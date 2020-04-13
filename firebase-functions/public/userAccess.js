@@ -25,6 +25,18 @@ signupForm.addEventListener("submit", (e) => {
             userID: cred.user.uid
         }).then(() => {
             console.log(cred);
+
+            // call php to insert to sql db
+            var post = "type=" + encodeURIComponent(userLevel1);
+            post += "&password=" + encodeURIComponent(password1);
+            post += "&name=" + encodeURIComponent(username1);
+            post += "&email=" + encodeURIComponent(email1);
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "adminPageResource/adduser.php", false);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send(post);
+
             document.getElementById('errorMessage').innerHTML = "Account Created Successfully " + '<br /> <br />';
             // auth.signOut().then(() => {
             //     alert('User signed out')
@@ -34,17 +46,6 @@ signupForm.addEventListener("submit", (e) => {
         document.getElementById('errorMessage').innerHTML = "There was an error signing you up: " + err.message + '<br /> <br />';
         console.log('Error signing you up', err);
     });
-
-    // call php to insert to sql db
-    var post = "type=" + encodeURIComponent(userLevel1);
-    post += "&password=" + encodeURIComponent(password1);
-    post += "&name=" + encodeURIComponent(username1);
-    post += "&email=" + encodeURIComponent(email1);
-
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "adminPageResource/adduser.php", false);
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send(post);
 
     //console.log(email, password, userLevel, username, 'thats all');
     //console.log("This is from the userAccess document");

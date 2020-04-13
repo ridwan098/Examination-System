@@ -199,7 +199,7 @@
                             <tr>
                                 <th>Subject</th>
                                 <th>Student Name</th>
-                                <th>Student ID</th>
+                                <th>Student Email</th>
                             </tr>
                             <?php 
                                 for ($i = 0; $i < sizeof($unmarkedExams); $i++){
@@ -212,7 +212,7 @@
                                     }
                                     echo "<td>{$unmarkedExams[$i]['subject']}</td>";
                                     echo "<td>{$unmarkedExams[$i]['name']}</td>";
-                                    echo "<td>{$unmarkedExams[$i]['id']}</td>";
+                                    echo "<td>{$unmarkedExams[$i]['email']}</td>";
                                     echo "</tr>";
                                 }
                             ?>
@@ -230,7 +230,7 @@
                         <tr>
                             <th>Subject</th>
                             <th>Student Name</th>
-                            <th>Student ID</th>
+                            <th>Student Email</th>
                             <th>Grade (%)</th>
                         </tr>
                         <?php 
@@ -248,7 +248,7 @@
                                 }
                                 echo "<td>{$markedExams[$i]['subject']}</td>";
                                 echo "<td>{$markedExams[$i]['name']}</td>";
-                                echo "<td>{$markedExams[$i]['id']}</td>";
+                                echo "<td>{$markedExams[$i]['email']}</td>";
                                 echo "<td>{$totalMarks}</td>";
                                 echo "</tr>";
                             }
@@ -378,6 +378,11 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                    if (doc.data().userLevel == "admin"){
+                        for (i = 0; i < adminItems.length; i++) {
+                            adminItems[i].style.display = 'block';
+                        }   
+                    }
                 });
 
             }

@@ -101,10 +101,11 @@
                     <textarea name="question" type='input' placeholder="Question" class='input' required></textarea>
                     <h5>Answer:</h5><input name="answer" form="question" class='input'
                         placeholder='Enter answer here...' required>
-                    <h5>Fake Answers: <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button></h5>
+                    <h5>Fake Answers:</h5>
                     <div id='fakeAnswers'>
                         <input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>
                     </div>
+                    <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button>
                     <h5>Marks:</h5><input name="marks" form="question" class='input'
                         placeholder='Enter marks here...' required>
                     <button onclick="postForm(this, 'question', questionPosted);" class='btn'>Submit Question</button><br/>

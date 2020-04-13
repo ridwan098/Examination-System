@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Examiner Page</title>
     <link rel="stylesheet" type="text/css" href="logIn.css">
-    <link rel="stylesheet" type="text/css" href="examinerPageResouces/examinerPage.css.css">    
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -224,10 +223,10 @@
         auth.onAuthStateChanged(user => {
             if (user) {
                 user.getIdTokenResult().then(idTokenResult => {
-                    user.admin = idTokenResult.claims.admin
+                    user.admin = idTokenResult.claims.admin;
                     setupUI(user);
                 })
-                console.log('User logged in: ', user)
+                console.log('User logged in: ', user);
 
             } else {
                 console.log('User logged out');
@@ -257,6 +256,11 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                    if (doc.data().userLevel == "admin"){
+                        for (i = 0; i < adminItems.length; i++) {
+                            adminItems[i].style.display = 'block';
+                        }   
+                    }
                 });
 
             }

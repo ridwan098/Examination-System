@@ -373,6 +373,11 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                    if (doc.data().userLevel == "admin"){
+                        for (i = 0; i < adminItems.length; i++) {
+                            adminItems[i].style.display = 'block';
+                        }   
+                    }
                 });
 
             }
