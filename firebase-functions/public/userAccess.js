@@ -38,9 +38,9 @@ signupForm.addEventListener("submit", (e) => {
             xhttp.send(post);
 
             document.getElementById('errorMessage').innerHTML = "Account Created Successfully " + '<br /> <br />';
-            // auth.signOut().then(() => {
-            //     alert('User signed out')
-            // })
+            auth.signOut().then(() => {
+                alert('User signed out')
+            })
         });
     }).catch(err => {
         document.getElementById('errorMessage').innerHTML = "There was an error signing you up: " + err.message + '<br /> <br />';
