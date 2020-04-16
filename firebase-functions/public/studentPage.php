@@ -177,23 +177,20 @@ $conn = null;
             <div class="col-sm-2">
                 <div class="well sidenav">
                     <div class="well">
-                        <p><a href="#">My Profile</a></p>
+                        <p id="profile"><a>My Profile</a></p>
                         <img src="avatar.png" class="img-circle" height="65" width="65" alt="Avatar">
                     </div>
 
                     <div class="well">
-                        <p>ADS</p>
+                        <a href="#">
+                            <p>View Grades</p>
+                        </a>
                     </div>
                     <div class="well">
                         <p>ADS</p>
                     </div>
                 </div>
 
-
-                <div class="well">
-                    <p><a href="#">My Profile</a></p>
-                    <img src="bird.jpg" class="img-circle" height="65" width="65" alt="Avatar">
-                </div>
                 <div class="well">
                     <p><a href="#">Interests</a></p>
                     <p>
@@ -224,29 +221,37 @@ $conn = null;
                     <div class="col-sm-12">
                         <div class="panel panel-default text-left">
                             <div class="panel-body">
-                                <p contenteditable="true">Status: Feeling Blue</p>
                                 <button type="button" class="btn btn-default btn-sm">
-                                    <span class="glyphicon glyphicon-thumbs-up"></span> Like
+                                    Exams
                                 </button>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">Exam Details</div>
+                            <div class="panel-footer">
+                                <!-- Exam content -->
+                                <div class="exam-content">
+                                    <h3>Here are your exam details:</h3>
+                                    <div class='examsClass'>
+                                        <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
+                                        <?php
+                                        echo $examDetails;
+                                        ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-sm-3">
-                        <div class="well">
-                            <p>John</p>
-                            <img src="bird.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-                        </div>
-                    </div>
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         <div class="well">
                             <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
                         </div>
                     </div>
                 </div>
-
             </div>
 
 
@@ -256,19 +261,23 @@ $conn = null;
             <div class="col-sm-2">
                 <div class="well sidenav">
                     <div class="thumbnail">
-                        <p>Upcoming Events:</p>
+                        <p><strong>Upcoming Exams:</strong></p>
+                        <!-- Amount of Exams -->
+                        <p id="welcomeMessage"><?php echo $welcome; ?></p>
 
-                        <p><strong>Paris</strong></p>
-                        <p>Fri. 27 November 2015</p>
-                        <button class="btn btn-primary">Info</button>
+                        <br>
+                        <button class="btn btn-danger">Today's Date</button>
                     </div>
                     <div class="alert alert-success fade in">
                         <a href="#" class="close1" data-dismiss="alert" aria-label="close">×</a>
-                        <p><strong>Ey!</strong></p>
-                        People are looking at your profile. Find out who.
+                        <p><strong>Attention!</strong></p>
+                        It is important to complete exams before deadline. All exams have a deadline to be completed by.
                     </div>
                     <div class="well">
-                        <p>ADS</p>
+                        Notes:
+                        <p><textarea style="width: 100%;"></textarea></p>
+
+                        <p style="color:blue;" contenteditable="true" placeholder="write here there"></p>
                     </div>
                 </div>
             </div>
@@ -276,17 +285,7 @@ $conn = null;
     </div>
 
 
-    <!-- Exam content -->
-    <div class="exam-content">
-        <h3>Here are your exam details:</h3>
-        <div class='examsClass'>
-            <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
-            <?php
-            echo $examDetails;
-            ?>
-        </div>
-    </div>
-    <hr>
+
 
     <!--changing font size-->
     <div class="fontSizeClass">
@@ -297,9 +296,6 @@ $conn = null;
     </div>
     <hr>
 
-    <!-- Amount of Exams -->
-    <h1 id='username'>Welcome </h1>
-    <p id="welcomeMessage"><?php echo $welcome; ?></p>
 
 
 
@@ -308,6 +304,18 @@ $conn = null;
 
     <!-- The Modal for account details -->
     <div id="myModal" class="modal modal-dialog">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Here are your account details:</h3>
+            <p id='accountDetails'></p>
+        </div>
+
+    </div>
+
+    <!-- The Modal for account details -->
+    <div id="myModal1" class="modal modal-dialog">
 
         <!-- Modal content -->
         <div class="modal-content">
@@ -420,6 +428,27 @@ $conn = null;
 
         //modal for user info
         // Get the modal
+        var modal = document.getElementById("myModal1");
+        // Get the button that opens the modal
+        var btn = document.getElementById("profile");
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+
+
+        //modal for user info
+        // Get the modal
         var modal = document.getElementById("myModal");
         // Get the button that opens the modal
         var btn = document.getElementById("modalBtn");
@@ -457,20 +486,8 @@ $conn = null;
             }
         }
 
-        const deleteUserBtn = document.getElementById('deleteAcc');
-        deleteUserBtn.addEventListener('submit', (e) => {
-            e.preventDefault();
-            var userEmail = deleteUserBtn.email.value;
 
-            const getUserFunction = functions.httpsCallable('deleteUser');
-            getUserFunction({
-                email: userEmail
-            }).then(result => {
-                console.log(result.data.message);
-                document.getElementById('deleteUserInfo').innerHTML = result.data.message;
-            });
-            console.log('Delete user button clicked, and function has completed execution');
-        });
+
 
 
         //add admin clous function
