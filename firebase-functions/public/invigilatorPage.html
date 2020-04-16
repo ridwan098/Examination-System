@@ -287,10 +287,10 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
-                    if (doc.data().userLevel == "admin"){
+                    if (doc.data().userLevel == "admin") {
                         for (i = 0; i < adminItems.length; i++) {
                             adminItems[i].style.display = 'block';
-                        }   
+                        }
                     }
                 });
 
@@ -327,6 +327,8 @@
         function returnTopage() {
             location.replace('adminPage.html');
         }
+
+        console.log();
     </script>
     <script src="invigilatorPageResource/invig.js"></script>
 
