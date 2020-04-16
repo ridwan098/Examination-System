@@ -136,12 +136,13 @@ $conn = null;
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="index.html">Home</a></li>
+                    <li><a href="index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
                     <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
+
         </div>
     </nav>
 
@@ -164,9 +165,6 @@ $conn = null;
         <div class="container text-center">
             <h1>Student Page</h1>
             <p id='username'>Welcome </p>
-
-            <h1 id='username'>Welcome </h1>
-            <p id="welcomeMessage"><?php echo $welcome; ?></p>
         </div>
     </div>
 
@@ -178,13 +176,11 @@ $conn = null;
         <div class="row content">
             <div class="col-sm-2">
                 <div class="well sidenav">
-                    <div class="thumbnail">
-                        <p>Upcoming Events:</p>
-
-                        <p><strong>Paris</strong></p>
-                        <p>Fri. 27 November 2015</p>
-                        <button class="btn btn-primary">Info</button>
+                    <div class="well">
+                        <p><a href="#">My Profile</a></p>
+                        <img src="avatar.png" class="img-circle" height="65" width="65" alt="Avatar">
                     </div>
+
                     <div class="well">
                         <p>ADS</p>
                     </div>
@@ -209,11 +205,7 @@ $conn = null;
                         <span class="label label-danger">Friends</span>
                     </p>
                 </div>
-                <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    <p><strong>Ey!</strong></p>
-                    People are looking at your profile. Find out who.
-                </div>
+
             </div>
 
 
@@ -270,8 +262,10 @@ $conn = null;
                         <p>Fri. 27 November 2015</p>
                         <button class="btn btn-primary">Info</button>
                     </div>
-                    <div class="well">
-                        <p>ADS</p>
+                    <div class="alert alert-success fade in">
+                        <a href="#" class="close1" data-dismiss="alert" aria-label="close">×</a>
+                        <p><strong>Ey!</strong></p>
+                        People are looking at your profile. Find out who.
                     </div>
                     <div class="well">
                         <p>ADS</p>
@@ -292,6 +286,7 @@ $conn = null;
             ?>
         </div>
     </div>
+    <hr>
 
     <!--changing font size-->
     <div class="fontSizeClass">
@@ -300,8 +295,11 @@ $conn = null;
         <button class="largeSizedButton fontButtonClass" onclick="changeFontSize('large')">Large</button>
         <button class="extraSizedButton fontButtonClass" onclick="changeFontSize('extra')">Extra Large</button>
     </div>
+    <hr>
 
-
+    <!-- Amount of Exams -->
+    <h1 id='username'>Welcome </h1>
+    <p id="welcomeMessage"><?php echo $welcome; ?></p>
 
 
 
