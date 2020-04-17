@@ -14,7 +14,7 @@ $db->connectToDb($dbname);
 
 $time = time();
 
-// Execute query
+// Fetch exams to sit
 $sql = "SELECT e.*, u.name FROM StudentExamRelation ser, Exams e, Users u 
             WHERE ser.userId=? 
             AND e.examinerId = u.id
@@ -26,7 +26,21 @@ while ($row = $result->fetch()) {
     $exams[] = $row;
 }
 
-$conn = null;
+// Fetch exam marks
+$sql = "SELECT fe.*, e.*,(
+    SELECT (SUM(cq.markReceived) / SUM(eq.maxMarks))*100 AS totalMarks
+    FROM ExamQuestions eq, CompletedQuestions cq
+    WHERE eq.examId = fe.examId
+    AND cq.finExamId = fe.finishedId
+    AND cq.examqId = eq.examqId) AS totalMarks 
+FROM FinishedExam fe, Exams e
+WHERE fe.examId = e.id
+AND fe.userId = ?";
+$result = $db->executeQuery($sql, [$_SESSION['userid']]);
+$marks = [];
+while ($row = $result->fetch()) {
+    $marks[] = $row;
+}
 ?>
 
 <html lang="en">
@@ -255,7 +269,22 @@ $conn = null;
                     <div class="col-sm-12">
                         <div class="well">
                             <p>If no exams are displayed, this means that you have no exams to sit. However, if you suspect there to be an error, please contact your examiner or whoever is responsible for writing the paper.</p>
+                            <h3>Marks</h3>
+                            <p>
+                            <?php
+                                foreach ($marks as $row){
+                                    echo "<b>" . $row['subject'] . ": </b>";
+                                    if ($row['marked']){
+                                        echo number_format($row['totalMarks'], 2, '.', '') . "%<br>";
+                                    }
+                                    else{
+                                        echo "Grade Pending<br>";
+                                    }
+                                }
+                            ?>
+                            </p>
                         </div>
+                        
                     </div>
                 </div>
             </div>
