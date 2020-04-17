@@ -272,7 +272,7 @@ $conn = null;
                         <p id="welcomeMessage"><?php echo $welcome; ?></p>
 
                         <br>
-                        <button class="btn btn-danger">Days Left</button>
+                        <button class="btn btn-danger" onclick="calcDays();">Days Left</button>
                     </div>
                     <div class="alert alert-success fade in">
                         <a href="#" class="close1" data-dismiss="alert" aria-label="close">×</a>
@@ -421,6 +421,7 @@ $conn = null;
             }
         }
 
+
         //modal for user info
         // Get the modal
         var modal = document.getElementById("myModal1");
@@ -554,6 +555,16 @@ underneath the brach for if the select is admin -->
                 fontSizeClass.style.fontSize = extra;
                 //  examinersId.style.fontSize = extra;
             }
+        }
+
+
+        function calcDays() {
+
+            var msg = "<?php echo $welcome; ?>";
+            var msg = msg.split(" ");
+            var length = msg.length;
+            var lastWord = msg[length - 1]
+            console.log("Hello world " + lastWord + " " + length);
         }
     </script>
 </body>
