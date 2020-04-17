@@ -192,7 +192,7 @@ while ($row = $result->fetch()) {
                 <div class="well sidenav">
                     <div class="well" style="cursor: pointer;">
                         <p id="profile"><a>My Profile</a></p>
-                        <img src="avatar.png" class="img-circle" height="65" width="65" alt="Avatar">
+                        <img src="studentPageResource/avatar.png" class="img-circle" height="65" width="65" alt="Avatar">
                     </div>
 
                     <div class="well">
