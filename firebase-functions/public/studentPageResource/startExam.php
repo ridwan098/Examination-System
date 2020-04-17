@@ -6,7 +6,7 @@
     session_start();
 
     if (!isSessionLoggedIn()){
-        header("Location: index.html");
+        header("Location: ../index.html");
     }
 
     $examId = $_GET['examid'];
@@ -51,7 +51,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start Exam</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -161,13 +161,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="../index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li id='logout'><a href="index.html">Home</a></li>
+                    <li id='logout'><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -186,16 +186,42 @@
     <!--Questions and  will be passed onto this tag below 'FOR ALEX'-->
 
     <script>
-        function checkSubmit(param){
-            if (param.contentWindow.document.body.innerHTML == 1){
+        function formSubmitted(param){
+            if (param == 1){
                 alert("Exam successfully submitted!");
-                param.contentWindow.document.body.innerHTML = "";
                 window.location.replace("../studentPage.php");
             }
+            else{
+                alert("Something went wrong... Failed to submit exam.");
+            }
+        }
+
+        function postForm(caller, formId, callback){
+            caller.disabled = true;
+
+            var form = document.getElementById(formId);
+            var inputs = Array.from(form.elements).filter(e => e.getAttribute("name"));
+
+            // compile data
+            var data = "";
+            for (var i = 0; i < inputs.length; i++){
+                data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
+            }
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    callback(xhr.response);
+                }
+            }
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(data);
         }
     </script>
-    <iframe  name="hidden-form" onload="checkSubmit(this)"></iframe>
-    <form class="questions-form" target="hidden-form" action="submitExam.php" method="post">
+    <iframe  name="hidden-form"></iframe>
+    <form onsubmit="postForm(this, 'questions', formSubmitted); return false;" id="questions" class="questions-form" action="submitExam.php" method="post">
         <input type="hidden" name="examid" value=<?php echo "\"$examId\""; ?> />
         <input type="hidden" name="userid" value=<?php echo "\"$userId\""; ?> />
         <?php 
@@ -220,7 +246,7 @@
             }
             echo "</div>";
         ?>
-      <input type="submit" value="Submit Exam"style="position:relative;top:20px;left: 150px; border-radius: 10px;">
+        <button type="submit" class="btn" style="position:relative;top:20px;left: 150px; border-radius: 10px;">Submit Exam</button>
     </form>
 
     
