@@ -272,6 +272,9 @@ while ($row = $result->fetch()) {
                             <h3>Marks</h3>
                             <p>
                             <?php
+                                if (sizeof($marks) == 0){
+                                    echo "None to show";
+                                }
                                 foreach ($marks as $row){
                                     echo "<b>" . $row['subject'] . ": </b>";
                                     if ($row['marked']){
