@@ -314,6 +314,7 @@ while ($row = $result->fetch()) {
                         <p id="welcomeMessage"><?php echo $welcome; ?></p>
 
                         <br>
+                        <p id="daysLeft" style="visibility: hidden;">hi there you nerd</p>
                         <button class="btn btn-danger" onclick="calcDays();">Days Left</button>
                     </div>
                     <div class="alert alert-success fade in">
@@ -614,13 +615,47 @@ underneath the brach for if the select is admin -->
             document.getElementById("marks").style.visibility = "visible";
         }
 
+        function getToday() {
+            var d = new Date();
+            var date = d.getDate();
+            var year = d.getFullYear();
+            var month = d.getMonth();
+
+            return date + "/" + (month + 1) + "/" + year
+        }
+
         function calcDays() {
 
+            //get last deadline
             var msg = "<?php echo $welcome; ?>";
             var msg = msg.split(" ");
             var length = msg.length;
-            var lastWord = msg[length - 1]
-            console.log("Hello world " + lastWord + " " + length);
+            var lastWord = msg[length - 1];
+
+            //get today's date
+            var today = getToday();
+
+
+            //split last deadline
+            lastWord = lastWord.split("/");
+            lastWord = lastWord[1] + '/' + lastWord[0] + '/' + lastWord[2];
+
+
+            //split today's date
+            today = today.split("/");
+            today = today[1] + '/' + today[0] + '/' + today[2];
+
+
+
+            //subract deadline from today's date
+            const date1 = new Date(today);
+            const date2 = new Date(lastWord);
+            const diffTime = Math.abs(date2 - date1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            console.log("Differnce is: " + diffDays + " date1: " + date1 + " date2: " + date2);
+
+            document.getElementById("daysLeft").innerHTML = diffDays + " days left till deadline";
+            document.getElementById("daysLeft").style.visibility = "visible";
         }
     </script>
 </body>
