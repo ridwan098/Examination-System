@@ -186,9 +186,7 @@ $conn = null;
                             <p>View Grades</p>
                         </a>
                     </div>
-                    <div class="well">
-                        <p>ADS</p>
-                    </div>
+
                 </div>
 
                 <div class="well">
@@ -197,9 +195,15 @@ $conn = null;
                     <!--changing font size-->
                     <div class="fontSizeClass">
                         <p><a href="#">Font sizes:</a></p>
-                        <p><span style="cursor: pointer;" class="label label-info" onclick="changeFontSize('normal')">Normal</span></p><br />
-                        <p><span style="cursor: pointer;" class="label label-warning" onclick="changeFontSize('large')">Medium</span></p><br />
-                        <p><span style="cursor: pointer;" class="label label-success" onclick="changeFontSize('extra')">Large</span></p>
+                        <div class="well">
+                            <span style="cursor: pointer;" class="label label-info" onclick="changeFontSize('normal')">Normal</span>
+                        </div>
+                        <div class="well">
+                            <span style="cursor: pointer;" class="label label-warning" onclick="changeFontSize('large')">Medium</span>
+                        </div>
+                        <div class="well">
+                            <span style="cursor: pointer;" class="label label-success" onclick="changeFontSize('extra')">Large</span>
+                        </div>
                     </div>
                     <hr>
                 </div>
@@ -213,7 +217,8 @@ $conn = null;
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
+                            <p>You are able to view exams on this page. To take an exam, simply click on the name of the course/subject and you will be directed to the exam screen. Each exam has a timer and will close once the timer has completed.</p>
+                            <p>You are also able to change the font size of the text on the exam details section. Simply choose from: "Normal, Medium or Large" and your text size will be adjusted accordingly.</p>
                         </div>
                     </div>
                 </div>
@@ -249,7 +254,7 @@ $conn = null;
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
+                            <p>If no exams are displayed, this means that you have no exams to sit. However, if you suspect there to be an error, please contact your examiner or whoever is responsible for writing the paper.</p>
                         </div>
                     </div>
                 </div>
