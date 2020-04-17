@@ -207,8 +207,8 @@ while ($row = $result->fetch()) {
                     <h4>Change Font Size</h4>
 
                     <!--changing font size-->
-                    <div class="fontSizeClass">
-                        <p><a href="#">Font sizes:</a></p>
+                    <div class="fontSizeClass" id="fontSize">
+                        <p><a href="#fontSize">Font sizes:</a></p>
                         <div class="well">
                             <span style="cursor: pointer;" class="label label-info" onclick="changeFontSize('normal')">Normal</span>
                         </div>
@@ -321,11 +321,9 @@ while ($row = $result->fetch()) {
                         <p><strong>Attention!</strong></p>
                         It is important to complete exams before deadline. All exams have a deadline to be completed by.
                     </div>
-                    <div class="well">
-                        Notes:
-                        <p><textarea style="width: 100%;"></textarea></p>
-
-                        <p style="color:blue;" contenteditable="true" placeholder="write here there"></p>
+                    <div class="well" id>
+                        Date:
+                        <p contenteditable="true" id="date"></p>
                     </div>
                 </div>
             </div>
@@ -597,6 +595,19 @@ underneath the brach for if the select is admin -->
                 fontSizeClass.style.fontSize = extra;
                 //  examinersId.style.fontSize = extra;
             }
+        }
+
+
+        window.onload = setInterval(clock, 100);
+
+        function clock() {
+            var d = new Date();
+            var date = d.getDate();
+            var year = d.getFullYear();
+            var month = d.getMonth();
+            var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            month = monthArr[month];
+            document.getElementById("date").innerHTML = date + " " + month + ", " + year;
         }
 
         function showGrades() {
