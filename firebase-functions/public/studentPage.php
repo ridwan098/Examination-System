@@ -192,15 +192,16 @@ $conn = null;
                 </div>
 
                 <div class="well">
-                    <p><a href="#">Interests</a></p>
-                    <p>
-                        <span class="label label-default">News</span>
-                        <span class="label label-primary">W3Schools</span>
-                        <span class="label label-success">Labels</span>
-                        <span class="label label-info">Football</span>
-                        <span class="label label-warning">Gaming</span>
-                        <span class="label label-danger">Friends</span>
-                    </p>
+                    <h4>Change Font Size</h4>
+
+                    <!--changing font size-->
+                    <div class="fontSizeClass">
+                        <p><a href="#">Font sizes:</a></p>
+                        <p><span style="cursor: pointer;" class="label label-info" onclick="changeFontSize('normal')">Normal</span></p><br />
+                        <p><span style="cursor: pointer;" class="label label-warning" onclick="changeFontSize('large')">Medium</span></p><br />
+                        <p><span style="cursor: pointer;" class="label label-success" onclick="changeFontSize('extra')">Large</span></p>
+                    </div>
+                    <hr>
                 </div>
 
             </div>
@@ -266,7 +267,7 @@ $conn = null;
                         <p id="welcomeMessage"><?php echo $welcome; ?></p>
 
                         <br>
-                        <button class="btn btn-danger">Today's Date</button>
+                        <button class="btn btn-danger">Days Left</button>
                     </div>
                     <div class="alert alert-success fade in">
                         <a href="#" class="close1" data-dismiss="alert" aria-label="close">×</a>
@@ -284,17 +285,6 @@ $conn = null;
         </div>
     </div>
 
-
-
-
-    <!--changing font size-->
-    <div class="fontSizeClass">
-        <h3>Font Size:</h3>
-        <button class="normalSizedButton fontButtonClass" onclick="changeFontSize('normal')">Normal</button>
-        <button class="largeSizedButton fontButtonClass" onclick="changeFontSize('large')">Large</button>
-        <button class="extraSizedButton fontButtonClass" onclick="changeFontSize('extra')">Extra Large</button>
-    </div>
-    <hr>
 
 
 
