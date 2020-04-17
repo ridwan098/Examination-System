@@ -190,13 +190,13 @@ while ($row = $result->fetch()) {
         <div class="row content">
             <div class="col-sm-2">
                 <div class="well sidenav">
-                    <div class="well">
+                    <div class="well" style="cursor: pointer;">
                         <p id="profile"><a>My Profile</a></p>
                         <img src="avatar.png" class="img-circle" height="65" width="65" alt="Avatar">
                     </div>
 
                     <div class="well">
-                        <a href="#">
+                        <a onclick="showGrades();" style="cursor: pointer;" href="#marks">
                             <p>View Grades</p>
                         </a>
                     </div>
@@ -241,7 +241,7 @@ while ($row = $result->fetch()) {
                     <div class="col-sm-12">
                         <div class="panel panel-default text-left">
                             <div class="panel-body">
-                                <button type="button" class="btn btn-default btn-sm">
+                                <button type="button" class="btn btn-default btn-sm" disabled>
                                     Exams
                                 </button>
                             </div>
@@ -252,7 +252,7 @@ while ($row = $result->fetch()) {
                             <div class="panel-footer">
                                 <!-- Exam content -->
                                 <div class="exam-content">
-                                    <h3>Here are your exam details:</h3>
+                                    <h4>Here are your exam details:</h4>
                                     <div class='examsClass'>
                                         <!--FOR ALEX Link names will come from examiner DB along with Due dates-->
                                         <?php
@@ -269,25 +269,35 @@ while ($row = $result->fetch()) {
                     <div class="col-sm-12">
                         <div class="well">
                             <p>If no exams are displayed, this means that you have no exams to sit. However, if you suspect there to be an error, please contact your examiner or whoever is responsible for writing the paper.</p>
-                            <h3>Marks</h3>
-                            <p>
-                            <?php
-                                if (sizeof($marks) == 0){
-                                    echo "None to show";
-                                }
-                                foreach ($marks as $row){
-                                    echo "<b>" . $row['subject'] . ": </b>";
-                                    if ($row['marked']){
-                                        echo number_format($row['totalMarks'], 2, '.', '') . "%<br>";
-                                    }
-                                    else{
-                                        echo "Grade Pending<br>";
-                                    }
-                                }
-                            ?>
-                            </p>
                         </div>
-                        
+
+                        <div style="visibility: hidden;" id="marks">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Grades</div>
+                                <div class="panel-footer">
+                                    <!-- Exam marks -->
+                                    <div class="exam-content">
+                                        <h4>Below are exam marks:</h4>
+                                        <div class='examsClass'>
+                                            <?php
+                                            if (sizeof($marks) == 0) {
+                                                echo "None to show";
+                                            }
+                                            foreach ($marks as $row) {
+                                                echo "<b>" . $row['subject'] . ": </b>";
+                                                if ($row['marked']) {
+                                                    echo number_format($row['totalMarks'], 2, '.', '') . "%<br>";
+                                                } else {
+                                                    echo "Grade Pending<br>";
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -589,6 +599,9 @@ underneath the brach for if the select is admin -->
             }
         }
 
+        function showGrades() {
+            document.getElementById("marks").style.visibility = "visible";
+        }
 
         function calcDays() {
 
