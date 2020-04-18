@@ -131,10 +131,13 @@
         <div class="row content">
             <div class="col-sm-2 sidenav">
                 <h3>Browse pages</h3>
-                <p><a href="studentPage.php">Student Page</a></p>
-                <p><a href="examinerPage.html">Examiner Page</a></p>
-                <p><a href="invigilatorPage.html">Invigilator Page</a></p>
-                <p><a href="graderPageResource/graderPage.php">Grader Page</a></p>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#">Admin Page</a></li>
+                    <li><a href="studentPage.php">Student Page</a></li>
+                    <li><a href="examinerPage.html">Examiner Page</a></li>
+                    <li><a href="graderPageResource/graderPage.php">Grader Page</a></li>
+                </ul>
+
             </div>
             <div class="col-sm-8 text-left well">
                 <h1>Welcome</h1>
@@ -154,7 +157,7 @@
                             <option value="Invigilator">Invigilator</option>
                             <option value="Grader">Grader</option>
                         </select>
-                        <button class='btn' style='margin-top: 5px;'> Change user role</button>
+                        <button class='btn btn-primary' style='margin-top: 5px;'> Change user role</button>
                         <p id="errorMessage"></p>
                     </form>
                     <hr>
