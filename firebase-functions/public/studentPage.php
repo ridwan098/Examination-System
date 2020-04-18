@@ -652,10 +652,17 @@ underneath the brach for if the select is admin -->
             const date2 = new Date(lastWord);
             const diffTime = Math.abs(date2 - date1);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            console.log("Differnce is: " + diffDays + " date1: " + date1 + " date2: " + date2);
 
-            document.getElementById("daysLeft").innerHTML = diffDays + " days left till deadline";
-            document.getElementById("daysLeft").style.visibility = "visible";
+
+            if (isNaN(diffDays)) {
+                document.getElementById("daysLeft").innerHTML = " There are no deadlines ";
+                document.getElementById("daysLeft").style.visibility = "visible";
+            } else {
+                document.getElementById("daysLeft").innerHTML = diffDays + " days left till deadline";
+                document.getElementById("daysLeft").style.visibility = "visible";
+            }
+
+
         }
     </script>
 </body>
