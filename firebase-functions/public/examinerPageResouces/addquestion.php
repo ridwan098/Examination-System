@@ -7,6 +7,12 @@
     $question = getPostArg('question');
     $type = getPostArg('type');
     $marks = getPostArg("marks");
+    $editing = false;
+    if (isset($_POST["qid"])){
+        $qid = $_POST['qid'];
+        $editing = true;
+    }
+
     if ($type == 1){
         $fakeOptions = [getPostArg("fakeAnswer1")];
         $i = 2;
@@ -27,11 +33,20 @@
 
     $db = new Class_DB($servername,$username, $password);
     $db->connectToDb("higherexam");
-    $db->executeQuery("INSERT INTO ExamQuestions (examId,question,type,maxMarks)
-                        VALUES (?,?,?,?)", [$examid, $question, $type, $marks]);
 
-    if ($type == 1){
-        $db->executeQuery("INSERT INTO McqQuestion VALUES (?,?,?)", [$db->getLastInsertId(), $fakeSql, $answer]);
+    if (!$editing){
+        $db->executeQuery("INSERT INTO ExamQuestions (examId,question,type,maxMarks)
+                            VALUES (?,?,?,?)", [$examid, $question, $type, $marks]);
+
+        if ($type == 1){
+            $db->executeQuery("INSERT INTO McqQuestion VALUES (?,?,?)", [$db->getLastInsertId(), $fakeSql, $answer]);
+        }
+    }
+    else{
+        $db->executeQuery("UPDATE ExamQuestions SET question=?, maxMarks=? WHERE examqId=?", [$question, $marks, $qid]);
+        if ($type==1){
+            $db->executeQuery("UPDATE McqQuestion SET fakeOptions=?, answer=? WHERE examqId=?", [$fakeSql, $answer, $qid]);
+        }
     }
 
     echo 1;

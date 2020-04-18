@@ -1,10 +1,33 @@
+<?php
+
+    require("../global/util.php");
+    require("../global/db.php");
+
+    session_start();
+
+    if (!isSessionLoggedIn()) {
+        header("Location: ../index.html");
+    }
+
+    $userid = $_SESSION['userid'];
+
+    $db = new Class_DB($servername, $username, $password);
+    $db->connectToDb($dbname);
+
+    $result= $db->executeQuery("SELECT * FROM Exams e WHERE examinerId=?", [$userid]);
+    $exams = [];
+    while ($row = $result->fetch()){
+        $exams[] = $row;
+    }
+?>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editing paper......</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -72,13 +95,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="../index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -107,14 +130,16 @@
                 <hr>
                 <h3>Previous papers:</h3>
 
-                <p>Please select the paper you wish to remove:</p>
-                <input type="radio" id="mcq" name="qtype" value="Paper X">
-                <label for="mcq">Paper X</label><br>
-                <input type="radio" id="math" name="qtype" value="Paper Y">
-                <label for="math">Paper Y</label><br>
-                <input type="radio" id="text" name="qtype" value="Paper Z">
-                <label for="text">Paper Z</label><br>
-                <button class='btn'>Edit paper</button><br/>
+                <p>Please select the paper you wish to edit:</p>
+                <form action="editquestion.php" method="get">
+                    <?php
+                        foreach ($exams as $exam){
+                            echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
+                            echo '<label for="mcq">' . $exam['subject'] . '</label><br>';
+                        }
+                    ?>
+                    <button type="submit" class='btn'>Edit Paper</button>
+                </form>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
@@ -185,7 +210,7 @@
                 setupUI(user);
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
 

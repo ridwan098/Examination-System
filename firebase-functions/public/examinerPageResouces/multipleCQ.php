@@ -1,3 +1,38 @@
+<?php
+    require("../global/util.php");
+    require("../global/db.php");
+
+    session_start();
+
+    if (!isSessionLoggedIn()) {
+        header("Location: index.html");
+    }
+    if (!isset($_GET['examid'])){
+        header("Location: ../examinerPage.html");
+    }
+    $examid = $_GET['examid'];
+
+    $numFakeAnswers = 0;
+
+    $editing = false;
+    if (isset($_GET['qid'])) {
+        $editing = true;
+        $qid = $_GET['qid'];
+
+        $db = new Class_DB($servername, $username, $password);
+        $db->connectToDb($dbname);
+
+        $sql = "SELECT * FROM ExamQuestions eq, McqQuestion mcq
+                WHERE eq.examqId=?
+                AND eq.examqId=mcq.examqId";
+        $result = $db->executeQuery($sql, [$qid]);
+        $question = $result->fetch();
+        if (!$question){
+            header("Location: ../examinerPage.html");
+        }
+    }
+?>
+
 <html lang="en">
 
 <head>
@@ -95,28 +130,68 @@
             <div class="col-sm-8 text-left">
                 <h1>Multiple Choice Question</h1>
                 <form onsubmit="postForm(this, 'question', questionPosted); return false;" action="addquestion.php" method="post" id='question'>
-                    <input type="hidden" name="examid" value=<?php echo '"' . $_GET['examid'] . '"'; ?> >
+                    <?php
+                        if ($editing){
+                            echo '<input type="hidden" name="qid" value="'.$qid.'">';
+                        }
+                    ?>
+                    <input type="hidden" name="examid" value=<?php echo '"' . $examid . '"'; ?> >
                     <input type="hidden" name="type" value=1 >
-                    <h5>Please enter a multiple choice question here along with the correct and fake answers.</h5> 
-                    <textarea name="question" type='input' placeholder="Question" class='input' required></textarea>
-                    <h5>Correct Answer:</h5><input name="answer" form="question" class='input'
-                        placeholder='Enter answer here...' required>
+                    <h5>Please enter a multiple choice question here along with the correct and fake answers.</h5>
+                    <?php
+
+                        echo '<textarea name="question" type="input" placeholder="Question" class="input" required>';
+                        if ($editing){
+                            echo $question['question'];
+                        }
+                        echo '</textarea>';
+                    ?>
+                    <h5>Correct Answer:</h5>
+                    <input name="answer" form="question" class='input'
+                        placeholder='Enter answer here...'
+                        <?php if ($editing) { echo 'value="' . $question['answer'] . '"'; } ?>
+                        required
+                    >
                     <h5>Other Answers:</h5>
                     <div id='fakeAnswers'>
-                        <input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>
+                        <?php 
+                            if ($editing){
+                                $answers = explode("\0", $question['fakeOptions']);
+                                foreach ($answers as $a){
+                                    if ($a == "") continue;
+                                    $numFakeAnswers++;
+                                    echo '<input name="fakeAnswer' . $numFakeAnswers . '" form="question" class="input" placeholder="Enter answer here..." value="' . $a . '">';
+                                }
+                            }
+                            else{
+                                echo '<input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>';
+                            }
+                        ?>
                     </div>
                     <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button>
-                    <h5>Marks:</h5><input name="marks" form="question" class='input'
-                        placeholder='Enter marks here...' required>
-                    <button type="submit" class='btn'>Submit Question</button><br/>
+                    <h5>Marks:</h5><input type="number" name="marks" form="question" class='input'
+                        placeholder='Enter marks here...' 
+                        <?php if ($editing) { echo 'value="' . $question['maxMarks'] . '"'; } ?>
+                        required>
+                    <button type="submit" class='btn'>
+                        <?php
+                            if ($editing){
+                                echo "Save Changes";
+                            }
+                            else{
+                                echo "Submit Question";
+                            }
+                    ?>
+                    </button><br/>
                     <hr />
                 </form>
 
-                <p id="addtext" style="visibility: hidden">Question successfully added. Continue adding more questions or <a href=<?php echo "\"addingStudent.php?examid={$_GET['examid']}\""; ?>>add students to the exam</a>.</p>
-
+                <?php
+                    if (!$editing){
+                        echo '<p id="addtext" style="visibility: hidden">Question successfully added. Continue adding more questions or <a href="addingStudent.php?examid=' . $examid . '">add students to the exam</a>.</p>';
+                    }
+                ?>
                 <hr>
-                <h3>Test</h3>
-                <p>Lorem ipsum...</p>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
@@ -144,7 +219,8 @@
     </div>
 
     <script>
-        let fakeAnswers = 1;
+        let fakeAnswers = <?php echo $numFakeAnswers; ?>;
+        let editing = <?php print($editing ? "true" : "false"); ?>;
 
         function addFormInput(id){
             fakeAnswers++;
@@ -164,8 +240,13 @@
             caller.disabled = false;
             if (response == 1){
                 alert("Success!");
-                var link = document.getElementById("addtext");
-                link.style ="";
+                if (!editing){
+                    var link = document.getElementById("addtext");
+                    link.style ="";
+                }
+                else{
+                    document.location = <?php echo "'editquestion.php?examid=$examid'"; ?>;
+                }
             }
             else{
                 alert("Failed to add question");

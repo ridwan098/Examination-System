@@ -1,10 +1,34 @@
+<?php
+
+    require("../global/util.php");
+    require("../global/db.php");
+
+    session_start();
+
+    if (!isSessionLoggedIn() || !isset($_GET['examid'])) {
+        header("Location: ../index.html");
+    }
+
+    $examid = $_GET['examid'];
+
+    $db = new Class_DB($servername, $username, $password);
+    $db->connectToDb($dbname);
+
+    $result= $db->executeQuery("SELECT * FROM ExamQuestions eq WHERE examId=?", [$examid]);
+    $examq = [];
+    while ($row = $result->fetch()){
+        $examq[] = $row;
+    }
+
+?>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editing paper....</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -72,13 +96,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="../index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -106,17 +130,21 @@
                 <p>Here you will be able to edit previously written questions.</p>
                 <hr>
                 <h3>Questions:</h3>
-                <p>Please select the paper you wish to remove:</p>
-                <input type="radio" id="mcq" name="qtype" value="q1">
-                <label for="mcq">Question 1</label><br>
-                <input type="radio" id="math" name="qtype" value="q2">
-                <label for="math">Question 2</label><br>
-                <input type="radio" id="text" name="qtype" value="q3">
-                <label for="text">Question 3</label><br>
-                <button class='btn'>Edit paper</button><br/>
-
-                <h5>Add Student:</h5><input name="snumber" form="createp" class='input' placeholder='Enter student number' required><br/>
-                <button type="submit" class='btn'>Submit Paper</button><br/>
+                <p>Please select the question you wish to edit:</p>
+                <form action="multipleCQ.php" method="get">
+                    <input type="hidden" name="examid" <?php echo "value='$examid'"; ?>>
+                    <?php
+                        $i = 1;
+                        foreach ($examq as $q){
+                            echo '<input type="radio" id="mcq' . $i . '" name="qid" value="' . $q['examqId'] . '" required>';
+                            echo '<label for="mcq' . $i . '">Q'. $i . ': ' . $q['question'] . '</label><br>';
+                            $i++;
+                        }
+                    ?>
+                    <button class='btn'>Edit Question</button><br/>
+                </form>
+                <hr>
+                <?php echo '<a href="addingStudent.php?examid=' . $examid . '"><h3>Add Student to Exam</h3></a>'; ?>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
@@ -187,7 +215,7 @@
                 setupUI(user);
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
 
