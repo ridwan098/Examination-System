@@ -1,9 +1,39 @@
+<?php
+    require("../global/util.php");
+    require("../global/db.php");
+
+    session_start();
+
+    if (!isSessionLoggedIn()) {
+        header("Location: index.html");
+    }
+
+    $editing = false;
+    if (isset($_GET['examid'])) {
+        $editing = true;
+        $examid = $_GET['examid'];
+
+        $db = new Class_DB($servername, $username, $password);
+        $db->connectToDb($dbname);
+
+        $sql = "SELECT * FROM Exams WHERE id=?";
+        $result = $db->executeQuery($sql, [$examid]);
+        $exam = $result->fetch();
+        if (!$exam){
+            header("Location: ../examinerPage.html");
+        }
+    }
+?>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Paper</title>
+    <?php 
+        if (!$editing) echo "<title>Create Paper</title>";
+        else echo "<title>Edit Paper Info</title>";
+    ?>
     <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
@@ -88,8 +118,14 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Template Page</h1>
-            <p id='username'>This is template page: </p>
+            <?php
+                if ($editing){
+                    echo "<h1>Edit Paper</h1>";
+                }
+                else{
+                    echo "<h1>Create Paper</h1>";
+                }
+            ?>
         </div>
     </div>
 
@@ -107,15 +143,39 @@
                 </p>
                 <iframe style="display:none" name="hidden-form"></iframe>
                 <form onsubmit="postForm(this, 'createp', examPosted); return false;" action="addexam.php" target="hidden-frame" method="post" id='createp'>
-
+                    <?php
+                        if ($editing){
+                            echo "<input type='hidden' name='examid' value='$examid'>";
+                        }
+                    ?>
                     <h5>Module:</h5><input name="mname" form="createp" class='input'
-                        placeholder='Enter module name ' required>
-                    <h5>Date of Exam:</h5><input type="date" class="input" name = "date" required>
-                    <h5>Time of Exam:</h5><input type="time" class="input" id="time" name="time"
-                        min="09:00" max="18:00" required>
-                    <h5>Length:</h5><input type="time" class="input" id="time" name="length" required>
+                        placeholder='Enter module name ' 
+                        <?php if ($editing) echo "value='{$exam['subject']}'"; ?>
+                        required>
+                    <h5>Date of Exam:</h5>
+                    <input type="date" class="input" name = "date" 
+                    <?php if ($editing) echo "value='" . date("Y-m-d", $exam['date']) . "'"; ?>
+                    required>
+                    <h5>Time of Exam:</h5>
+                    <input type="time" class="input" id="time" name="time"
+                        min="09:00" max="18:00" 
+                        <?php if ($editing) echo "value='" . date("H:i", $exam['date']) . "'"; ?>
+                        required>
+                    <h5>Length:</h5>
+                    <input type="time" class="input" id="time" name="length" 
+                    <?php if ($editing) echo "value='" . gmdate("H:i", $exam['timerLength']) . "'"; ?>
+                    required>
                     <hr>
-                    <button type="submit" class='btn'>Submit Paper</button><br/>
+                    <button type="submit" class='btn'>
+                        <?php 
+                            if ($editing){
+                                echo "Save Changes";
+                            }
+                            else{
+                                echo "Submit Paper";
+                            }
+                        ?>
+                    </button><br/>
                 </form>
                 <hr>
                 <p id="qtext" style="visibility:hidden;">The exam has been successfully created, time to <a id="qlink" href="multipleCQ.html?">add some questions</a>.</p>
@@ -147,13 +207,21 @@
 
     <script>
 
+        let editing = <?php print($editing ? "true" : "false"); ?>;
+
         var examPosted = function (response) {
             if (response != 0 && !isNaN(response)){
-                alert("Added exam successfully!");
-                var link = document.getElementById("qlink");
-                link.href = "multipleCQ.php?examid=" + response;
-                var text = document.getElementById("qtext");
-                text.style = "";
+                if (!editing){
+                    alert("Added exam successfully!");
+                    var link = document.getElementById("qlink");
+                    link.href = "multipleCQ.php?examid=" + response;
+                    var text = document.getElementById("qtext");
+                    text.style = "";
+                }
+                else{
+                    alert("Saved changes successfully!");
+                    document.location = <?php echo "'editquestion.php?examid=$examid'"; ?>;
+                }
             }
             else
                 alert("Failed to add exam");
