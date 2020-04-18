@@ -80,15 +80,14 @@
             background-color: #555;
         }
 
-        .buttton{
+        .buttton {
             border: 1px;
             height: 75px;
             width: 200px;
             cursor: pointer;
             text-align: center;
-            
-        }
 
+        }
     </style>
 </head>
 
@@ -123,42 +122,82 @@
         </div>
     </div>
 
-    <div class="container-fluid text-center">
+
+    <div class="container-fluid">
         <div class="row content">
-            <div class="col-sm-2 sidenav">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-            </div>
-            <div class="col-sm-8 text-left">
-                <h1>Examination Papers</h1>
-                <form action="examinerPageResouces/createPaper.php">
-                    <input class="buttton" type="submit" value="Create Paper" />
-                </form>
-                <hr>
-                <form action="examinerPageResouces/editPaper.php">
-                    <input class="buttton" type="submit" value="Edit Paper" />
-                </form>
-                <hr>
-                <form action="examinerPageResouces/removePaper.php">
-                    <input class="buttton" type="submit" value="Remove Paper" />
-                </form>
-                <hr>
-                <h3>Current papers</h3>
-                <p>Lorem ipsum...</p>
-            </div>
-            <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>ADS</p>
+            <div class="col-sm-3 sidenav hidden-xs">
+                <h2></h2>
+                <div class="well sidenav">
+                    <h4>Welcome:</h4>
+                    <div class="thumbnail">
+                        <p id="welcomeMessage" style="text-align: justify;">This is the examiner page. Here, you have
+                            the responsibilty of exam papers. Here, exam papers can be created. Once created each exam
+                            paper can be edited before being published to the students. Once published, you are able to
+                            control the students that are able to view the exam papers by manually adding individual
+                            students. After students have been added, they will be able to view and take the exams.
+                            <br>
+                        </p>
+                        <p>
+                            <b>Note:</b> You may choose to delete an exam paper. A paper can only be deleted
+                            by its
+                            creator
+                            and once deleted, can no longer be recovered.
+                        </p>
+
+                        <br>
+
+
+                    </div>
+
+
                 </div>
+            </div>
+            <br>
+
+            <div class="col-sm-9">
                 <div class="well">
-                    <p>ADS</p>
+                    <h4>Examination Papers</h4>
+                    <p>Below you can select an action to carry out. You can either, create a paper, edit a paper or
+                        delete a paper that has already been created. </p>
                 </div>
+
+
+                <div class="row">
+                    <div class="col-sm-8">
+                        <img src="examinerPageResouces/examIcon3.png" class="img-responsive" style="width:100%"
+                            alt="Image">
+
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="well">
+                            <form action="examinerPageResouces/createPaper.php">
+                                <input class="btn btn-info" type="submit" value="Create Paper" />
+                            </form>
+                        </div>
+                        <div class="well">
+                            <form action="examinerPageResouces/editPaper.php">
+                                <input class="btn btn-primary" type="submit" value="Edit Paper" />
+                            </form>
+                        </div>
+                        <div class="well">
+                            <form action="examinerPageResouces/removePaper.php">
+                                <input class="btn btn-danger" type="submit" value="Remove Paper" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
             </div>
         </div>
+
     </div>
-
-
+    </div>
+    </div>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -256,10 +295,10 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
-                    if (doc.data().userLevel == "admin"){
+                    if (doc.data().userLevel == "admin") {
                         for (i = 0; i < adminItems.length; i++) {
                             adminItems[i].style.display = 'block';
-                        }   
+                        }
                     }
                 });
 

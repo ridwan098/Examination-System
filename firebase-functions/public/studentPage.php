@@ -314,7 +314,7 @@ while ($row = $result->fetch()) {
                         <p id="welcomeMessage"><?php echo $welcome; ?></p>
 
                         <br>
-                        <p id="daysLeft" style="visibility: hidden;">hi there you nerd</p>
+                        <p id="daysLeft" style="visibility: hidden;"></p>
                         <button class="btn btn-danger" onclick="calcDays();">Days Left</button>
                     </div>
                     <div class="alert alert-success fade in">
