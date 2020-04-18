@@ -1,10 +1,39 @@
+<?php
+
+    require("../global/util.php");
+    require("../global/db.php");
+
+    session_start();
+
+    if (!isSessionLoggedIn()) {
+        header("Location: ../index.html");
+    }
+
+    $userid = $_SESSION['userid'];
+
+    $db = new Class_DB($servername, $username, $password);
+    $db->connectToDb($dbname);
+
+    $sql = "SELECT e.*, ( 
+                SELECT (COUNT(*) > 0) as warning
+                FROM FinishedExam fe
+                WHERE fe.examId=e.id) as warning
+            FROM Exams e WHERE e.examinerId=?";
+
+    $result= $db->executeQuery($sql, [$userid]);
+    $exams = [];
+    while ($row = $result->fetch()){
+        $exams[] = $row;
+    }
+?>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
-    <link rel="stylesheet" type="text/css" href="logIn.css">
+    <title>Remove Paper</title>
+    <link rel="stylesheet" type="text/css" href="../logIn.css">
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-firestore.js"></script>
 
@@ -72,13 +101,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Higher Exam</a>
+                <a class="navbar-brand" href="../index.html">Higher Exam</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="../index.html">Home</a></li>
                     <li id='modalBtn'><a>Account Info</a></li>
-                    <li id='logout'><a href='logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
+                    <li id='logout'><a href='../logIn.html'><span class="glyphicon glyphicon-log-in"></span> Sign Out</a>
                     </li>
                 </ul>
             </div>
@@ -103,18 +132,30 @@
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
-                <p>Here you will be able to remove and delete previously written papers from the database.</p>
+                <p>Here you will be able to delete previously written papers from the database.</p>
                 <hr>
                 <h3>Previous papers:</h3>
 
-                <p>Please select the paper you wish to remove:</p>
-                <input type="radio" id="mcq" name="qtype" value="Paper X">
-                <label for="mcq">Paper X</label><br>
-                <input type="radio" id="math" name="qtype" value="Paper Y">
-                <label for="math">Paper Y</label><br>
-                <input type="radio" id="text" name="qtype" value="Paper Z">
-                <label for="text">Paper Z</label><br>
-                <button class='btn'>Remove paper</button><br/>
+                <p>Please select the paper you wish to delete:</p>
+                <?php
+                    if (sizeof($exams)>0){
+                ?>
+                        <form onsubmit="postForm(this, postComplete); return false;" action="deleteexam.php" method="post">
+                            <?php
+                                foreach ($exams as $exam){
+                                    echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
+                                    echo '<label for="mcq">' . $exam['subject'];
+                                    echo '</label><br>';
+                                }
+                            ?>
+                            <button type="submit" class='btn'>Remove Paper</button>
+                        </form>
+                <?php
+                    }
+                    else{
+                        echo "None to show";
+                    }
+                ?>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
@@ -126,6 +167,55 @@
             </div>
         </div>
     </div>
+
+    <script>
+        <?php
+            echo "let warnings = {};";
+            foreach ($exams as $exam){
+                echo "warnings[" . $exam['id'] . "] = " . $exam['warning'] . ";";
+            }
+        ?>
+
+        var postComplete = function(caller, response){
+            if (response == 1){
+                alert("Paper removed successfully!");
+                location.reload();
+            }
+            else{
+                alert("Failed to remove paper: " + response);
+            }
+        }
+
+        function postForm(caller, callback){
+            caller.disabled = true;
+
+            var form = caller;
+            var inputs = Array.from(form.elements).filter(e => e.getAttribute("name"));
+
+            // compile data
+            var data = "";
+            for (var i = 0; i < inputs.length; i++){
+                if (inputs[i].name == "examid" && warnings[inputs[i].value]){
+                    if(!confirm("WARNING: This exam has been sat by at least one student, deleting this exam will also remove their answers and all other associated data. Would you like to continue?")){
+                        caller.disabled = false;
+                        return;
+                    }
+                }
+                data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
+            }
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    callback(caller, xhr.response);
+                }
+            }
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(data);
+        }
+    </script>
 
 
 
@@ -185,7 +275,7 @@
                 setupUI(user);
             } else {
                 console.log('User logged out');
-                location.replace('index.html');
+                location.replace('../index.html');
             }
         });
 
