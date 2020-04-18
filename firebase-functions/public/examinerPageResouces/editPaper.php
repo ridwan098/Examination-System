@@ -131,15 +131,24 @@
                 <h3>Previous papers:</h3>
 
                 <p>Please select the paper you wish to edit:</p>
-                <form action="editquestion.php" method="get">
-                    <?php
-                        foreach ($exams as $exam){
-                            echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
-                            echo '<label for="mcq">' . $exam['subject'] . '</label><br>';
-                        }
-                    ?>
-                    <button type="submit" class='btn'>Edit Paper</button>
-                </form>
+                <?php
+                    if (sizeof($exams)>0){
+                ?>
+                        <form action="editquestion.php" method="get">
+                            <?php
+                                foreach ($exams as $exam){
+                                    echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
+                                    echo '<label for="mcq">' . $exam['subject'] . '</label><br>';
+                                }
+                            ?>
+                            <button type="submit" class='btn'>Edit Paper</button>
+                        </form>
+                <?php
+                    }
+                    else{
+                        echo "None to show";
+                    }
+                ?>
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">

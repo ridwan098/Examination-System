@@ -14,6 +14,12 @@
     $db = new Class_DB($servername, $username, $password);
     $db->connectToDb($dbname);
 
+    $result=$db->executeQuery("SELECT * FROM Exams WHERE id=?", [$examid]);
+    $exam = $result->fetch();
+    if (!$exam){
+        header("Location: ../examinerPage.html");
+    }
+
     $result= $db->executeQuery("SELECT * FROM ExamQuestions eq WHERE examId=?", [$examid]);
     $examq = [];
     while ($row = $result->fetch()){
@@ -129,6 +135,17 @@
                 <h1>Welcome</h1>
                 <p>Here you will be able to edit previously written questions.</p>
                 <hr>
+                <h3>Paper Info</h3>
+                <?php
+                    echo "<h5>Subject: {$exam['subject']}</h5>";
+                    echo "<h5>Start Time: " . date("d/m/Y H:i", $exam['date']) . "</h5>";
+                    echo "<h5>Duration: " . gmdate("H:i", $exam['timerLength']) . "</h5>";
+                ?>
+                <form action="createPaper.php">
+                    <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?> >
+                    <button class='btn'>Edit Paper Info</button>
+                </form>
+                <hr>
                 <h3>Questions:</h3>
                 <p>Please select the question you wish to edit:</p>
                 <form action="multipleCQ.php" method="get">
@@ -142,6 +159,11 @@
                         }
                     ?>
                     <button class='btn'>Edit Question</button><br/>
+                </form>
+                <hr>
+                <form action="multipleCQ.php" method="get">
+                    <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?> >
+                    <button class='btn'>Add New Question</button>
                 </form>
                 <hr>
                 <?php echo '<a href="addingStudent.php?examid=' . $examid . '"><h3>Add Student to Exam</h3></a>'; ?>
