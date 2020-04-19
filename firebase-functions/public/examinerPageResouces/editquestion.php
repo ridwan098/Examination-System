@@ -155,29 +155,24 @@ while ($row = $result->fetch()){
                 </form>
                 <hr>
                 <h3>Students</h3>
-                <table class="table table-bordered table-hover">
-                            <tr>
-                                <th>Student Name</th>
-                                <th>Student Email</th>
-                                <th></th>
-                            </tr>
-                            <?php 
-                                for ($i = 0; $i < sizeof($students); $i++){
-                                    echo "<tr id=\"unmarked$i\" class=\"paperRow\" ";
-                                    if ($i >= $NUM_STUDENTS_DISPLAY){
-                                        echo "style='display:none;' >";
-                                    }
-                                    else{
-                                        echo ">";
-                                    }
-
-                                    echo "<td>{$students[$i]['name']}</td>";
-                                    echo "<td>{$students[$i]['email']}</td>";
-                                    echo "<td><button class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
-                                    echo "</tr>";
-                                }
-                            ?>
-                        </table>
+                <div <?php echo 'style="height:' . min(50 + (sizeof($students) * 50), 300) . 'px;overflow:auto;"'; ?> >
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Student Email</th>
+                            <th></th>
+                        </tr>
+                        <?php 
+                            for ($i = 0; $i < sizeof($students); $i++){
+                                echo "<tr id=\"unmarked$i\" class=\"paperRow\" >";
+                                echo "<td>{$students[$i]['name']}</td>";
+                                echo "<td>{$students[$i]['email']}</td>";
+                                echo "<td><button class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
+                                echo "</tr>";
+                            }
+                        ?>
+                    </table>
+                </div>
                 <form action="addingStudent.php" method="get">
                     <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
                     <button class="btn">Add Student to Exam</button>
