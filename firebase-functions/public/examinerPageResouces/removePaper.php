@@ -225,7 +225,8 @@ while ($row = $result->fetch()) {
                         return;
                     }
                 }
-                data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
+                if (inputs[i].type != "radio" || (inputs[i].type == "radio" && inputs[i].checked))
+                    data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
             }
 
             var xhr = new XMLHttpRequest();
