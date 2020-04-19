@@ -21,7 +21,7 @@
     $query = "SELECT id FROM Exams WHERE subject=?";
     if (isset($_POST["examid"])){
         $examid = $_POST['examid'];
-        $query .= " AND id=?";
+        $query .= " AND id<>?";
         $result = $db->executeQuery($query, [$mname, $examid]);
     }
     else{
