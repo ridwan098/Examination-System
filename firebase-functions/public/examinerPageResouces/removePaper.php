@@ -178,6 +178,7 @@ while ($row = $result->fetch()) {
                             echo '</label><br>';
                         }
                         ?>
+                        <br>
                         <button type="submit" class='btn'>Remove Paper</button>
                     </form>
                 <?php
