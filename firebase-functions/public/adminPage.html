@@ -364,7 +364,17 @@
 
             const getUserFunction = functions.httpsCallable('deleteUser');
             getUserFunction({ email: userEmail }).then(result => {
-                console.log(result.data.message);
+                console.log(result);
+                if (!result.data.message.includes("error")){
+
+                    // delete from sql db as well
+                    var post = "email=" + encodeURIComponent(userEmail);
+
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.open("POST", "adminPageResource/removeuser.php", false);
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhttp.send(post);
+                }
                 document.getElementById('deleteUserInfo').innerHTML = result.data.message;
             });
             console.log('Delete user button clicked, and function has completed execution');
