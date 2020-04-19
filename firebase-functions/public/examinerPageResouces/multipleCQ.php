@@ -12,7 +12,7 @@ if (!isset($_GET['examid'])) {
 }
 $examid = $_GET['examid'];
 
-$numFakeAnswers = 0;
+$numFakeAnswers = 1;
 
 $editing = false;
 if (isset($_GET['qid'])) {
