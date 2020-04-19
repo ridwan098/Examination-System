@@ -160,9 +160,9 @@ if (isset($_GET['examid'])) {
     <div class="container-fluid text-center">
         <div class="row content">
             <div class="col-sm-2 sidenav">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
+                <h4> </h4>
+
+                <p><a href="../examinerPage.html">Back</a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
@@ -198,12 +198,7 @@ if (isset($_GET['examid'])) {
                 <p id="qtext" style="visibility:hidden;">The exam has been successfully created, time to <a id="qlink" href="multipleCQ.html?">add some questions</a>.</p>
             </div>
             <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>ADS</p>
-                </div>
-                <div class="well">
-                    <p>ADS</p>
-                </div>
+
             </div>
         </div>
     </div>
@@ -253,8 +248,6 @@ if (isset($_GET['examid'])) {
             xhr.send(data);
         }
     </script>
-
-
     <!-- The Modal -->
     <div id="myModal" class="modal">
 

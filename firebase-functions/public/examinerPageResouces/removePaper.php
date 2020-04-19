@@ -147,17 +147,18 @@ while ($row = $result->fetch()) {
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Template Page</h1>
-            <p id='username'>This is template page: </p>
+            <h1>Remove Paper</h1>
+            <p id='username'>Here, you can edit paper: </p>
         </div>
     </div>
 
     <div class="container-fluid text-center">
         <div class="row content">
             <div class="col-sm-2 sidenav">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
+                <h4> </h4>
+
+                <p><a href="../examinerPage.html">Back</a></p>
+
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
@@ -186,12 +187,7 @@ while ($row = $result->fetch()) {
                 ?>
             </div>
             <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>ADS</p>
-                </div>
-                <div class="well">
-                    <p>ADS</p>
-                </div>
+
             </div>
         </div>
     </div>
