@@ -208,7 +208,10 @@ if (isset($_GET['examid'])) {
         let editing = <?php print($editing ? "true" : "false"); ?>;
 
         var examPosted = function(response) {
-            if (response != 0 && !isNaN(response)) {
+            if (response == -1){
+                alert("An exam already exists with that name. Please choose another.");
+            }
+            else if (response != 0 && !isNaN(response)) {
                 if (!editing) {
                     alert("Added exam successfully!");
                     var link = document.getElementById("qlink");
