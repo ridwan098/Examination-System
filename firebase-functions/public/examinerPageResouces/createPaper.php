@@ -184,7 +184,7 @@ if (isset($_GET['examid'])) {
                     <h5>Length:</h5>
                     <input type="time" class="input" id="time" name="length" <?php if ($editing) echo "value='" . gmdate("H:i", $exam['timerLength']) . "'"; ?> required>
                     <hr>
-                    <button type="submit" class='btn'>
+                    <button type="submit" class='btn btn-primary'>
                         <?php
                         if ($editing) {
                             echo "Save Changes";

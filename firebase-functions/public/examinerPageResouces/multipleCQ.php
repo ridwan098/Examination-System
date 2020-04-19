@@ -165,11 +165,11 @@ if (isset($_GET['qid'])) {
                         }
                         ?>
                     </div>
-                    <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button>
+                    <button type="button" onclick='addFormInput("fakeAnswers")' class='btn btn-primary'>Add Another Answer</button>
                     <h5>Marks:</h5><input type="number" name="marks" form="question" class='input' placeholder='Enter marks here...' <?php if ($editing) {
                                                                                                                                             echo 'value="' . $question['maxMarks'] . '"';
                                                                                                                                         } ?> required>
-                    <button type="submit" class='btn'>
+                    <button type="submit" class='btn btn-primary'>
                         <?php
                         if ($editing) {
                             echo "Save Changes";

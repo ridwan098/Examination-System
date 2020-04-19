@@ -179,7 +179,7 @@ while ($row = $result->fetch()) {
                         }
                         ?>
                         <br>
-                        <button type="submit" class='btn'>Remove Paper</button>
+                        <button type="submit" class='btn btn-danger'>Remove Paper</button>
                     </form>
                 <?php
                 } else {
