@@ -183,7 +183,7 @@ if (isset($_GET['qid'])) {
 
                 <?php
                 if (!$editing) {
-                    echo '<p id="addtext" style="visibility: hidden">Question successfully added. Continue adding more questions or <a href="addingStudent.php?examid=' . $examid . '">add students to the exam</a>.</p>';
+                    echo '<h3 id="addtext" style="visibility: hidden">Question successfully added. <a onClick="window.location.reload()">Continue adding more questions</a> or <a href="addingStudent.php?examid=' . $examid . '">add students to the exam</a>.</h3>';
                 }
                 ?>
                 <hr>
