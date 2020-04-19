@@ -205,7 +205,8 @@
             // compile data
             var data = "";
             for (var i = 0; i < inputs.length; i++){
-                data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
+                if (inputs[i].type != "radio" || (inputs[i].type == "radio" && inputs[i].checked))
+                    data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
             }
 
             var xhr = new XMLHttpRequest();
@@ -238,8 +239,8 @@
                 foreach ($answers as $a){
                     if ($a == "") continue;
                     echo "
-                        <input type='radio' id='$a' name='{$q['examqId']}' value='$a'>
-                        <label style='font-weight: normal' for='$a'>$a</label><br>";
+                        <input type='radio' id='$qnum$a' name='{$q['examqId']}' value='$a'>
+                        <label style='font-weight: normal' for='$qnum$a'>$a</label><br>";
                 }
                 echo "</div>";
                 $qnum += 1;
