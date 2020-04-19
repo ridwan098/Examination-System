@@ -1,24 +1,24 @@
 <?php
 
-    require("../global/util.php");
-    require("../global/db.php");
+require("../global/util.php");
+require("../global/db.php");
 
-    session_start();
+session_start();
 
-    if (!isSessionLoggedIn()) {
-        header("Location: ../index.html");
-    }
+if (!isSessionLoggedIn()) {
+    header("Location: ../index.html");
+}
 
-    $userid = $_SESSION['userid'];
+$userid = $_SESSION['userid'];
 
-    $db = new Class_DB($servername, $username, $password);
-    $db->connectToDb($dbname);
+$db = new Class_DB($servername, $username, $password);
+$db->connectToDb($dbname);
 
-    $result= $db->executeQuery("SELECT * FROM Exams e WHERE examinerId=?", [$userid]);
-    $exams = [];
-    while ($row = $result->fetch()){
-        $exams[] = $row;
-    }
+$result = $db->executeQuery("SELECT * FROM Exams e WHERE examinerId=?", [$userid]);
+$exams = [];
+while ($row = $result->fetch()) {
+    $exams[] = $row;
+}
 ?>
 
 <html lang="en">
@@ -83,6 +83,35 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        #adminBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        #adminBtn:hover {
+            background-color: #555;
+        }
+
+        .buttton {
+            border: 1px;
+            height: 75px;
+            width: 200px;
+            cursor: pointer;
+            text-align: center;
+
+        }
     </style>
 </head>
 
@@ -132,22 +161,21 @@
 
                 <p>Please select the paper you wish to edit:</p>
                 <?php
-                    if (sizeof($exams)>0){
+                if (sizeof($exams) > 0) {
                 ?>
-                        <form action="editquestion.php" method="get">
-                            <?php
-                                foreach ($exams as $exam){
-                                    echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
-                                    echo '<label for="mcq">' . $exam['subject'] . '</label><br>';
-                                }
-                            ?>
-                            <button type="submit" class='btn'>Edit Paper</button>
-                        </form>
+                    <form action="editquestion.php" method="get">
+                        <?php
+                        foreach ($exams as $exam) {
+                            echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
+                            echo '<label for="mcq">' . $exam['subject'] . '</label><br>';
+                        }
+                        ?>
+                        <button type="submit" class='btn'>Edit Paper</button>
+                    </form>
                 <?php
-                    }
-                    else{
-                        echo "None to show";
-                    }
+                } else {
+                    echo "None to show";
+                }
                 ?>
             </div>
             <div class="col-sm-2 sidenav">
@@ -175,9 +203,18 @@
 
     </div>
 
+    <!---      From here below -->
+
+    <footer class="container-fluid text-center adminOnly" style='display:none;'>
+        <p>Admin Page</p>
+    </footer>
+
+    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
+
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -193,12 +230,12 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const functions = firebase.functions();
 
         //update firestore settings
-        db.settings({ timestampsInSnapshots: true });
-
-
-
+        db.settings({
+            timestampsInSnapshots: true
+        });
     </script>
 
     <script>
@@ -215,21 +252,33 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user)
-                setupUI(user);
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin;
+                    setupUI(user);
+                })
+                console.log('User logged in: ', user);
+
             } else {
                 console.log('User logged out');
                 location.replace('../index.html');
             }
         });
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                if (user.admin) {
+                    //document.getElementById("adminBtn").style.display = "block";
+                    //adminItems[1].style.display = 'block';
+                    for (i = 0; i < adminItems.length; i++) {
+                        adminItems[i].style.display = 'block';
+                    }
+
+                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
-                    const name = `<span>${doc.data().username} </span>`;
+                    const name = `<span>${doc.data().username}</span>`;
                     const html = `
                 <div>email: ${user.email} </div>
                 <div>username: ${doc.data().username} </div>
@@ -237,15 +286,22 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                    if (doc.data().userLevel == "admin") {
+                        for (i = 0; i < adminItems.length; i++) {
+                            adminItems[i].style.display = 'block';
+                        }
+                    }
                 });
 
-            }
-            else {
+            } else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
-
             }
         }
+
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -253,16 +309,22 @@
         var btn = document.getElementById("modalBtn");
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
-        btn.onclick = function () {
+        btn.onclick = function() {
             modal.style.display = "block";
         }
-        span.onclick = function () {
+        span.onclick = function() {
             modal.style.display = "none";
         }
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
+        }
+
+
+        //when admin returns to page
+        function returnTopage() {
+            location.replace('../adminPage.html');
         }
     </script>
 

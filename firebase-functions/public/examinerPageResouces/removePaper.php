@@ -1,30 +1,30 @@
 <?php
 
-    require("../global/util.php");
-    require("../global/db.php");
+require("../global/util.php");
+require("../global/db.php");
 
-    session_start();
+session_start();
 
-    if (!isSessionLoggedIn()) {
-        header("Location: ../index.html");
-    }
+if (!isSessionLoggedIn()) {
+    header("Location: ../index.html");
+}
 
-    $userid = $_SESSION['userid'];
+$userid = $_SESSION['userid'];
 
-    $db = new Class_DB($servername, $username, $password);
-    $db->connectToDb($dbname);
+$db = new Class_DB($servername, $username, $password);
+$db->connectToDb($dbname);
 
-    $sql = "SELECT e.*, ( 
+$sql = "SELECT e.*, ( 
                 SELECT (COUNT(*) > 0) as warning
                 FROM FinishedExam fe
                 WHERE fe.examId=e.id) as warning
             FROM Exams e WHERE e.examinerId=?";
 
-    $result= $db->executeQuery($sql, [$userid]);
-    $exams = [];
-    while ($row = $result->fetch()){
-        $exams[] = $row;
-    }
+$result = $db->executeQuery($sql, [$userid]);
+$exams = [];
+while ($row = $result->fetch()) {
+    $exams[] = $row;
+}
 ?>
 
 <html lang="en">
@@ -89,6 +89,35 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        #adminBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: grey;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        #adminBtn:hover {
+            background-color: #555;
+        }
+
+        .buttton {
+            border: 1px;
+            height: 75px;
+            width: 200px;
+            cursor: pointer;
+            text-align: center;
+
+        }
     </style>
 </head>
 
@@ -138,23 +167,22 @@
 
                 <p>Please select the paper you wish to delete:</p>
                 <?php
-                    if (sizeof($exams)>0){
+                if (sizeof($exams) > 0) {
                 ?>
-                        <form onsubmit="postForm(this, postComplete); return false;" action="deleteexam.php" method="post">
-                            <?php
-                                foreach ($exams as $exam){
-                                    echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
-                                    echo '<label for="mcq">' . $exam['subject'];
-                                    echo '</label><br>';
-                                }
-                            ?>
-                            <button type="submit" class='btn'>Remove Paper</button>
-                        </form>
+                    <form onsubmit="postForm(this, postComplete); return false;" action="deleteexam.php" method="post">
+                        <?php
+                        foreach ($exams as $exam) {
+                            echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
+                            echo '<label for="mcq">' . $exam['subject'];
+                            echo '</label><br>';
+                        }
+                        ?>
+                        <button type="submit" class='btn'>Remove Paper</button>
+                    </form>
                 <?php
-                    }
-                    else{
-                        echo "None to show";
-                    }
+                } else {
+                    echo "None to show";
+                }
                 ?>
             </div>
             <div class="col-sm-2 sidenav">
@@ -170,23 +198,22 @@
 
     <script>
         <?php
-            echo "let warnings = {};";
-            foreach ($exams as $exam){
-                echo "warnings[" . $exam['id'] . "] = " . $exam['warning'] . ";";
-            }
+        echo "let warnings = {};";
+        foreach ($exams as $exam) {
+            echo "warnings[" . $exam['id'] . "] = " . $exam['warning'] . ";";
+        }
         ?>
 
-        var postComplete = function(caller, response){
-            if (response == 1){
+        var postComplete = function(caller, response) {
+            if (response == 1) {
                 alert("Paper removed successfully!");
                 location.reload();
-            }
-            else{
+            } else {
                 alert("Failed to remove paper: " + response);
             }
         }
 
-        function postForm(caller, callback){
+        function postForm(caller, callback) {
             caller.disabled = true;
 
             var form = caller;
@@ -194,9 +221,9 @@
 
             // compile data
             var data = "";
-            for (var i = 0; i < inputs.length; i++){
-                if (inputs[i].name == "examid" && warnings[inputs[i].value]){
-                    if(!confirm("WARNING: This exam has been sat by at least one student, deleting this exam will also remove their answers and all other associated data. Would you like to continue?")){
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].name == "examid" && warnings[inputs[i].value]) {
+                    if (!confirm("WARNING: This exam has been sat by at least one student, deleting this exam will also remove their answers and all other associated data. Would you like to continue?")) {
                         caller.disabled = false;
                         return;
                     }
@@ -219,6 +246,7 @@
 
 
 
+
     <!-- The Modal -->
     <div id="myModal" class="modal">
 
@@ -231,9 +259,18 @@
 
     </div>
 
+    <!---      From here below -->
+
+    <footer class="container-fluid text-center adminOnly" style='display:none;'>
+        <p>Admin Page</p>
+    </footer>
+
+    <button class='adminOnly' onclick="returnTopage()" id="adminBtn" title="Go to top">Admin Page</button>
+
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-functions.js"></script>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -249,12 +286,12 @@
         // maek auth and firestore references
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const functions = firebase.functions();
 
         //update firestore settings
-        db.settings({ timestampsInSnapshots: true });
-
-
-
+        db.settings({
+            timestampsInSnapshots: true
+        });
     </script>
 
     <script>
@@ -271,21 +308,33 @@
         //listen for the auth status of user (whether theyre signed in or out)
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User logged in: ', user)
-                setupUI(user);
+                user.getIdTokenResult().then(idTokenResult => {
+                    user.admin = idTokenResult.claims.admin;
+                    setupUI(user);
+                })
+                console.log('User logged in: ', user);
+
             } else {
                 console.log('User logged out');
                 location.replace('../index.html');
             }
         });
 
-
+        const adminItems = document.querySelectorAll('.adminOnly');
         const setupUI = (user) => {
             //<div>password: ${doc.data().password} </div>
             if (user) {
+                if (user.admin) {
+                    //document.getElementById("adminBtn").style.display = "block";
+                    //adminItems[1].style.display = 'block';
+                    for (i = 0; i < adminItems.length; i++) {
+                        adminItems[i].style.display = 'block';
+                    }
+
+                }
                 //acount info 
                 db.collection('users').doc(user.uid).get().then(doc => {
-                    const name = `<span>${doc.data().username} </span>`;
+                    const name = `<span>${doc.data().username}</span>`;
                     const html = `
                 <div>email: ${user.email} </div>
                 <div>username: ${doc.data().username} </div>
@@ -293,15 +342,22 @@
                 `;
                     document.getElementById('accountDetails').innerHTML += html;
                     document.getElementById('username').innerHTML += name;
+                    if (doc.data().userLevel == "admin") {
+                        for (i = 0; i < adminItems.length; i++) {
+                            adminItems[i].style.display = 'block';
+                        }
+                    }
                 });
 
-            }
-            else {
+            } else {
+                for (i = 0; i < adminItems.length; i++) {
+                    adminItems[i].style.display = 'none';
+                }
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
-
             }
         }
+
 
         // Get the modal
         var modal = document.getElementById("myModal");
@@ -309,16 +365,22 @@
         var btn = document.getElementById("modalBtn");
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
-        btn.onclick = function () {
+        btn.onclick = function() {
             modal.style.display = "block";
         }
-        span.onclick = function () {
+        span.onclick = function() {
             modal.style.display = "none";
         }
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
+        }
+
+
+        //when admin returns to page
+        function returnTopage() {
+            location.replace('../adminPage.html');
         }
     </script>
 
