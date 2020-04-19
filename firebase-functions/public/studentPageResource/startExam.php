@@ -236,11 +236,13 @@
                 shuffle($answers);
                 echo "<strong>Question $qnum: {$q['question']}</strong><br>
                     <div class='answers' style='position:relative;left: 20px;'>";
+                $anum = 0;
                 foreach ($answers as $a){
                     if ($a == "") continue;
                     echo "
-                        <input type='radio' id='$qnum$a' name='{$q['examqId']}' value='$a'>
-                        <label style='font-weight: normal' for='$qnum$a'>$a</label><br>";
+                        <input type='radio' id='$qnum$anum' name='{$q['examqId']}' value='$a'>
+                        <label style='font-weight: normal' for='$qnum$anum'>$a</label><br>";
+                    $anum++;
                 }
                 echo "</div>";
                 $qnum += 1;

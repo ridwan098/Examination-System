@@ -178,7 +178,7 @@ if (isset($_GET['examid'])) {
                     ?>
                     <h5>Module:</h5><input name="mname" form="createp" class='input' placeholder='Enter module name ' <?php if ($editing) echo "value='{$exam['subject']}'"; ?> required>
                     <h5>Date of Exam:</h5>
-                    <input type="date" class="input" name="date" <?php if ($editing) echo "value='" . date("Y-m-d", $exam['date']) . "'"; ?> required>
+                    <input type="date" class="input" max="2050-01-01" min=<?php echo "'" . date("Y-m-d", time() + 24*60*60) . "'"; ?> name="date" <?php if ($editing) echo "value='" . date("Y-m-d", $exam['date']) . "'"; ?> required>
                     <h5>Time of Exam:</h5>
                     <input type="time" class="input" id="time" name="time" min="09:00" max="18:00" <?php if ($editing) echo "value='" . date("H:i", $exam['date']) . "'"; ?> required>
                     <h5>Length:</h5>
