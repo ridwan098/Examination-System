@@ -157,8 +157,8 @@ if (isset($_GET['qid'])) {
                             $answers = explode("\0", $question['fakeOptions']);
                             foreach ($answers as $a) {
                                 if ($a == "") continue;
-                                $numFakeAnswers++;
                                 echo '<input name="fakeAnswer' . $numFakeAnswers . '" form="question" class="input" placeholder="Enter answer here..." value="' . $a . '">';
+                                $numFakeAnswers++;
                             }
                         } else {
                             echo '<input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>';
