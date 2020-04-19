@@ -162,7 +162,7 @@ if (isset($_GET['examid'])) {
             <div class="col-sm-2 sidenav">
                 <h4> </h4>
 
-                <p><a href="../examinerPage.html">Back</a></p>
+                <p><a href="../examinerPage.html">Back to examiner page</a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>

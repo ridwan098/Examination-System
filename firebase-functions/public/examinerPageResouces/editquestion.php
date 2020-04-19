@@ -119,8 +119,8 @@ while ($row = $result->fetch()) {
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Edit Question</h1>
-            <p id='username'>On this page, you can edit questions: </p>
+            <h1>Previous Paper</h1>
+            <p id='username'>On this page, you can change details of a paper: </p>
         </div>
     </div>
 
@@ -129,7 +129,7 @@ while ($row = $result->fetch()) {
             <div class="col-sm-2 sidenav">
                 <h4> </h4>
 
-                <p><a href="../examinerPage.html">Back</a></p>
+                <p><a href="editPaper.php">Back</a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>

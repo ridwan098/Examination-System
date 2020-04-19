@@ -1,36 +1,36 @@
 <?php
-    require("../global/util.php");
-    require("../global/db.php");
+require("../global/util.php");
+require("../global/db.php");
 
-    session_start();
+session_start();
 
-    if (!isSessionLoggedIn()) {
-        header("Location: index.html");
-    }
-    if (!isset($_GET['examid'])){
-        header("Location: ../examinerPage.html");
-    }
-    $examid = $_GET['examid'];
+if (!isSessionLoggedIn()) {
+    header("Location: index.html");
+}
+if (!isset($_GET['examid'])) {
+    header("Location: ../examinerPage.html");
+}
+$examid = $_GET['examid'];
 
-    $numFakeAnswers = 0;
+$numFakeAnswers = 0;
 
-    $editing = false;
-    if (isset($_GET['qid'])) {
-        $editing = true;
-        $qid = $_GET['qid'];
+$editing = false;
+if (isset($_GET['qid'])) {
+    $editing = true;
+    $qid = $_GET['qid'];
 
-        $db = new Class_DB($servername, $username, $password);
-        $db->connectToDb($dbname);
+    $db = new Class_DB($servername, $username, $password);
+    $db->connectToDb($dbname);
 
-        $sql = "SELECT * FROM ExamQuestions eq, McqQuestion mcq
+    $sql = "SELECT * FROM ExamQuestions eq, McqQuestion mcq
                 WHERE eq.examqId=?
                 AND eq.examqId=mcq.examqId";
-        $result = $db->executeQuery($sql, [$qid]);
-        $question = $result->fetch();
-        if (!$question){
-            header("Location: ../examinerPage.html");
-        }
+    $result = $db->executeQuery($sql, [$qid]);
+    $question = $result->fetch();
+    if (!$question) {
+        header("Location: ../examinerPage.html");
     }
+}
 ?>
 
 <html lang="en">
@@ -123,83 +123,73 @@
     <div class="container-fluid text-center">
         <div class="row content">
             <div class="col-sm-2 sidenav">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
+                <h4> </h4>
+
+                <p><a href="editPaper.php">Back</a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Multiple Choice Question</h1>
                 <form onsubmit="postForm(this, 'question', questionPosted); return false;" action="addquestion.php" method="post" id='question'>
                     <?php
-                        if ($editing){
-                            echo '<input type="hidden" name="qid" value="'.$qid.'">';
-                        }
+                    if ($editing) {
+                        echo '<input type="hidden" name="qid" value="' . $qid . '">';
+                    }
                     ?>
-                    <input type="hidden" name="examid" value=<?php echo '"' . $examid . '"'; ?> >
-                    <input type="hidden" name="type" value=1 >
+                    <input type="hidden" name="examid" value=<?php echo '"' . $examid . '"'; ?>>
+                    <input type="hidden" name="type" value=1>
                     <h5>Please enter a multiple choice question here along with the correct and fake answers.</h5>
                     <?php
 
-                        echo '<textarea name="question" type="input" placeholder="Question" class="input" required>';
-                        if ($editing){
-                            echo $question['question'];
-                        }
-                        echo '</textarea>';
+                    echo '<textarea name="question" type="input" placeholder="Question" class="input" required>';
+                    if ($editing) {
+                        echo $question['question'];
+                    }
+                    echo '</textarea>';
                     ?>
                     <h5>Correct Answer:</h5>
-                    <input name="answer" form="question" class='input'
-                        placeholder='Enter answer here...'
-                        <?php if ($editing) { echo 'value="' . $question['answer'] . '"'; } ?>
-                        required
-                    >
+                    <input name="answer" form="question" class='input' placeholder='Enter answer here...' <?php if ($editing) {
+                                                                                                                echo 'value="' . $question['answer'] . '"';
+                                                                                                            } ?> required>
                     <h5>Other Answers:</h5>
                     <div id='fakeAnswers'>
-                        <?php 
-                            if ($editing){
-                                $answers = explode("\0", $question['fakeOptions']);
-                                foreach ($answers as $a){
-                                    if ($a == "") continue;
-                                    $numFakeAnswers++;
-                                    echo '<input name="fakeAnswer' . $numFakeAnswers . '" form="question" class="input" placeholder="Enter answer here..." value="' . $a . '">';
-                                }
+                        <?php
+                        if ($editing) {
+                            $answers = explode("\0", $question['fakeOptions']);
+                            foreach ($answers as $a) {
+                                if ($a == "") continue;
+                                $numFakeAnswers++;
+                                echo '<input name="fakeAnswer' . $numFakeAnswers . '" form="question" class="input" placeholder="Enter answer here..." value="' . $a . '">';
                             }
-                            else{
-                                echo '<input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>';
-                            }
+                        } else {
+                            echo '<input name="fakeAnswer1" form="question" class="input" placeholder="Enter answer here..." required>';
+                        }
                         ?>
                     </div>
                     <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button>
-                    <h5>Marks:</h5><input type="number" name="marks" form="question" class='input'
-                        placeholder='Enter marks here...' 
-                        <?php if ($editing) { echo 'value="' . $question['maxMarks'] . '"'; } ?>
-                        required>
+                    <h5>Marks:</h5><input type="number" name="marks" form="question" class='input' placeholder='Enter marks here...' <?php if ($editing) {
+                                                                                                                                            echo 'value="' . $question['maxMarks'] . '"';
+                                                                                                                                        } ?> required>
                     <button type="submit" class='btn'>
                         <?php
-                            if ($editing){
-                                echo "Save Changes";
-                            }
-                            else{
-                                echo "Submit Question";
-                            }
-                    ?>
-                    </button><br/>
+                        if ($editing) {
+                            echo "Save Changes";
+                        } else {
+                            echo "Submit Question";
+                        }
+                        ?>
+                    </button><br />
                     <hr />
                 </form>
 
                 <?php
-                    if (!$editing){
-                        echo '<p id="addtext" style="visibility: hidden">Question successfully added. Continue adding more questions or <a href="addingStudent.php?examid=' . $examid . '">add students to the exam</a>.</p>';
-                    }
+                if (!$editing) {
+                    echo '<p id="addtext" style="visibility: hidden">Question successfully added. Continue adding more questions or <a href="addingStudent.php?examid=' . $examid . '">add students to the exam</a>.</p>';
+                }
                 ?>
                 <hr>
             </div>
             <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>ADS</p>
-                </div>
-                <div class="well">
-                    <p>ADS</p>
-                </div>
+
             </div>
         </div>
     </div>
@@ -222,7 +212,7 @@
         let fakeAnswers = <?php echo $numFakeAnswers; ?>;
         let editing = <?php print($editing ? "true" : "false"); ?>;
 
-        function addFormInput(id){
+        function addFormInput(id) {
             fakeAnswers++;
             var node = document.createElement("input");
             node.setAttribute("name", "fakeAnswer" + fakeAnswers);
@@ -235,25 +225,23 @@
             div.appendChild(node);
         }
 
-        var questionPosted = function (caller, response) {
-            
+        var questionPosted = function(caller, response) {
+
             caller.disabled = false;
-            if (response == 1){
+            if (response == 1) {
                 alert("Success!");
-                if (!editing){
+                if (!editing) {
                     var link = document.getElementById("addtext");
-                    link.style ="";
-                }
-                else{
+                    link.style = "";
+                } else {
                     document.location = <?php echo "'editquestion.php?examid=$examid'"; ?>;
                 }
-            }
-            else{
+            } else {
                 alert("Failed to add question");
             }
         }
 
-        function postForm(caller, formId, callback){
+        function postForm(caller, formId, callback) {
             caller.disabled = true;
 
             var form = document.getElementById(formId);
@@ -261,7 +249,7 @@
 
             // compile data
             var data = "";
-            for (var i = 0; i < inputs.length; i++){
+            for (var i = 0; i < inputs.length; i++) {
 
                 data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
             }
@@ -299,10 +287,9 @@
         const db = firebase.firestore();
 
         //update firestore settings
-        db.settings({ timestampsInSnapshots: true });
-
-
-
+        db.settings({
+            timestampsInSnapshots: true
+        });
     </script>
 
     <script>
@@ -343,8 +330,7 @@
                     document.getElementById('username').innerHTML += name;
                 });
 
-            }
-            else {
+            } else {
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
 
@@ -357,13 +343,13 @@
         var btn = document.getElementById("modalBtn");
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
-        btn.onclick = function () {
+        btn.onclick = function() {
             modal.style.display = "block";
         }
-        span.onclick = function () {
+        span.onclick = function() {
             modal.style.display = "none";
         }
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
