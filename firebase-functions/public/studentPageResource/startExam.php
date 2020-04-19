@@ -239,7 +239,7 @@
                     if ($a == "") continue;
                     echo "
                         <input type='radio' id='$a' name='{$q['examqId']}' value='$a'>
-                        <span for='$a'>$a</span><br>";
+                        <label style='font-weight: normal' for='$a'>$a</label><br>";
                 }
                 echo "</div>";
                 $qnum += 1;
