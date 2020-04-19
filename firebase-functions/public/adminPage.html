@@ -162,14 +162,14 @@
                     </form>
                     <hr>
                     <h3>Core Functions</h3>
-                    <p>You can create and delete user accounts. Otherwsie, you can browse through other pages using the
+                    <p>You can create and delete user accounts. Otherwise, you can browse through other pages using the
                         links above. </p>
                     <p><b>Note:</b> If this is your first time logging in as an admin, you need to use the 'change user
                         role' feature
                         to get full access. This full access will enable you to navigate through other pages whilst
                         maintaining the ability to return to the admin page. You should still select admin when doing
                         this. Admin access is permanent unless account is
-                        deleted</p>
+                        deleted.</p>
 
             </div>
             <div class="col-sm-2 sidenav">
@@ -365,7 +365,7 @@
             const getUserFunction = functions.httpsCallable('deleteUser');
             getUserFunction({ email: userEmail }).then(result => {
                 console.log(result);
-                if (!result.data.message.includes("error")){
+                if (!result.data.message.includes("error")) {
 
                     // delete from sql db as well
                     var post = "email=" + encodeURIComponent(userEmail);
