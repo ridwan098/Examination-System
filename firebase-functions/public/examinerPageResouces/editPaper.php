@@ -165,10 +165,10 @@ while ($row = $result->fetch()) {
                 ?>
                     <form action="editquestion.php" method="get">
                         <?php
-                        foreach ($exams as $exam) {
-                            echo '<input type="radio" id="'.$exam['id'].'" name="examid" value="' . $exam['id'] . '" required>';
-                            echo '<label for="'.$exam['id'].'">' . $exam['subject'] . '</label><br>';
-                        }
+                            foreach ($exams as $exam) {
+                                echo '<input type="radio" id="'.$exam['id'].'" name="examid" value="' . $exam['id'] . '" required>';
+                                echo '<label for="'.$exam['id'].'">' . $exam['subject'] . '</label><br>';
+                            }
                         ?>
                         <button type="submit" class='btn'>Edit Paper</button>
                     </form>

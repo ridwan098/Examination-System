@@ -170,7 +170,7 @@ if (isset($_GET['examid'])) {
                     which you would like for the paper to start and a total number of questions.
                 </p>
                 <iframe style="display:none" name="hidden-form"></iframe>
-                <form onsubmit="postForm(this, 'createp', examPosted); return false;" action="addexam.php" target="hidden-frame" method="post" id='createp'>
+                <form onsubmit="postForm(this, 'createp', examPosted); return false;" action="addexam.php" target="hidden-form" method="post" id='createp'>
                     <?php
                     if ($editing) {
                         echo "<input type='hidden' name='examid' value='$examid'>";

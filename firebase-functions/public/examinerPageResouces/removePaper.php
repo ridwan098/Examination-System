@@ -173,8 +173,8 @@ while ($row = $result->fetch()) {
                     <form onsubmit="postForm(this, postComplete); return false;" action="deleteexam.php" method="post">
                         <?php
                         foreach ($exams as $exam) {
-                            echo '<input type="radio" id="mcq" name="examid" value="' . $exam['id'] . '" required>';
-                            echo '<label for="mcq">' . $exam['subject'];
+                            echo '<input type="radio" id="' . $exam['id']. '" name="examid" value="' . $exam['id'] . '" required>';
+                            echo '<label for="' . $exam['id']. '">' . $exam['subject'];
                             echo '</label><br>';
                         }
                         ?>

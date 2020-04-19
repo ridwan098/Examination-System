@@ -167,7 +167,7 @@ while ($row = $result->fetch()){
                                 echo "<tr id=\"unmarked$i\" class=\"paperRow\" >";
                                 echo "<td>{$students[$i]['name']}</td>";
                                 echo "<td>{$students[$i]['email']}</td>";
-                                echo "<td><button class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
+                                echo "<td><button onclick='removeStudent($examid, {$students[$i]['id']});' class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
                                 echo "</tr>";
                             }
                         ?>
@@ -218,6 +218,17 @@ while ($row = $result->fetch()){
         </div>
 
     </div>
+
+    <script>
+        function removeStudent(examId, studentId){
+            var post = "examid=" + encodeURIComponent(examId) + "&userid=" + encodeURIComponent(studentId);
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "removestudent.php", false);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send(post);
+        }
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
