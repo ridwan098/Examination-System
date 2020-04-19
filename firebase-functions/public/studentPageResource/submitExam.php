@@ -10,6 +10,14 @@
         $db = new Class_DB($servername, $username, $password);
         $db->connectToDb($dbname);
 
+        // Get list of questions we should have
+        $query = "SELECT * FROM ExamQuestions WHERE examId=?";
+        $result = $db->executeQuery($query, [$examId]);
+        $questions = [];
+        while ($row = $result->fetch()){
+            $questions[] = $row;
+        }
+
         // Execute query for finished exam
         $query = "INSERT INTO FinishedExam (examId, userId, marked)
                 VALUES (?, ?, 0)";
@@ -20,7 +28,17 @@
                 VALUES ";
         $needcomma = false;
         $values = [];
-        foreach ($_POST as $key => $value){
+        foreach ($questions as $q){
+            if ($needcomma){
+                $query .= ",";
+            }
+            $query .= "(?,?,?)";
+            $values[] = $q['examqId'];
+            $values[] = $db->getLastInsertId();
+            $values[] = isset($_POST[$q['examqId']]) ? $_POST[$q['examqId']] : 'Not answered';
+            $needcomma = true;
+        }
+        /*foreach ($_POST as $key => $value){
             if (is_numeric($key)){
                 if ($needcomma){
                     $query .= ",";
@@ -31,7 +49,7 @@
                 $values[] = $value;
                 $needcomma = true;
             }
-        }
+        }*/
         $result = $db->executeQuery($query, $values);
 
         // Remove from database after student has sat exam
