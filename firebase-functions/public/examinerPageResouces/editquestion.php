@@ -190,12 +190,13 @@ while ($row = $result->fetch()) {
                         $i++;
                     }
                     ?>
+                    <br>
                     <button class='btn btn-primary'>Edit Question</button><br />
                 </form>
                 <br>
                 <form action="multipleCQ.php" method="get">
                     <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
-                    <button class='btn btn-primary'>Add New Question</button>
+                    <button class='btn btn-info'>Add New Question</button>
                 </form>
                 <hr>
             </div>
