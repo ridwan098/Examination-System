@@ -109,7 +109,7 @@
                     <input type="hidden" name="examid" value=<?php echo "\"{$_GET['examid']}\""; ?>>
                     <h5>Please enter the student email address</h5>
                     <h5>Student Email:</h5><input name="student" form="addS" class='input' placeholder='Enter student email' required><br>
-                    <button type="submit" class='btn'>Add Student</button><br />
+                    <button type="submit" class='btn btn-primary'>Add Student</button><br />
                 </form>
                 <hr>
                 <!--<form>

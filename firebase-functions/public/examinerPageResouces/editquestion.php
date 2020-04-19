@@ -30,7 +30,7 @@ while ($row = $result->fetch()) {
 
 $result = $db->executeQuery("SELECT * FROM StudentExamRelation ser, Users u WHERE ser.examId=? AND u.id=ser.userId", [$examid]);
 $students = [];
-while ($row = $result->fetch()){
+while ($row = $result->fetch()) {
     $students[] = $row;
 }
 
@@ -151,31 +151,31 @@ while ($row = $result->fetch()){
                 ?>
                 <form action="createPaper.php" method="get">
                     <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
-                    <button class='btn'>Edit Paper Info</button>
+                    <button class='btn btn-primary'>Edit Paper Info</button>
                 </form>
                 <hr>
                 <h3>Students</h3>
-                <div id='studentTable' <?php echo 'style="height:' . min(50 + (sizeof($students) * 50), 300) . 'px;overflow:auto;"'; ?> >
+                <div id='studentTable' <?php echo 'style="height:' . min(50 + (sizeof($students) * 50), 300) . 'px;overflow:auto;"'; ?>>
                     <table class="table table-bordered table-hover">
                         <tr>
                             <th>Student Name</th>
                             <th>Student Email</th>
                             <th></th>
                         </tr>
-                        <?php 
-                            for ($i = 0; $i < sizeof($students); $i++){
-                                echo "<tr id=\"unmarked$i\" class=\"paperRow\" >";
-                                echo "<td>{$students[$i]['name']}</td>";
-                                echo "<td>{$students[$i]['email']}</td>";
-                                echo "<td><button onclick='removeStudent(\"studentTable\", \"unmarked$i\", $examid, {$students[$i]['id']});' class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
-                                echo "</tr>";
-                            }
+                        <?php
+                        for ($i = 0; $i < sizeof($students); $i++) {
+                            echo "<tr id=\"unmarked$i\" class=\"paperRow\" >";
+                            echo "<td>{$students[$i]['name']}</td>";
+                            echo "<td>{$students[$i]['email']}</td>";
+                            echo "<td><button onclick='removeStudent(\"studentTable\", \"unmarked$i\", $examid, {$students[$i]['id']});' class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
+                            echo "</tr>";
+                        }
                         ?>
                     </table>
                 </div>
                 <form action="addingStudent.php" method="get">
                     <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
-                    <button class="btn">Add Student to Exam</button>
+                    <button class="btn btn-primary">Add Student to Exam</button>
                 </form>
                 <hr>
                 <h3>Questions:</h3>
@@ -190,12 +190,13 @@ while ($row = $result->fetch()){
                         $i++;
                     }
                     ?>
-                    <button class='btn'>Edit Question</button><br />
+                    <br>
+                    <button class='btn btn-primary'>Edit Question</button><br />
                 </form>
                 <br>
                 <form action="multipleCQ.php" method="get">
                     <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
-                    <button class='btn'>Add New Question</button>
+                    <button class='btn btn-info'>Add New Question</button>
                 </form>
                 <hr>
             </div>
@@ -222,7 +223,7 @@ while ($row = $result->fetch()){
     <script>
         let numStudents = <?php echo sizeof($students); ?>;
 
-        function removeStudent(table, row, examId, studentId){
+        function removeStudent(table, row, examId, studentId) {
             var post = "examid=" + encodeURIComponent(examId) + "&userid=" + encodeURIComponent(studentId);
 
             var xhttp = new XMLHttpRequest();
@@ -230,14 +231,13 @@ while ($row = $result->fetch()){
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send(post);
 
-            if (xhttp.responseText == 1){
+            if (xhttp.responseText == 1) {
                 var element = document.getElementById(row);
                 element.parentNode.removeChild(element);
                 numStudents--;
                 var table = document.getElementById(table);
                 table.style.height = Math.min(50 + (numStudents * 50), 300) + "px";
-            }
-            else{
+            } else {
                 alert("Failed to remove student");
             }
         }

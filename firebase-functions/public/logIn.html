@@ -49,7 +49,7 @@
                 <div class="login-form">
                     <input type="text" name='username' placeholder="Enter email address" class="input" required><br />
                     <input type="password" name='password' placeholder="Password" class="input" required><br />
-                    <button class="btn">log in</button>
+                    <button class="btn ">log in</button>
                     <span id='errorMessage' style='color:grey;'></span>
                     <span><a href="signUp.html">Create a new account</a></span>
                 </div>
@@ -91,7 +91,7 @@
     <script>
         //log in 
 
-        function loginError(err){
+        function loginError(err) {
             document.getElementById('errorMessage').innerHTML = "There was an error logging you in: " + err + '<br /> <br />';
         }
 
@@ -108,24 +108,24 @@
                 console.log(cred.user);
                 auth.onAuthStateChanged(user1 => {
                     if (user1) {
-                        if (phpLogin(user,password)){
+                        if (phpLogin(user, password)) {
                             console.log('User logged in: ', user)
                             db.collection('users').doc(user1.uid).get().then(doc => {
                                 var word = `${doc.data().userLevel}`;
                                 word = word.toLowerCase();
                                 console.log('This is the word', word + 'Page.html');
-                                if (word == "grader"){
+                                if (word == "grader") {
                                     location.replace("graderPageResource/graderPage.php");
                                 }
-                                else if (word == "student"){
+                                else if (word == "student") {
                                     location.replace("studentPage.php");
                                 }
-                                else{
+                                else {
                                     location.replace(word + 'Page.html');
                                 }
                             });
                         }
-                        else{
+                        else {
                             loginError("Invalid user credentials");
                         }
                     }
@@ -136,7 +136,7 @@
 
         });
 
-        function phpLogin(email,password){
+        function phpLogin(email, password) {
 
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", "adminPageResource/login.php", false);

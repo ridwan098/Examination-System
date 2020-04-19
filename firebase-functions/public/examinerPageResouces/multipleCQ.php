@@ -165,11 +165,11 @@ if (isset($_GET['qid'])) {
                         }
                         ?>
                     </div>
-                    <button type="button" onclick='addFormInput("fakeAnswers")' class='btn'>Add Another Answer</button>
+                    <button type="button" onclick='addFormInput("fakeAnswers")' class='btn btn-primary'>Add Another Answer</button>
                     <h5>Marks:</h5><input type="number" name="marks" form="question" class='input' placeholder='Enter marks here...' <?php if ($editing) {
                                                                                                                                             echo 'value="' . $question['maxMarks'] . '"';
                                                                                                                                         } ?> required>
-                    <button type="submit" class='btn'>
+                    <button type="submit" class='btn btn-primary'>
                         <?php
                         if ($editing) {
                             echo "Save Changes";
@@ -183,7 +183,7 @@ if (isset($_GET['qid'])) {
 
                 <?php
                 if (!$editing) {
-                    echo '<p id="addtext" style="visibility: hidden">Question successfully added. Continue adding more questions or <a href="addingStudent.php?examid=' . $examid . '">add students to the exam</a>.</p>';
+                    echo '<h3 id="addtext" style="visibility: hidden">Question successfully added. <a onClick="window.location.reload()">Continue adding more questions</a> or <a href="addingStudent.php?examid=' . $examid . '">add students to the exam</a>.</h3>';
                 }
                 ?>
                 <hr>
