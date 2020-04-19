@@ -155,7 +155,7 @@ while ($row = $result->fetch()){
                 </form>
                 <hr>
                 <h3>Students</h3>
-                <div <?php echo 'style="height:' . min(50 + (sizeof($students) * 50), 300) . 'px;overflow:auto;"'; ?> >
+                <div id='studentTable' <?php echo 'style="height:' . min(50 + (sizeof($students) * 50), 300) . 'px;overflow:auto;"'; ?> >
                     <table class="table table-bordered table-hover">
                         <tr>
                             <th>Student Name</th>
@@ -167,7 +167,7 @@ while ($row = $result->fetch()){
                                 echo "<tr id=\"unmarked$i\" class=\"paperRow\" >";
                                 echo "<td>{$students[$i]['name']}</td>";
                                 echo "<td>{$students[$i]['email']}</td>";
-                                echo "<td><button onclick='removeStudent($examid, {$students[$i]['id']});' class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
+                                echo "<td><button onclick='removeStudent(\"studentTable\", \"unmarked$i\", $examid, {$students[$i]['id']});' class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
                                 echo "</tr>";
                             }
                         ?>
@@ -220,13 +220,26 @@ while ($row = $result->fetch()){
     </div>
 
     <script>
-        function removeStudent(examId, studentId){
+        let numStudents = <?php echo sizeof($students); ?>;
+
+        function removeStudent(table, row, examId, studentId){
             var post = "examid=" + encodeURIComponent(examId) + "&userid=" + encodeURIComponent(studentId);
 
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", "removestudent.php", false);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send(post);
+
+            if (xhttp.responseText == 1){
+                var element = document.getElementById(row);
+                element.parentNode.removeChild(element);
+                numStudents--;
+                var table = document.getElementById(table);
+                table.style.height = Math.min(50 + (numStudents * 50), 300) + "px";
+            }
+            else{
+                alert("Failed to remove student");
+            }
         }
     </script>
 
