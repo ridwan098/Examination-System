@@ -17,8 +17,27 @@
     $db = new Class_DB($servername,$username,$password);
     $db->connectToDb($dbname);
 
+    // check if there is exams with the same name
+    $query = "SELECT id FROM Exams WHERE subject=?";
     if (isset($_POST["examid"])){
         $examid = $_POST['examid'];
+        $query .= " AND id=?";
+        $result = $db->executeQuery($query, [$mname, $examid]);
+    }
+    else{
+        $result = $db->executeQuery($query, [$mname]);
+    }
+    $exams = [];
+    while ($row = $result->fetch()){
+        $exams[] = $row;
+    }
+
+    if (sizeof($exams) > 0){
+        echo -1;
+        die();
+    }
+
+    if (isset($examid)){
         $db->executeQuery("UPDATE Exams SET subject=?,timerLength=?,date=? WHERE id=?", [$mname, $length, $timestamp, $examid]);
         echo 1;
     }
