@@ -247,7 +247,7 @@
             }
             echo "</div>";
         ?>
-        <button type="submit" class="btn" style="position:relative;top:20px;left: 150px; border-radius: 10px;">Submit Exam</button>
+        <button id="submitExam" type="submit" class="btn" style="position:relative;top:20px;left: 150px; border-radius: 10px;">Submit Exam</button>
     </form>
 
     
@@ -427,11 +427,11 @@
         var countdown = document.getElementById("countdown");
         countdown.innerHTML = "<b>Time remaining: " + hours + "h " + minutes + "m " + seconds + "s </b>";
 
-
         // If the count down is over, write some text 
         if (examOver < 0) {
             clearInterval(x);
             document.getElementById("countdown").innerHTML = "EXPIRED";
+            postForm(document.getElementById("submitExam"), 'questions', formSubmitted);
         }
     }, 500);
   </script>
