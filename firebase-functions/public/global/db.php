@@ -11,6 +11,7 @@
             $this->username = $username;
             $this->password = $password;
             $this->conn = null;
+            $this->execRes = false;
         }
 
         public function __destruct(){
@@ -33,12 +34,16 @@
         public function executeQuery($query, $inputParams=null){
             if ($this->conn){
                 $result = $this->conn->prepare($query);
-                $result->execute($inputParams);
+                $this->execRes = $result->execute($inputParams);
                 return $result;
             }
             else{
                 throw new Exception("No active connection");
             }
+        }
+
+        public function getExecuteResult(){
+            return $this->execRes;
         }
 
         public function getLastInsertId(){

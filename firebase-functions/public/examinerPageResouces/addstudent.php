@@ -8,8 +8,11 @@
 
     $db = new Class_DB($servername,$username,$password);
     $db->connectToDb($dbname);
-    $db->executeQuery("INSERT INTO StudentExamRelation
-                        SELECT ?, id FROM Users WHERE email=?", [$examid, $email]);
-
-    echo 1;
+    $result = $db->executeQuery("INSERT INTO StudentExamRelation SELECT ?, id FROM Users WHERE email=?", [$examid, $email]);
+    if ($result->rowCount() > 0){
+        echo 1;
+    }
+    else{
+        echo 0;
+    }
 ?>

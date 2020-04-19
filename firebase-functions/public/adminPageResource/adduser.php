@@ -12,4 +12,9 @@
 
     $sql = "INSERT INTO Users (type,name,email,password) VALUES (?,?,?,?)";
     $db->executeQuery($sql, [$type,$name,$email,$password]);
+
+    if ($db->getExecuteResult()){
+        echo 1;
+    }
+    else {echo 0;}
 ?>
