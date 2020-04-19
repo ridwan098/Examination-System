@@ -3,6 +3,8 @@
 require("../global/util.php");
 require("../global/db.php");
 
+$NUM_STUDENTS_DISPLAY = 5;
+
 session_start();
 
 if (!isSessionLoggedIn() || !isset($_GET['examid'])) {
@@ -24,6 +26,12 @@ $result = $db->executeQuery("SELECT * FROM ExamQuestions eq WHERE examId=?", [$e
 $examq = [];
 while ($row = $result->fetch()) {
     $examq[] = $row;
+}
+
+$result = $db->executeQuery("SELECT * FROM StudentExamRelation ser, Users u WHERE ser.examId=? AND u.id=ser.userId", [$examid]);
+$students = [];
+while ($row = $result->fetch()){
+    $students[] = $row;
 }
 
 ?>
@@ -141,9 +149,38 @@ while ($row = $result->fetch()) {
                 echo "<h5>Start Time: " . date("d/m/Y H:i", $exam['date']) . "</h5>";
                 echo "<h5>Duration: " . gmdate("H:i", $exam['timerLength']) . "</h5>";
                 ?>
-                <form action="createPaper.php">
+                <form action="createPaper.php" method="get">
                     <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
                     <button class='btn'>Edit Paper Info</button>
+                </form>
+                <hr>
+                <h3>Students</h3>
+                <table class="table table-bordered table-hover">
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student Email</th>
+                                <th></th>
+                            </tr>
+                            <?php 
+                                for ($i = 0; $i < sizeof($students); $i++){
+                                    echo "<tr id=\"unmarked$i\" class=\"paperRow\" ";
+                                    if ($i >= $NUM_STUDENTS_DISPLAY){
+                                        echo "style='display:none;' >";
+                                    }
+                                    else{
+                                        echo ">";
+                                    }
+
+                                    echo "<td>{$students[$i]['name']}</td>";
+                                    echo "<td>{$students[$i]['email']}</td>";
+                                    echo "<td><button class='btn btn-sm btn-danger' style='height:100%'>Remove</button></td>";
+                                    echo "</tr>";
+                                }
+                            ?>
+                        </table>
+                <form action="addingStudent.php" method="get">
+                    <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
+                    <button class="btn">Add Student to Exam</button>
                 </form>
                 <hr>
                 <h3>Questions:</h3>
@@ -160,13 +197,12 @@ while ($row = $result->fetch()) {
                     ?>
                     <button class='btn'>Edit Question</button><br />
                 </form>
-                <hr>
+                <br>
                 <form action="multipleCQ.php" method="get">
                     <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
                     <button class='btn'>Add New Question</button>
                 </form>
                 <hr>
-                <?php echo '<a href="addingStudent.php?examid=' . $examid . '"><h3>Add Student to Exam</h3></a>'; ?>
             </div>
             <div class="col-sm-2 sidenav">
 
