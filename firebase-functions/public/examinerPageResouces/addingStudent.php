@@ -88,17 +88,17 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Template Page</h1>
-            <p id='username'>This is template page: </p>
+            <h1>Adding Student </h1>
+            <p id='username'>On this page, you can add students: </p>
         </div>
     </div>
 
     <div class="container-fluid text-center">
         <div class="row content">
             <div class="col-sm-2 sidenav">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
+                <h4> </h4>
+
+                <p><a href="../examinerPage.html">Back</a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
@@ -106,11 +106,10 @@
                 <hr>
 
                 <form onsubmit="postForm(this, 'addS', studentAdded); return false;" action="addstudent.php" method="post" id='addS'>
-                    <input type="hidden" name="examid" value=<?php echo "\"{$_GET['examid']}\""; ?> >
-                    <h5>Please enter the student email address</h5> 
-                    <h5>Student Email:</h5><input name="student" form="addS" class='input'
-                        placeholder='Enter student email' required><br>
-                    <button type="submit" class='btn'>Add Student</button><br/>
+                    <input type="hidden" name="examid" value=<?php echo "\"{$_GET['examid']}\""; ?>>
+                    <h5>Please enter the student email address</h5>
+                    <h5>Student Email:</h5><input name="student" form="addS" class='input' placeholder='Enter student email' required><br>
+                    <button type="submit" class='btn'>Add Student</button><br />
                 </form>
                 <hr>
                 <!--<form>
@@ -127,12 +126,7 @@
                 </form>-->
             </div>
             <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>ADS</p>
-                </div>
-                <div class="well">
-                    <p>ADS</p>
-                </div>
+
             </div>
         </div>
     </div>
@@ -152,17 +146,16 @@
     </div>
 
     <script>
-        var studentAdded = function(caller, response){
+        var studentAdded = function(caller, response) {
             caller.disabled = false;
-            if (response == 1){
+            if (response == 1) {
                 alert("Student added successfully!");
-            }
-            else{
+            } else {
                 alert("Failed to add student");
             }
         }
 
-        function postForm(caller, formId, callback){
+        function postForm(caller, formId, callback) {
             caller.disabled = true;
 
             var form = document.getElementById(formId);
@@ -170,7 +163,7 @@
 
             // compile data
             var data = "";
-            for (var i = 0; i < inputs.length; i++){
+            for (var i = 0; i < inputs.length; i++) {
 
                 data += inputs[i].name + "=" + encodeURIComponent(inputs[i].value) + "&";
             }
@@ -208,10 +201,9 @@
         const db = firebase.firestore();
 
         //update firestore settings
-        db.settings({ timestampsInSnapshots: true });
-
-
-
+        db.settings({
+            timestampsInSnapshots: true
+        });
     </script>
 
 
@@ -254,8 +246,7 @@
                     document.getElementById('username').innerHTML += name;
                 });
 
-            }
-            else {
+            } else {
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
 
@@ -268,13 +259,13 @@
         var btn = document.getElementById("modalBtn");
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
-        btn.onclick = function () {
+        btn.onclick = function() {
             modal.style.display = "block";
         }
-        span.onclick = function () {
+        span.onclick = function() {
             modal.style.display = "none";
         }
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }

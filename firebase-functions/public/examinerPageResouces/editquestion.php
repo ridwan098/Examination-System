@@ -1,30 +1,30 @@
 <?php
 
-    require("../global/util.php");
-    require("../global/db.php");
+require("../global/util.php");
+require("../global/db.php");
 
-    session_start();
+session_start();
 
-    if (!isSessionLoggedIn() || !isset($_GET['examid'])) {
-        header("Location: ../index.html");
-    }
+if (!isSessionLoggedIn() || !isset($_GET['examid'])) {
+    header("Location: ../index.html");
+}
 
-    $examid = $_GET['examid'];
+$examid = $_GET['examid'];
 
-    $db = new Class_DB($servername, $username, $password);
-    $db->connectToDb($dbname);
+$db = new Class_DB($servername, $username, $password);
+$db->connectToDb($dbname);
 
-    $result=$db->executeQuery("SELECT * FROM Exams WHERE id=?", [$examid]);
-    $exam = $result->fetch();
-    if (!$exam){
-        header("Location: ../examinerPage.html");
-    }
+$result = $db->executeQuery("SELECT * FROM Exams WHERE id=?", [$examid]);
+$exam = $result->fetch();
+if (!$exam) {
+    header("Location: ../examinerPage.html");
+}
 
-    $result= $db->executeQuery("SELECT * FROM ExamQuestions eq WHERE examId=?", [$examid]);
-    $examq = [];
-    while ($row = $result->fetch()){
-        $examq[] = $row;
-    }
+$result = $db->executeQuery("SELECT * FROM ExamQuestions eq WHERE examId=?", [$examid]);
+$examq = [];
+while ($row = $result->fetch()) {
+    $examq[] = $row;
+}
 
 ?>
 
@@ -119,17 +119,17 @@
 
     <div class="jumbotron">
         <div class="container text-center">
-            <h1>Template Page</h1>
-            <p id='username'>This is template page: </p>
+            <h1>Edit Question</h1>
+            <p id='username'>On this page, you can edit questions: </p>
         </div>
     </div>
 
     <div class="container-fluid text-center">
         <div class="row content">
             <div class="col-sm-2 sidenav">
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p>
+                <h4> </h4>
+
+                <p><a href="../examinerPage.html">Back</a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
@@ -137,12 +137,12 @@
                 <hr>
                 <h3>Paper Info</h3>
                 <?php
-                    echo "<h5>Subject: {$exam['subject']}</h5>";
-                    echo "<h5>Start Time: " . date("d/m/Y H:i", $exam['date']) . "</h5>";
-                    echo "<h5>Duration: " . gmdate("H:i", $exam['timerLength']) . "</h5>";
+                echo "<h5>Subject: {$exam['subject']}</h5>";
+                echo "<h5>Start Time: " . date("d/m/Y H:i", $exam['date']) . "</h5>";
+                echo "<h5>Duration: " . gmdate("H:i", $exam['timerLength']) . "</h5>";
                 ?>
                 <form action="createPaper.php">
-                    <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?> >
+                    <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
                     <button class='btn'>Edit Paper Info</button>
                 </form>
                 <hr>
@@ -151,30 +151,25 @@
                 <form action="multipleCQ.php" method="get">
                     <input type="hidden" name="examid" <?php echo "value='$examid'"; ?>>
                     <?php
-                        $i = 1;
-                        foreach ($examq as $q){
-                            echo '<input type="radio" id="mcq' . $i . '" name="qid" value="' . $q['examqId'] . '" required>';
-                            echo '<label for="mcq' . $i . '">Q'. $i . ': ' . $q['question'] . '</label><br>';
-                            $i++;
-                        }
+                    $i = 1;
+                    foreach ($examq as $q) {
+                        echo '<input type="radio" id="mcq' . $i . '" name="qid" value="' . $q['examqId'] . '" required>';
+                        echo '<label for="mcq' . $i . '">Q' . $i . ': ' . $q['question'] . '</label><br>';
+                        $i++;
+                    }
                     ?>
-                    <button class='btn'>Edit Question</button><br/>
+                    <button class='btn'>Edit Question</button><br />
                 </form>
                 <hr>
                 <form action="multipleCQ.php" method="get">
-                    <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?> >
+                    <input type="hidden" name="examid" value=<?php echo "'$examid'"; ?>>
                     <button class='btn'>Add New Question</button>
                 </form>
                 <hr>
                 <?php echo '<a href="addingStudent.php?examid=' . $examid . '"><h3>Add Student to Exam</h3></a>'; ?>
             </div>
             <div class="col-sm-2 sidenav">
-                <div class="well">
-                    <p>ADS</p>
-                </div>
-                <div class="well">
-                    <p>ADS</p>
-                </div>
+
             </div>
         </div>
     </div>
@@ -213,10 +208,9 @@
         const db = firebase.firestore();
 
         //update firestore settings
-        db.settings({ timestampsInSnapshots: true });
-
-
-
+        db.settings({
+            timestampsInSnapshots: true
+        });
     </script>
 
     <script>
@@ -257,8 +251,7 @@
                     document.getElementById('username').innerHTML += name;
                 });
 
-            }
-            else {
+            } else {
                 accountDetails.innerHtml = '';
                 document.getElementById('username').innerHTML
 
@@ -271,13 +264,13 @@
         var btn = document.getElementById("modalBtn");
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
-        btn.onclick = function () {
+        btn.onclick = function() {
             modal.style.display = "block";
         }
-        span.onclick = function () {
+        span.onclick = function() {
             modal.style.display = "none";
         }
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
