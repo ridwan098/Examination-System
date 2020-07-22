@@ -2,12 +2,13 @@
 
 
 # Higher Exam
-This was a group project crea
+This was a software engineering group project that was undertaken during semester B of our second year. The task was to create an online examination application in which 'Higher Exam' was our output. Overall, this project was successful as we received a first class for it!
 
 You can view my portfolio at: (will be redirected to)
 ```
 > https://examination--system.herokuapp.com/firebase-functions/public/index.html
 ```
+- Or by clicking [here](https://examination--system.herokuapp.com/firebase-functions/public/index.html)
 
 
 ## Links
