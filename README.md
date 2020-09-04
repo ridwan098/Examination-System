@@ -1,4 +1,4 @@
-[![screenshot of higherExam website](higherExam.png)](https://examination--system.herokuapp.com/firebase-functions/public/index.html)
+[![screenshot of higherExam website](higherExam.png)](https://hopeful-wilson-29fa1d.netlify.app/firebase-functions/public/index.html)
 
 
 # Higher Exam
@@ -6,9 +6,18 @@ This was a software engineering group project that was undertaken during semeste
 
 You can view a live version here: (will be redirected to)
 ```
-> https://examination--system.herokuapp.com/firebase-functions/public/index.html
+> https://hopeful-wilson-29fa1d.netlify.app/firebase-functions/public/index.html
 ```
-- Or by clicking [here](https://examination--system.herokuapp.com/firebase-functions/public/index.html)
+
+
+
+Note:
+
+As netlify only hosts static sites, you will need to click the link below after logging in as the login features if the site and som pages uses php. Most pages such as the admin page however, should be fine as they utilise firebase functions
+```
+> https://hopeful-wilson-29fa1d.netlify.app/firebase-functions/public/adminpage
+```
+- Or by clicking [here](https://hopeful-wilson-29fa1d.netlify.app/firebase-functions/public/index.html)
 
 
 ## Links
