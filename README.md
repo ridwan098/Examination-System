@@ -18,6 +18,9 @@ As netlify only hosts static sites, you will need to click the link below after 
 > https://hopeful-wilson-29fa1d.netlify.app/firebase-functions/public/adminpage
 ```
 - Or by clicking [here](https://hopeful-wilson-29fa1d.netlify.app/firebase-functions/public/index.html)
+- After registering: [here](https://hopeful-wilson-29fa1d.netlify.app/firebase-functions/public/adminpage)
+
+To get the fully working product, you will need to run it locally, with php enabled
 
 
 ## Links
